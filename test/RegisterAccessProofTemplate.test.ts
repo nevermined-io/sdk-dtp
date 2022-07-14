@@ -8,7 +8,7 @@ import AssetRewards from '@nevermined-io/sdk-js/dist/node/models/AssetRewards'
 import { BabyjubPublicKey } from '@nevermined-io/sdk-js/dist/node/models/KeyTransfer'
 import Token from '@nevermined-io/sdk-js/dist/node/keeper/contracts/Token'
 import { generateId } from '@nevermined-io/sdk-js/dist/node/utils'
-import utils from '@nevermined-io/sdk-js/dist/node/utils'
+// import utils from '@nevermined-io/sdk-js/dist/node/utils'
 
 import { AccessProofTemplate } from '../src/AccessProofTemplate'
 import { EscrowPaymentCondition, LockPaymentCondition } from '@nevermined-io/sdk-js/dist/node/keeper/contracts/conditions'
@@ -134,12 +134,12 @@ describe('Register Escrow Access Proof Template', () => {
         let hash: string
 
         before(async () => {
-            agreementIdSeed = utils.generateId()
+            agreementIdSeed = generateId()
             agreementId = await nevermined.keeper.agreementStoreManager.agreementId(
                 agreementIdSeed,
                 publisher.getId()
             )
-            didSeed = utils.generateId()
+            didSeed = generateId()
             did = await keeper.didRegistry.hashDID(didSeed, publisher.getId())
 
             keyTransfer = await makeKeyTransfer()

@@ -1,7 +1,9 @@
 import { Nevermined, Account, DDO, MetaData } from '@nevermined-io/sdk-js'
+import { generateIntantiableConfigFromConfig } from '@nevermined-io/sdk-js/dist/node/Instantiable.abstract'
 import { BabyjubPublicKey } from '@nevermined-io/sdk-js/dist/node/models/KeyTransfer'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
+import { Dtp } from '../src/Dtp'
 import { makeKeyTransfer } from '../src/KeyTransfer'
 import { config } from './config'
 import { getMetadataForDTP, sleep } from './utils'
@@ -9,6 +11,7 @@ import { getMetadataForDTP, sleep } from './utils'
 describe('Consume Asset (Gateway w/ proofs)', () => {
     let nevermined: Nevermined
     let keyTransfer
+    let dtp: Dtp
 
     let publisher: Account
     let consumer: Account
@@ -27,6 +30,12 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
     before(async () => {
         config.graphHttpUri = undefined
         nevermined = await Nevermined.getInstance(config)
+        const instanceConfig = {
+            ...generateIntantiableConfigFromConfig(config),
+            nevermined
+        }
+
+        dtp = await Dtp.getInstance(instanceConfig)
         keyTransfer = await makeKeyTransfer()
 
         // Accounts
@@ -97,22 +106,18 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
     })
 
     it('should consume and store the assets', async () => {
-        /*
-        const passwd = await nevermined.assets.consumeProof(agreementId, ddo.id, consumer)
+        const passwd = await dtp.consumeProof(agreementId, ddo.id, consumer)
         assert.deepEqual(passwd, origPasswd)
-        */
     })
 
     it('buyer should have the key', async () => {
         // wait for subgraph to pick up the events
         await sleep(3000)
-        /*
-        const key = await nevermined.agreements.conditions.readKey(
+        const key = await dtp.readKey(
             agreementId,
             keyTransfer.makeKey(consumer.babySecret),
             new BabyjubPublicKey(providerKey.x, providerKey.y)
         )
         assert.equal(key.toString('hex'), origPasswd)
-        */
     })
 })

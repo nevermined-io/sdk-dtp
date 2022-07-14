@@ -16,12 +16,14 @@ export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams>
         config: InstantiableConfig,
         dtp: Dtp
     ): Promise<AccessProofTemplate> {
-        return AgreementTemplate.getInstance(
+        const res: AccessProofTemplate = await AgreementTemplate.getInstance(
             config,
             'AccessProofTemplate',
             AccessProofTemplate,
             true
         )
+        res.dtp = dtp
+        return res
     }
 
     public async getServiceAgreementTemplate() {

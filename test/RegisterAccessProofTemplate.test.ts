@@ -386,15 +386,14 @@ describe('Register Escrow Access Proof Template', () => {
         })
 
         it('should fulfill the conditions from publisher side', async () => {
-            /*
-            await nevermined.agreements.conditions.transferKey(
+            await dtp.transferKey(
                 agreementId,
                 data,
                 providerK,
                 buyerPub,
                 providerPub,
                 publisher
-            )*/
+            )
             await nevermined.agreements.conditions.releaseReward(
                 agreementId,
                 amounts,
@@ -407,14 +406,12 @@ describe('Register Escrow Access Proof Template', () => {
         })
 
         it('buyer should have the key', async () => {
-            /*
-            const key = await nevermined.agreements.conditions.readKey(
+            const key = await dtp.readKey(
                 agreementId,
                 buyerK,
                 providerPub
             )
             assert.equal(key.toString(), data.toString())
-            */
         })
     })
 })

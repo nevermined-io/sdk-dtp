@@ -109,7 +109,7 @@ export class Dtp extends Instantiable {
                 account,
                 agreementId,
                 did,
-                'access-proof',
+                '/access-proof',
                 {babysig: await this.signBabyjub(account, BigInt(address)),
                     buyer: account.getPublic()}
             )

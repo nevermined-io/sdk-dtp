@@ -1,4 +1,4 @@
-import { ServiceAgreementTemplate } from '../../../ddo/ServiceAgreementTemplate'
+import { ServiceAgreementTemplate } from "@nevermined-io/sdk-js/dist/node/ddo/ServiceAgreementTemplate";
 
 export const accessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {
     contractName: 'AccessProofTemplate',

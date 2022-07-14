@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { makeKeyTransfer } from '../../src/utils/KeyTransfer'
+import { makeKeyTransfer } from '../src/KeyTransfer'
 
 describe('KeyTransfer', () => {
     let keyTransfer

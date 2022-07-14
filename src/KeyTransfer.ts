@@ -2,8 +2,6 @@ import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/sdk-js/dist/node/mo
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
 
-
-
 const SEED = 'mimcsponge'
 const NROUNDS = 220
 

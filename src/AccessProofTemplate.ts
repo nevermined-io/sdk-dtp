@@ -1,10 +1,9 @@
-import { AgreementInstance, AgreementTemplate } from './AgreementTemplate.abstract'
-import { BaseTemplate } from './BaseTemplate.abstract'
-import { DDO } from '../../../ddo/DDO'
-import { InstantiableConfig } from '../../../Instantiable.abstract'
-import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
-import Account from '../../../nevermined/Account'
-import { ServiceType } from '../../../ddo/Service'
+import { Account, AgreementTemplate, DDO } from "@nevermined-io/sdk-js"
+import { ServiceType } from "@nevermined-io/sdk-js/dist/node/ddo/Service"
+import { InstantiableConfig } from "@nevermined-io/sdk-js/dist/node/Instantiable.abstract"
+import { BaseTemplate, AgreementInstance } from "@nevermined-io/sdk-js/dist/node/keeper/contracts/templates"
+import { accessTemplateServiceAgreementTemplate } from "./AccessProofTemplate.serviceAgreementTemplate"
+import { Dtp } from "./Dtp"
 
 export interface AccessProofTemplateParams {
     consumer: Account
@@ -12,8 +11,10 @@ export interface AccessProofTemplateParams {
 }
 
 export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams> {
-    public static async getInstance(
-        config: InstantiableConfig
+    public dtp: Dtp
+    public static async getInstanceDtp(
+        config: InstantiableConfig,
+        dtp: Dtp
     ): Promise<AccessProofTemplate> {
         return AgreementTemplate.getInstance(
             config,
@@ -42,10 +43,10 @@ export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams>
         parameters: AccessProofTemplateParams
     ): Promise<AgreementInstance<AccessProofTemplateParams>> {
         const {
-            accessProofCondition,
             lockPaymentCondition,
             escrowPaymentCondition
         } = this.nevermined.keeper.conditions
+        const accessProofCondition = this.dtp.accessProofCondition
 
         const agreementId = await this.agreementId(agreementIdSeed, creator)
 

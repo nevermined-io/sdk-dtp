@@ -1,9 +1,10 @@
-import { Condition, ConditionContext } from './Condition.abstract'
-import { zeroX, makeKeyTransfer } from '../../../utils'
-import { InstantiableConfig } from '../../../Instantiable.abstract'
-import Account from '../../../nevermined/Account'
-import { BabyjubPublicKey, MimcCipher } from '../../../models/KeyTransfer'
-import { TxParameters } from '../ContractBase'
+import { Account, Condition } from '@nevermined-io/sdk-js'
+import { InstantiableConfig } from '@nevermined-io/sdk-js/dist/node/Instantiable.abstract'
+import { ConditionContext } from '@nevermined-io/sdk-js/dist/node/keeper/contracts/conditions'
+import { TxParameters } from '@nevermined-io/sdk-js/dist/node/keeper/contracts/ContractBase'
+import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/sdk-js/dist/node/models/KeyTransfer'
+import { zeroX } from '@nevermined-io/sdk-js/dist/node/utils'
+import { makeKeyTransfer } from './KeyTransfer'
 
 export interface AccessProofConditionContext extends ConditionContext {
     consumer: Account
@@ -33,8 +34,8 @@ export class AccessProofCondition extends Condition<
         const keytransfer = await makeKeyTransfer()
         const { _hash, _providerPub } = service.attributes.main
         const buyerPub: BabyjubPublicKey = keytransfer.makePublic(
-            consumer.babyX,
-            consumer.babyY
+            consumer.babyX!,
+            consumer.babyY!
         )
         const providerPub: BabyjubPublicKey = keytransfer.makePublic(
             _providerPub[0],

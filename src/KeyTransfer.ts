@@ -1,4 +1,4 @@
-import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/sdk-js/build/models/KeyTransfer'
+import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/sdk-js/dist/node/models/KeyTransfer'
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
 

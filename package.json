@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/sdk-js": "git+https://github.com/nevermined-io/sdk-js#feat/remove-circom",
+    "@nevermined-io/sdk-js": "git+https://github.com/nevermined-io/sdk-js#8ec030a",
     "circomlibjs": "^0.1.1",
     "ffjavascript": "0.2.50",
     "snarkjs": "0.4.14"

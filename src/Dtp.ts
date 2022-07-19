@@ -1,16 +1,16 @@
 // Extension of main nevermined object
-import { Instantiable, InstantiableConfig } from "@nevermined-io/sdk-js/dist/node/Instantiable.abstract";
+import { Instantiable, InstantiableConfig } from "@nevermined-io/sdk-js/build/Instantiable.abstract";
 import { AccessProofTemplate } from "./AccessProofTemplate";
 import { AccessProofCondition } from "./AccessProofCondition";
 import { Account, MetaData, Nevermined } from "@nevermined-io/sdk-js";
-import { ServiceAccessProof, ServiceCommon } from "@nevermined-io/sdk-js/dist/node/ddo/Service";
-import { ServicePlugin } from "@nevermined-io/sdk-js/dist/node/nevermined/Assets";
+import { ServiceAccessProof, ServiceCommon } from "@nevermined-io/sdk-js/build/ddo/Service";
+import { ServicePlugin } from "@nevermined-io/sdk-js/build/nevermined/Assets";
 import { makeKeyTransfer, KeyTransfer } from "./KeyTransfer";
-import { AssetError, GatewayError, KeeperError } from "@nevermined-io/sdk-js/dist/node/errors";
-import { noZeroX } from "@nevermined-io/sdk-js/dist/node/utils";
-import { BabyjubPublicKey, MimcCipher } from "@nevermined-io/sdk-js/dist/node/models/KeyTransfer";
-import { TxParameters } from "@nevermined-io/sdk-js/dist/node/keeper/contracts/ContractBase";
-import { EventOptions } from "@nevermined-io/sdk-js/dist/node/events";
+import { AssetError, GatewayError, KeeperError } from "@nevermined-io/sdk-js/build/errors";
+import { noZeroX } from "@nevermined-io/sdk-js/build/utils";
+import { BabyjubPublicKey, MimcCipher } from "@nevermined-io/sdk-js/build/models/KeyTransfer";
+import { TxParameters } from "@nevermined-io/sdk-js/build/keeper/contracts/ContractBase";
+import { EventOptions } from "@nevermined-io/sdk-js/build/events";
 
 class AccessProofServicePlugin implements ServicePlugin {
     public dtp: Dtp

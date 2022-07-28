@@ -26,7 +26,8 @@
     "@nevermined-io/nevermined-sdk-js": "0.22.1",
     "circomlibjs": "^0.1.1",
     "ffjavascript": "0.2.50",
-    "snarkjs": "0.4.14"
+    "snarkjs": "0.4.14",
+    "web3-utils": "^1.7.4"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",

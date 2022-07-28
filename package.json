@@ -2,6 +2,8 @@
   "name": "@nevermined-io/nevermined-sdk-dtp",
   "version": "0.0.1",
   "description": "Javascript SDK for connecting with Nevermined Data Platform (Data Transfer proofs module)",
+  "main": "./dist/index.js",
+  "typings": "./dist/node/index.d.ts",
   "scripts": {
     "build": "npm run clean && npm run build:tsc && npm run build:dist",
     "build:tsc": "tsc --sourceMap",
@@ -23,7 +25,7 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "0.22.1",
+    "@nevermined-io/nevermined-sdk-js": "/home/sami/nvm/sdk-js",
     "circomlibjs": "^0.1.1",
     "ffjavascript": "0.2.50",
     "snarkjs": "0.4.14",

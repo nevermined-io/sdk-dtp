@@ -46,7 +46,7 @@ export class AccessProofCondition extends Condition<
     )
     return {
       list: [zeroX(_hash), buyerPub.param(), providerPub.param()],
-      params: async ({ data, providerK }) => {
+      params: async (_method, { data, providerK }) => {
         const cipher = await keytransfer.encryptKey(
           data,
           await keytransfer.ecdh(providerK, buyerPub)
@@ -71,7 +71,7 @@ export class AccessProofCondition extends Condition<
     proof: string,
     from?: Account,
     params?: TxParameters
-  ) {
+  ): Promise<any> {
     return super.fulfillPlain(
       agreementId,
       [zeroX(origHash), grantee.param(), provider.param(), cipher.param(), zeroX(proof)],

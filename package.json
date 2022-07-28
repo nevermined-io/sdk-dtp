@@ -13,6 +13,9 @@
     "format": "prettier --parser typescript --ignore-path .gitignore --write '**/*.{js,jsx,ts,tsx}'",
     "doc": "typedoc --out ./docs/ ./src/"
   },
+  "files": [
+    "dist/"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nevermined-io/sdk-dtp.git"

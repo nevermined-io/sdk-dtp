@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run clean && npm run build:tsc && npm run build:dist",
     "build:tsc": "tsc --sourceMap",
-    "test": "mocha",
+    "test": "mocha test/*.test.ts",
     "lint": "eslint --ignore-path .gitignore --ext .ts,.tsx .",
     "lint:fix": "eslint --fix --ignore-path .gitignore --ext .ts,.tsx .",
     "format": "prettier --parser typescript --ignore-path .gitignore --write '**/*.{js,jsx,ts,tsx}'",

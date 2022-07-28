@@ -208,9 +208,9 @@ export class Dtp extends Instantiable {
             throw new KeeperError('No events are returned')
         }
 
-        const [cipherL, cipherR] = ev[0].returnValues
-            ? ev[0].returnValues._cipher
-            : ev[0]._cipher
+        const args = ev[0].args
+
+        const [cipherL, cipherR] = ev[0].args._cipher
 
         const keyTransfer = await makeKeyTransfer()
         return keyTransfer.decryptKey(

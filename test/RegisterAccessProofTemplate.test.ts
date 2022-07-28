@@ -8,7 +8,6 @@ import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/Asse
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
 import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-// import utils from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 
 import { AccessProofTemplate } from '../src/AccessProofTemplate'
 import { EscrowPaymentCondition, LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
@@ -18,22 +17,6 @@ import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { getMetadataForDTP, sleep } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 
-/*
-import { Nevermined, utils, Account, Keeper, DDO } from '../../src'
-import AssetRewards from '../../src/models/AssetRewards'
-import Token from '../../src/keeper/contracts/Token'
-import { getMetadataForDTP } from '../utils'
-import {
-    AccessProofCondition,
-    EscrowPaymentCondition,
-    LockPaymentCondition
-} from '../../src/keeper/contracts/conditions'
-import { AccessProofTemplate } from '../../src/keeper/contracts/templates'
-import { BabyjubPublicKey } from '../../src/models/KeyTransfer'
-import { makeKeyTransfer, KeyTransfer } from '../../src/utils/KeyTransfer'
-import { generateId } from '../../src/utils'
-*/
-
 describe('Register Escrow Access Proof Template', () => {
     let nevermined: Nevermined
     let keeper: Keeper
@@ -41,7 +24,7 @@ describe('Register Escrow Access Proof Template', () => {
     let accessProofTemplate: AccessProofTemplate
 
     const url = 'https://example.com/did/nevermined/test-attr-example.txt'
-    const checksum = 'b'.repeat(32)
+    const checksum = 'b'.repeat(64)
     const totalAmount = new BigNumber(12)
     const amounts = [new BigNumber(10), new BigNumber(2)]
 
@@ -240,7 +223,7 @@ describe('Register Escrow Access Proof Template', () => {
                 publisher
             )
 
-            assert.isTrue(agreement.status)
+            assert.isTrue(agreement.status === 1)
         })
 
         it('should fulfill LockPaymentCondition', async () => {

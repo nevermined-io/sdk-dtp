@@ -1,9 +1,9 @@
-import { Account, Condition } from '@nevermined-io/sdk-js'
-import { InstantiableConfig } from '@nevermined-io/sdk-js/dist/node/Instantiable.abstract'
-import { ConditionContext } from '@nevermined-io/sdk-js/dist/node/keeper/contracts/conditions'
-import { TxParameters } from '@nevermined-io/sdk-js/dist/node/keeper/contracts/ContractBase'
-import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/sdk-js/dist/node/models/KeyTransfer'
-import { zeroX } from '@nevermined-io/sdk-js/dist/node/utils'
+import { Account, Condition } from '@nevermined-io/nevermined-sdk-js'
+import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+import { ConditionContext } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
+import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
+import { zeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 import { makeKeyTransfer } from './KeyTransfer'
 
 export interface AccessProofConditionContext extends ConditionContext {

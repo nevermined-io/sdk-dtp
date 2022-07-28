@@ -1,6 +1,6 @@
 // import { Config } from '../src'
-import { Config } from '@nevermined-io/sdk-js'
-import { LoggerInstance, LogLevel } from '@nevermined-io/sdk-js/dist/node/utils'
+import { Config } from '@nevermined-io/nevermined-sdk-js'
+import { LoggerInstance, LogLevel } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 import HDWalletProvider from '@truffle/hdwallet-provider'
 // import { LoggerInstance, LogLevel } from '../src/utils'
 

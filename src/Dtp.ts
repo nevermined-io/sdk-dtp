@@ -1,16 +1,16 @@
 // Extension of main nevermined object
-import { Instantiable, InstantiableConfig } from "@nevermined-io/sdk-js/dist/node/Instantiable.abstract";
+import { Instantiable, InstantiableConfig } from "@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract";
 import { AccessProofTemplate } from "./AccessProofTemplate";
 import { AccessProofCondition } from "./AccessProofCondition";
-import { Account, MetaData, Nevermined } from "@nevermined-io/sdk-js";
-import { ServiceAccessProof, ServiceCommon } from "@nevermined-io/sdk-js/dist/node/ddo/Service";
-import { ServicePlugin } from "@nevermined-io/sdk-js/dist/node/nevermined/Assets";
+import { Account, MetaData, Nevermined } from "@nevermined-io/nevermined-sdk-js";
+import { ServiceAccessProof, ServiceCommon } from "@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service";
+import { ServicePlugin } from "@nevermined-io/nevermined-sdk-js/dist/node/nevermined/Assets";
 import { makeKeyTransfer, KeyTransfer } from "./KeyTransfer";
-import { AssetError, GatewayError, KeeperError } from "@nevermined-io/sdk-js/dist/node/errors";
-import { noZeroX } from "@nevermined-io/sdk-js/dist/node/utils";
-import { BabyjubPublicKey, MimcCipher } from "@nevermined-io/sdk-js/dist/node/models/KeyTransfer";
-import { TxParameters } from "@nevermined-io/sdk-js/dist/node/keeper/contracts/ContractBase";
-import { EventOptions } from "@nevermined-io/sdk-js/dist/node/events";
+import { AssetError, GatewayError, KeeperError } from "@nevermined-io/nevermined-sdk-js/dist/node/errors";
+import { noZeroX } from "@nevermined-io/nevermined-sdk-js/dist/node/utils";
+import { BabyjubPublicKey, MimcCipher } from "@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer";
+import { TxParameters } from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase";
+import { EventOptions } from "@nevermined-io/nevermined-sdk-js/dist/node/events";
 
 class AccessProofServicePlugin implements ServicePlugin {
     public dtp: Dtp
@@ -104,7 +104,7 @@ export class Dtp extends Instantiable {
         const cacheKey = jwt.generateCacheKey(account.getId(), agreementId, did)
 
         if (!jwt.tokenCache.has(cacheKey)) {
-            const address = this.web3.utils.toChecksumAddress(account.getId())
+            const address = account.getId()
             const grantToken = await jwt.generateToken(
                 account,
                 agreementId,
@@ -168,7 +168,7 @@ export class Dtp extends Instantiable {
                 from,
                 params
             )
-            return !!receipt.events!.Fulfilled
+            return !!receipt
         } catch (e) {
             throw new KeeperError(e)
         }

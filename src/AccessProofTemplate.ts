@@ -1,7 +1,7 @@
-import { Account, AgreementTemplate, DDO } from "@nevermined-io/sdk-js"
-import { ServiceType } from "@nevermined-io/sdk-js/dist/node/ddo/Service"
-import { InstantiableConfig } from "@nevermined-io/sdk-js/dist/node/Instantiable.abstract"
-import { BaseTemplate, AgreementInstance } from "@nevermined-io/sdk-js/dist/node/keeper/contracts/templates"
+import { Account, AgreementTemplate, DDO } from "@nevermined-io/nevermined-sdk-js"
+import { ServiceType } from "@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service"
+import { InstantiableConfig } from "@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract"
+import { BaseTemplate, AgreementInstance } from "@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates"
 import { accessTemplateServiceAgreementTemplate } from "./AccessProofTemplate.serviceAgreementTemplate"
 import { Dtp } from "./Dtp"
 

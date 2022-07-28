@@ -3,20 +3,20 @@ import { decodeJwt } from 'jose'
 import BigNumber from 'bignumber.js'
 
 import { config } from './config'
-import { Nevermined, Keeper, Account, DDO } from '@nevermined-io/sdk-js'
-import AssetRewards from '@nevermined-io/sdk-js/dist/node/models/AssetRewards'
-import { BabyjubPublicKey } from '@nevermined-io/sdk-js/dist/node/models/KeyTransfer'
-import Token from '@nevermined-io/sdk-js/dist/node/keeper/contracts/Token'
-import { generateId } from '@nevermined-io/sdk-js/dist/node/utils'
-// import utils from '@nevermined-io/sdk-js/dist/node/utils'
+import { Nevermined, Keeper, Account, DDO } from '@nevermined-io/nevermined-sdk-js'
+import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards'
+import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
+import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
+import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
+// import utils from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 
 import { AccessProofTemplate } from '../src/AccessProofTemplate'
-import { EscrowPaymentCondition, LockPaymentCondition } from '@nevermined-io/sdk-js/dist/node/keeper/contracts/conditions'
+import { EscrowPaymentCondition, LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import { Dtp } from '../src/Dtp'
 import { AccessProofCondition } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { getMetadataForDTP, sleep } from './utils'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/sdk-js/dist/node/Instantiable.abstract'
+import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 
 /*
 import { Nevermined, utils, Account, Keeper, DDO } from '../../src'
@@ -264,7 +264,7 @@ describe('Register Escrow Access Proof Template', () => {
                 consumer
             )
 
-            assert.isDefined(fulfill.events!.Fulfilled, 'Not Fulfilled event.')
+            assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
         })
 
         it('should fulfill AccessCondition', async () => {
@@ -282,7 +282,7 @@ describe('Register Escrow Access Proof Template', () => {
                 proof
             )
 
-            assert.isDefined(fulfill.events!.Fulfilled, 'Not Fulfilled event.')
+            assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
         })
 
         it('should fulfill EscrowPaymentCondition', async () => {
@@ -299,7 +299,7 @@ describe('Register Escrow Access Proof Template', () => {
                 consumer
             )
 
-            assert.isDefined(fulfill.events!.Fulfilled, 'Not Fulfilled event.')
+            assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
         })
     })
 

@@ -1,4 +1,4 @@
-import { MetaData } from "@nevermined-io/sdk-js"
+import { MetaData } from "@nevermined-io/nevermined-sdk-js"
 import { makeKeyTransfer } from "../src/KeyTransfer"
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

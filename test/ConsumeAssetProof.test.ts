@@ -41,6 +41,8 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
     // Accounts
     ;[publisher, consumer] = await nevermined.accounts.list()
 
+    console.log(publisher)
+
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
     await nevermined.marketplace.login(clientAssertion)

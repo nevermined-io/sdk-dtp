@@ -54,8 +54,8 @@ jobs:
 
       - name: Run integration tests
         env:
-          SEED_WORDS: ${{ secrets.seedWords }}
-          INFURA_TOKEN: ${{ secrets.INFURA_TOKEN }}
+          NO_GRAPH: true
+          SEED_WORDS: taxi music thumb unique chat sand crew more leg another off lamp
         run: |
           yarn test
       - name: Upload logs

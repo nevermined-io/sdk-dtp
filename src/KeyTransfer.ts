@@ -8,6 +8,11 @@ import vKey from './verification_key.json'
 const SEED = 'mimcsponge'
 const NROUNDS = 220
 
+export interface Babysig {
+  R8: [string, string]
+  S: string
+}
+
 class Circom {
   private babyjub
   private poseidon
@@ -106,7 +111,7 @@ export class KeyTransfer {
     return new BabyjubPublicKey(this.toHex(x), this.toHex(y))
   }
 
-  public async signBabyjub(provider_secret, msg) {
+  public async signBabyjub(provider_secret, msg): Promise<Babysig> {
     const babyjub = this.circom.getBabyjub()
     const poseidon = this.circom.getPoseidon()
 
@@ -124,6 +129,35 @@ export class KeyTransfer {
       R8: [this.toHex(R8[0]), this.toHex(R8[1])],
       S: this.bigToHex(S)
     }
+  }
+
+  public async verifyBabyjub(pubkey: BabyjubPublicKey, msg, sig: Babysig): Promise<boolean> {
+    const babyjub = this.circom.getBabyjub()
+    const poseidon = this.circom.getPoseidon()
+
+    const base8 = babyjub.Base8
+    const order = 21888242871839275222246405745257275088614511777268538073601725287587578984328n
+    const subOrder = order / 8n
+    const F = babyjub.p
+
+    // these should be hex numbers
+    const sig_R8 = [this.F.e(sig.R8[0]), this.F.e(sig.R8[1])]
+    const sig_S = BigInt(sig.S)
+    const A = [this.F.e(pubkey.x),this.F.e(pubkey.y)]
+    // console.log(A, sig_R8)
+    if (!babyjub.inCurve(sig_R8)) return false
+    if (!babyjub.inCurve(A)) return false
+    if (BigInt(sig.S) >= subOrder) return false
+
+    const hm = this.F.toObject(poseidon([sig_R8[0], sig_R8[1], A[0], A[1], msg % F]))
+
+    const Pleft = babyjub.mulPointEscalar(base8, sig_S*8n)
+    const Pright_ = babyjub.mulPointEscalar(A, hm*8n)
+    const Pright = babyjub.addPoint(babyjub.mulPointEscalar(sig_R8, 8n), Pright_)
+
+    if (this.F.toObject(Pleft[0]) != this.F.toObject(Pright[0])) return false
+    if (this.F.toObject(Pleft[1]) != this.F.toObject(Pright[1])) return false
+    return true
   }
 
   // generate hash from plain text key

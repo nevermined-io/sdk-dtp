@@ -20,6 +20,12 @@ describe('KeyTransfer', () => {
   })
 
   describe('whole flow', () => {
+    it.only('signatures work', async () => {
+      const msg = 123456n
+      const sig = await keyTransfer.signBabyjub('e f g', msg)
+      const res = await keyTransfer.verifyBabyjub(providerPub, msg, sig)
+      assert.equal(res, true)
+    })
     it('hashing works', async () => {
       assert.equal(
         await keyTransfer.hashKey(data),

@@ -205,6 +205,13 @@ export class Dtp extends Instantiable {
     return account
   }
 
+  public async babyjubPublicAccount(x: string, y: string): Promise<Account> {
+    const account = new Account()
+    account.babyX = x
+    account.babyY = y
+    return account
+  }
+
   /**
    * Read the transferred key from chain.
    * @param agreementId - Agreement ID.

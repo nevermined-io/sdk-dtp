@@ -1,7 +1,5 @@
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
-import BigNumber from 'bignumber.js'
-
 import { config } from './config'
 import { Nevermined, Keeper, Account, DDO } from '@nevermined-io/nevermined-sdk-js'
 import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards'
@@ -17,8 +15,9 @@ import {
 import { Dtp } from '../src/Dtp'
 import { AccessProofCondition } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
-import { getMetadataForDTP, sleep } from './utils'
+import { getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 
 describe('Register Escrow Access Proof Template', () => {
   let nevermined: Nevermined
@@ -28,8 +27,8 @@ describe('Register Escrow Access Proof Template', () => {
 
   const url = 'https://example.com/did/nevermined/test-attr-example.txt'
   const checksum = 'b'.repeat(64)
-  const totalAmount = new BigNumber(12)
-  const amounts = [new BigNumber(10), new BigNumber(2)]
+  const totalAmount = BigNumber.from(12)
+  const amounts = [BigNumber.from(10), BigNumber.from(2)]
 
   let templateManagerOwner: Account
   let publisher: Account

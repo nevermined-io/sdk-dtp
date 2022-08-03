@@ -20,7 +20,7 @@ describe('KeyTransfer', () => {
   })
 
   describe('whole flow', () => {
-    it.only('signatures work', async () => {
+    it('signatures work', async () => {
       const msg = 123456n
       const sig = await keyTransfer.signBabyjub('e f g', msg)
       const res = await keyTransfer.verifyBabyjub(providerPub, msg, sig)

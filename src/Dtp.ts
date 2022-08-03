@@ -195,6 +195,16 @@ export class Dtp extends Instantiable {
     }
   }
 
+  public async babyjubAccount(mnemonic: string): Promise<Account> {
+    const keyTransfer = await makeKeyTransfer()
+    const account = new Account()
+    account.babySecret = mnemonic
+    const pub = await keyTransfer.secretToPublic(keyTransfer.makeKey(mnemonic))
+    account.babyX = pub.x
+    account.babyY = pub.y
+    return account
+  }
+
   /**
    * Read the transferred key from chain.
    * @param agreementId - Agreement ID.

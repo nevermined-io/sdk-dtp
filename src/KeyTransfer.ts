@@ -231,8 +231,8 @@ export class KeyTransfer {
 
     const { proof } = await this.snarkjs.plonk.fullProve(
       snarkParams,
-      'node_modules/@nevermined-io/contracts/circuits/keytransfer.wasm',
-      'node_modules/@nevermined-io/contracts/circuits/keytransfer.zkey'
+      'circuits/keytransfer.wasm',
+      'circuits/keytransfer.zkey'
     )
 
     const signals = [

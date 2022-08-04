@@ -15,7 +15,8 @@ const configBase: Config = {
   faucetUri: 'http://localhost:3001',
   gatewayUri: 'http://localhost:8030',
   secretStoreUri: 'http://localhost:12001',
-  gatewayAddress: '0xe2DD09d719Da89e5a3D0F2549c7E24566e947260',
+  // gatewayAddress: '0xe2DD09d719Da89e5a3D0F2549c7E24566e947260',
+  gatewayAddress: '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0',
   marketplaceAuthToken: 'bogus',
   artifactsFolder: './artifacts',
   graphHttpUri: nograph

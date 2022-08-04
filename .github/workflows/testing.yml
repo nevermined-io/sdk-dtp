@@ -25,17 +25,17 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - name: Build SDK
-        run: |
-          git clone https://github.com/nevermined-io/sdk-js
-          cd sdk-js
-          git checkout fix/artifact-ref
-          yarn
-          yarn build
-          yarn pack
-          cp *.tgz ..
-          cd ..
-          rm -rf sdk-js
+      #- name: Build SDK
+      #  run: |
+      #    git clone https://github.com/nevermined-io/sdk-js
+      #    cd sdk-js
+      #    git checkout fix/artifact-ref
+      #    yarn
+      #    yarn build
+      #    yarn pack
+      #    cp *.tgz ..
+      #    cd ..
+      #    rm -rf sdk-js
       - name: Install dependencies
         run: |
           yarn
@@ -51,9 +51,6 @@ jobs:
 
           export KEEPER_OWNER_ROLE_ADDRESS="0xe2DD09d719Da89e5a3D0F2549c7E24566e947260"
           rm -rf "${HOME}/.nevermined/nevermined-contracts/artifacts"
-
-          # Disabling the compute api for now
-          # Check https://github.com/nevermined-io/sdk-js/issues/33
 
           export KEEPER_VERSION=develop
           ./start_nevermined.sh --latest --no-graph ${{ matrix.network }} 2>&1 | tee nevermined_tools.txt &

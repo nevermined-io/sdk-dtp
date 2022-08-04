@@ -41,7 +41,7 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
     // Accounts
     ;[publisher, consumer] = await nevermined.accounts.list()
 
-    console.log(publisher)
+    // console.log(publisher)
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
@@ -104,7 +104,7 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
     assert.deepEqual(passwd, origPasswd)
   })
 
-  it.skip('buyer should have the key', async () => {
+  it('buyer should have the key', async () => {
     // wait for subgraph to pick up the events
     await sleep(3000)
     const key = await dtp.readKey(

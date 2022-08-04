@@ -23,7 +23,3 @@ jobs:
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

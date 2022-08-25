@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "^0.22.6",
+    "@nevermined-io/nevermined-sdk-js": "./nevermined-io-nevermined-sdk-js-v0.23.2.tgz",
     "circomlibjs": "^0.1.1",
     "ffjavascript": "0.2.50",
     "snarkjs": "0.4.14",

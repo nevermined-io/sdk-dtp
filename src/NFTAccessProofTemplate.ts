@@ -7,23 +7,24 @@ import {
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { Dtp } from './Dtp'
-import { nft721AccessTemplateServiceAgreementTemplate } from './NFT721AccessProofTemplate.serviceAgreementTemplate'
+import { nftAccessTemplateServiceAgreementTemplate } from './NFTAccessProofTemplate.serviceAgreementTemplate'
 
-export interface NFT721AccessProofTemplateParams {
+export interface NFTAccessProofTemplateParams {
     holderAddress: string
+    amount: number
     consumer: Account
 }
 
-export class NFT721AccessProofTemplate extends BaseTemplate<NFT721AccessProofTemplateParams> {
+export class NFTAccessProofTemplate extends BaseTemplate<NFTAccessProofTemplateParams> {
     public dtp: Dtp
     public static async getInstanceDtp(
         config: InstantiableConfig,
         dtp: Dtp
-    ): Promise<NFT721AccessProofTemplate> {
+    ): Promise<NFTAccessProofTemplate> {
         const res = await AgreementTemplate.getInstance(
             config,
-            'NFT721AccessProofTemplate',
-            NFT721AccessProofTemplate,
+            'NFTAccessProofTemplate',
+            NFTAccessProofTemplate,
             true
         )
         res.dtp = dtp
@@ -31,20 +32,20 @@ export class NFT721AccessProofTemplate extends BaseTemplate<NFT721AccessProofTem
     }
 
     public service(): ServiceType {
-        return 'nft721-access-proof'
+        return 'nft-access-proof'
     }
 
-    public params(holderAddress: string, consumer: Account): NFT721AccessProofTemplateParams {
-        return { holderAddress, consumer }
+    public params(holderAddress: string, amount: number, consumer: Account): NFTAccessProofTemplateParams {
+        return { holderAddress, amount, consumer }
     }
 
     public async instanceFromDDO(
         agreementIdSeed: string,
         ddo: DDO,
         creator: string,
-        parameters: NFT721AccessProofTemplateParams
-    ): Promise<AgreementInstance<NFT721AccessProofTemplateParams>> {
-        const { nft721HolderCondition } = this.nevermined.keeper.conditions
+        parameters: NFTAccessProofTemplateParams
+    ): Promise<AgreementInstance<NFTAccessProofTemplateParams>> {
+        const { nftHolderCondition } = this.nevermined.keeper.conditions
         const { accessProofCondition } = this.dtp
 
         const agreementId = await this.agreementId(agreementIdSeed, creator)
@@ -53,7 +54,7 @@ export class NFT721AccessProofTemplate extends BaseTemplate<NFT721AccessProofTem
             ...parameters
         }
 
-        const holderConditionInstance = await nft721HolderCondition.instanceFromDDO(
+        const holderConditionInstance = await nftHolderCondition.instanceFromDDO(
             agreementId,
             ctx
         )
@@ -70,6 +71,6 @@ export class NFT721AccessProofTemplate extends BaseTemplate<NFT721AccessProofTem
     }
 
     public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-        return nft721AccessTemplateServiceAgreementTemplate
+        return nftAccessTemplateServiceAgreementTemplate
     }
 }

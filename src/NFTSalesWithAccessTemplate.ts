@@ -37,6 +37,10 @@ export class NFTSalesWithAccessTemplate extends BaseTemplate<NFTSalesWithAccessT
         return 'nft-sales-proof'
     }
 
+    public name(): string {
+        return 'dataAssetNFTSalesProofServiceAgreement'
+    }
+
     public params(consumer: Account, providerId: string, nftAmount: number = 1, expiration: number = 0): NFTSalesWithAccessTemplateParams {
         return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId }
     }

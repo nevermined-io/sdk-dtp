@@ -35,7 +35,11 @@ export class NFTAccessProofTemplate extends BaseTemplate<NFTAccessProofTemplateP
         return 'nft-access-proof'
     }
 
-    public params(holderAddress: string, amount: number, consumer: Account): NFTAccessProofTemplateParams {
+    public name(): string {
+        return 'dataAssetNFTAccessProofServiceAgreement'
+    }
+
+    public params(consumer: Account, holderAddress: string, amount: number): NFTAccessProofTemplateParams {
         return { holderAddress, amount, consumer }
     }
 

@@ -8,7 +8,7 @@
     "build": "yarn run build:tsc",
     "build:tsc": "tsc --sourceMap",
     "test": "mocha test/*.test.ts",
-    "prepare" : "yarn run build",
+    "prepare": "yarn run build",
     "lint": "eslint --ignore-path .gitignore --ext .ts,.tsx .",
     "lint:fix": "eslint --fix --ignore-path .gitignore --ext .ts,.tsx .",
     "format": "prettier --parser typescript --ignore-path .gitignore --write '**/*.{js,jsx,ts,tsx}'",
@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "./nevermined-io-nevermined-sdk-js-v0.23.2.tgz",
+    "@nevermined-io/nevermined-sdk-js": "./nevermined-io-nevermined-sdk-js-v0.23.4.tgz",
     "circomlibjs": "^0.1.1",
     "ffjavascript": "0.2.50",
     "snarkjs": "0.4.14",

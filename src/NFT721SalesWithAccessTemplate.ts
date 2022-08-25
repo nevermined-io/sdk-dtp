@@ -35,6 +35,10 @@ export class NFT721SalesWithAccessTemplate extends BaseTemplate<NFT721SalesWithA
         return 'nft721-sales-proof'
     }
 
+    public name(): string {
+        return 'dataAssetNFT721SalesProofServiceAgreement'
+    }
+
     public params(consumer: Account, expiration: number = 0): NFT721SalesWithAccessTemplateParams {
         return { consumer, consumerId: consumer.getId(), expiration }
     }

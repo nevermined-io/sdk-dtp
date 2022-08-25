@@ -34,6 +34,10 @@ export class NFT721AccessProofTemplate extends BaseTemplate<NFT721AccessProofTem
         return 'nft721-access-proof'
     }
 
+    public name(): string {
+        return 'dataAssetNFT721AccessProofServiceAgreement'
+    }
+
     public params(holderAddress: string, consumer: Account): NFT721AccessProofTemplateParams {
         return { holderAddress, consumer }
     }

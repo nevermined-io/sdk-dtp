@@ -8,7 +8,8 @@ import { AccessProofCondition } from './AccessProofCondition'
 import { Account, MetaData, Nevermined } from '@nevermined-io/nevermined-sdk-js'
 import {
   ServiceAccessProof,
-  ServiceCommon
+  ServiceCommon,
+  ServiceType
 } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServicePlugin } from '@nevermined-io/nevermined-sdk-js/dist/node/nevermined/Assets'
 import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
@@ -153,10 +154,11 @@ export class Dtp extends Instantiable {
   public async consumeProof(
     agreementId: string,
     did: string,
-    consumerAccount: Account
+    consumerAccount: Account,
+    service : ServiceType = 'access-proof'
   ): Promise<string | true> {
     const ddo = await this.nevermined.assets.resolve(did)
-    const { serviceEndpoint } = ddo.findServiceByType('access-proof')
+    const { serviceEndpoint } = ddo.findServiceByType(service)
 
     if (!serviceEndpoint) {
       throw new AssetError(
@@ -168,7 +170,8 @@ export class Dtp extends Instantiable {
       did,
       agreementId,
       serviceEndpoint,
-      consumerAccount
+      consumerAccount,
+      service
     )
   }
 
@@ -176,7 +179,8 @@ export class Dtp extends Instantiable {
     did: string,
     agreementId: string,
     serviceEndpoint: string,
-    account: Account
+    account: Account,
+    service: ServiceType
   ): Promise<string> {
     const { jwt } = this.nevermined.utils
     let accessToken: string
@@ -188,7 +192,7 @@ export class Dtp extends Instantiable {
         account,
         agreementId,
         did,
-        '/access-proof',
+        service,
         {
           babysig: await this.signBabyjub(account, BigInt(address)),
           buyer: account.getPublic()
@@ -230,8 +234,6 @@ export class Dtp extends Instantiable {
     params?: TxParameters
   ) {
     try {
-      // const { accessProofCondition } = this.nevermined.keeper.conditions
-
       const keyTransfer = await makeKeyTransfer()
       const cipher = await keyTransfer.encryptKey(
         data,

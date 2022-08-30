@@ -35,6 +35,10 @@ export class NFT721SalesWithAccessTemplate extends BaseTemplate<NFT721SalesWithA
         return 'nft721-sales-proof'
     }
 
+    public description(): string {
+        return 'Data Asset NFT Transfer Service Agreement w/ proof'
+    }
+    
     public name(): string {
         return 'dataAssetNFT721SalesProofServiceAgreement'
     }

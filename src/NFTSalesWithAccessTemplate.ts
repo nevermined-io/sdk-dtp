@@ -45,6 +45,10 @@ export class NFTSalesWithAccessTemplate extends BaseTemplate<NFTSalesWithAccessT
         return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId }
     }
 
+    public description(): string {
+        return 'Data Asset NFT Transfer Service Agreement w/ proof'
+    }
+    
     public lockConditionIndex(): number {
         return 0
     }

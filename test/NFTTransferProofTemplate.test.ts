@@ -12,14 +12,19 @@ import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
-import { NFTAccessProofTemplate, NFTAccessProofTemplateParams } from '../src/NFTAccessProofTemplate'
 import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { NFTSalesWithAccessTemplate, NFTSalesWithAccessTemplateParams } from '../src/NFTSalesWithAccessTemplate'
+import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
+import {
+  LockPaymentCondition
+} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 
 describe('NFT Access Proof Template', () => {
   let nevermined: Nevermined
 
-  let accessProofTemplate: NFTAccessProofTemplate
+  let accessProofTemplate: NFTSalesWithAccessTemplate
+  let lockPaymentCondition: LockPaymentCondition
 
   const totalAmount = BigNumber.from(12)
   const amounts = [BigNumber.from(10), BigNumber.from(2)]
@@ -40,8 +45,9 @@ describe('NFT Access Proof Template', () => {
     }
 
     dtp = await Dtp.getInstance(instanceConfig)
-    accessProofTemplate = dtp.nftAccessProofTemplate
-
+    accessProofTemplate = dtp.nftSalesWithAccessTemplate
+    ;({ lockPaymentCondition } = nevermined.keeper.conditions)
+  
     // Accounts
     ;[
       ,
@@ -64,8 +70,9 @@ describe('NFT Access Proof Template', () => {
     let buyerPub: BabyjubPublicKey
     let providerPub: BabyjubPublicKey
     let keyTransfer: KeyTransfer
+    let token: Token
 
-    let agreementData: AgreementInstance<NFTAccessProofTemplateParams>
+    let agreementData: AgreementInstance<NFTSalesWithAccessTemplateParams>
 
     const providerKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
@@ -83,6 +90,7 @@ describe('NFT Access Proof Template', () => {
         data.toString('hex'),
         providerKey
       )
+      ;({ token } = nevermined.keeper)
 
       const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(
         publisher
@@ -111,7 +119,7 @@ describe('NFT Access Proof Template', () => {
         undefined,
         undefined,
         undefined,
-        ['nft-access-proof']
+        ['nft-sales-proof']
       )
 
       keyTransfer = await makeKeyTransfer()
@@ -148,7 +156,12 @@ describe('NFT Access Proof Template', () => {
         await consumer.requestTokens(totalAmount)
       } catch {}
 
-      await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(agreementData.instances[0] as ConditionInstance<{}>, {})
+      await token.approve(
+        lockPaymentCondition.getAddress(),
+        totalAmount,
+        consumer
+      )
+      await lockPaymentCondition.fulfillInstance(agreementData.instances[0] as ConditionInstance<{}>, {}, consumer)
     })
 
     it('should fulfill the conditions from publisher side', async () => {
@@ -156,7 +169,9 @@ describe('NFT Access Proof Template', () => {
         providerK,
         data
       }
-      await dtp.accessProofCondition.fulfillInstance(agreementData.instances[1] as ConditionInstance<AccessProofConditionExtra>, extra)
+      await nevermined.keeper.conditions.transferNftCondition.fulfillInstance(agreementData.instances[1] as ConditionInstance<{}>, {}, publisher)
+      await dtp.accessProofCondition.fulfillInstance(agreementData.instances[3] as ConditionInstance<AccessProofConditionExtra>, extra)
+      await nevermined.keeper.conditions.escrowPaymentCondition.fulfillInstance(agreementData.instances[2] as ConditionInstance<{}>, {})
     })
 
     it('buyer should have the key', async () => {

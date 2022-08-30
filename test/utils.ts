@@ -17,7 +17,7 @@ export async function getMetadataForDTP(
       datePublished: '2012-10-10T17:00:00Z',
       author: 'Met Office',
       license: 'CC-BY',
-      price: '21' + '0'.repeat(18),
+      price: '21' + '0'.repeat(10),
       files: [
         {
           index: 1,

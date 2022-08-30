@@ -128,7 +128,7 @@ export class Dtp extends Instantiable {
       config.nevermined,
       dtp.nftAccessProofTemplate
     )
-    config.nevermined.assets.servicePlugin['nft-sales-with-access'] = new ProofServicePlugin(
+    config.nevermined.assets.servicePlugin['nft-sales-proof'] = new ProofServicePlugin(
       dtp,
       config.nevermined,
       dtp.nftSalesWithAccessTemplate
@@ -138,7 +138,7 @@ export class Dtp extends Instantiable {
       config.nevermined,
       dtp.nft721AccessProofTemplate
     )
-    config.nevermined.assets.servicePlugin['nft721-sales-with-access'] = new ProofServicePlugin(
+    config.nevermined.assets.servicePlugin['nft721-sales-proof'] = new ProofServicePlugin(
       dtp,
       config.nevermined,
       dtp.nft721SalesWithAccessTemplate

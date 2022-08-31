@@ -19,7 +19,7 @@ import {
 import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 
-describe('NFT Access Proof Template', () => {
+describe.skip('NFT Access Proof Template', () => {
   let nevermined: Nevermined
 
   let accessProofTemplate: NFTAccessProofTemplate

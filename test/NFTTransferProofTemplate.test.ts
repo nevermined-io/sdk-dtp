@@ -14,11 +14,12 @@ import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-s
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import { NFTSalesWithAccessTemplate, NFTSalesWithAccessTemplateParams } from '../src/NFTSalesWithAccessTemplate'
-import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
 import {
-  LockPaymentCondition
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+  NFTSalesWithAccessTemplate,
+  NFTSalesWithAccessTemplateParams
+} from '../src/NFTSalesWithAccessTemplate'
+import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
+import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 
 describe('NFT Access Proof Template', () => {
   let nevermined: Nevermined
@@ -47,19 +48,12 @@ describe('NFT Access Proof Template', () => {
     dtp = await Dtp.getInstance(instanceConfig)
     accessProofTemplate = dtp.nftSalesWithAccessTemplate
     ;({ lockPaymentCondition } = nevermined.keeper.conditions)
-  
+
     // Accounts
-    ;[
-      ,
-      publisher,
-      consumer,
-      provider
-    ] = await nevermined.accounts.list()
+    ;[, publisher, consumer, provider] = await nevermined.accounts.list()
 
     receivers = [publisher.getId(), provider.getId()]
-
   })
-
 
   describe('Short flow', () => {
     let agreementId, agreementIdSeed: string
@@ -109,7 +103,11 @@ describe('NFT Access Proof Template', () => {
       )
       agreementIdSeed = generateId()
 
-      ddo = await nevermined.assets.createNft(metadata, publisher, assetRewards, undefined, 
+      ddo = await nevermined.assets.createNft(
+        metadata,
+        publisher,
+        assetRewards,
+        undefined,
         100,
         undefined,
         20,
@@ -156,22 +154,32 @@ describe('NFT Access Proof Template', () => {
         await consumer.requestTokens(totalAmount)
       } catch {}
 
-      await token.approve(
-        lockPaymentCondition.getAddress(),
-        totalAmount,
+      await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
+      await lockPaymentCondition.fulfillInstance(
+        agreementData.instances[0] as ConditionInstance<{}>,
+        {},
         consumer
       )
-      await lockPaymentCondition.fulfillInstance(agreementData.instances[0] as ConditionInstance<{}>, {}, consumer)
     })
 
     it('should fulfill the conditions from publisher side', async () => {
-      const extra : AccessProofConditionExtra = {
+      const extra: AccessProofConditionExtra = {
         providerK,
         data
       }
-      await nevermined.keeper.conditions.transferNftCondition.fulfillInstance(agreementData.instances[1] as ConditionInstance<{}>, {}, publisher)
-      await dtp.accessProofCondition.fulfillInstance(agreementData.instances[3] as ConditionInstance<AccessProofConditionExtra>, extra)
-      await nevermined.keeper.conditions.escrowPaymentCondition.fulfillInstance(agreementData.instances[2] as ConditionInstance<{}>, {})
+      await nevermined.keeper.conditions.transferNftCondition.fulfillInstance(
+        agreementData.instances[1] as ConditionInstance<{}>,
+        {},
+        publisher
+      )
+      await dtp.accessProofCondition.fulfillInstance(
+        agreementData.instances[3] as ConditionInstance<AccessProofConditionExtra>,
+        extra
+      )
+      await nevermined.keeper.conditions.escrowPaymentCondition.fulfillInstance(
+        agreementData.instances[2] as ConditionInstance<{}>,
+        {}
+      )
     })
 
     it('buyer should have the key', async () => {

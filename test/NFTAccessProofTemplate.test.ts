@@ -12,7 +12,10 @@ import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
-import { NFTAccessProofTemplate, NFTAccessProofTemplateParams } from '../src/NFTAccessProofTemplate'
+import {
+  NFTAccessProofTemplate,
+  NFTAccessProofTemplateParams
+} from '../src/NFTAccessProofTemplate'
 import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 
@@ -43,17 +46,10 @@ describe('NFT Access Proof Template', () => {
     accessProofTemplate = dtp.nftAccessProofTemplate
 
     // Accounts
-    ;[
-      ,
-      publisher,
-      consumer,
-      provider
-    ] = await nevermined.accounts.list()
+    ;[, publisher, consumer, provider] = await nevermined.accounts.list()
 
     receivers = [publisher.getId(), provider.getId()]
-
   })
-
 
   describe('Short flow', () => {
     let agreementId, agreementIdSeed: string
@@ -101,7 +97,11 @@ describe('NFT Access Proof Template', () => {
       )
       agreementIdSeed = generateId()
 
-      ddo = await nevermined.assets.createNft(metadata, publisher, assetRewards, undefined, 
+      ddo = await nevermined.assets.createNft(
+        metadata,
+        publisher,
+        assetRewards,
+        undefined,
         100,
         undefined,
         20,
@@ -148,15 +148,21 @@ describe('NFT Access Proof Template', () => {
         await consumer.requestTokens(totalAmount)
       } catch {}
 
-      await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(agreementData.instances[0] as ConditionInstance<{}>, {})
+      await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
+        agreementData.instances[0] as ConditionInstance<{}>,
+        {}
+      )
     })
 
     it('should fulfill the conditions from publisher side', async () => {
-      const extra : AccessProofConditionExtra = {
+      const extra: AccessProofConditionExtra = {
         providerK,
         data
       }
-      await dtp.accessProofCondition.fulfillInstance(agreementData.instances[1] as ConditionInstance<AccessProofConditionExtra>, extra)
+      await dtp.accessProofCondition.fulfillInstance(
+        agreementData.instances[1] as ConditionInstance<AccessProofConditionExtra>,
+        extra
+      )
     })
 
     it('buyer should have the key', async () => {

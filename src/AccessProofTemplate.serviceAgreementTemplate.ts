@@ -20,9 +20,5 @@ export const accessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = 
     access: [],
     escrowPayment: ['lockPayment', 'access']
   },
-  conditions: [
-    lockPayment,
-    access,
-    escrowPayment,
-  ]
+  conditions: [lockPayment, access, escrowPayment]
 }

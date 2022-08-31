@@ -82,7 +82,11 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   })
 
   it('should register an asset', async () => {
-    ddo = await nevermined.assets.createNft(metadata, publisher, undefined, undefined, 
+    ddo = await nevermined.assets.createNft(
+      metadata,
+      publisher,
+      undefined,
+      undefined,
       100,
       undefined,
       1,
@@ -109,7 +113,7 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       ddo,
       params,
       consumer,
-      consumer,
+      consumer
     )
     const agreementData = await template.instanceFromDDO(
       agreementIdSeed,
@@ -117,12 +121,21 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       consumer.getId(),
       params
     )
-    await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(agreementData.instances[0] as ConditionInstance<{}>, {}, consumer)
+    await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
+      agreementData.instances[0] as ConditionInstance<{}>,
+      {},
+      consumer
+    )
     console.log(agreementData.instances.map(a => a.id))
   })
 
   it('should consume and store the assets', async () => {
-    const passwd = await dtp.consumeProof(agreementId, ddo.id, consumer, 'nft-access-proof')
+    const passwd = await dtp.consumeProof(
+      agreementId,
+      ddo.id,
+      consumer,
+      'nft-access-proof'
+    )
     assert.deepEqual(passwd, origPasswd)
   })
 

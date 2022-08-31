@@ -192,7 +192,7 @@ export class Dtp extends Instantiable {
         account,
         agreementId,
         did,
-        service,
+        '/' + service,
         {
           babysig: await this.signBabyjub(account, BigInt(address)),
           buyer: account.getPublic()

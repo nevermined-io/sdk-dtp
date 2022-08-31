@@ -122,7 +122,7 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       params
     )
     await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
-      agreementData.instances[0] as ConditionInstance<{}>,
+      agreementData.instances[0] as ConditionInstance<any>,
       {},
       consumer
     )

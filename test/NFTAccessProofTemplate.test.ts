@@ -149,7 +149,7 @@ describe('NFT Access Proof Template', () => {
       } catch {}
 
       await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
-        agreementData.instances[0] as ConditionInstance<{}>,
+        agreementData.instances[0] as ConditionInstance<any>,
         {}
       )
     })

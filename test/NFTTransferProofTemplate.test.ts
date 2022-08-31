@@ -156,7 +156,7 @@ describe('NFT Access Proof Template', () => {
 
       await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
       await lockPaymentCondition.fulfillInstance(
-        agreementData.instances[0] as ConditionInstance<{}>,
+        agreementData.instances[0] as ConditionInstance<any>,
         {},
         consumer
       )
@@ -168,7 +168,7 @@ describe('NFT Access Proof Template', () => {
         data
       }
       await nevermined.keeper.conditions.transferNftCondition.fulfillInstance(
-        agreementData.instances[1] as ConditionInstance<{}>,
+        agreementData.instances[1] as ConditionInstance<any>,
         {},
         publisher
       )
@@ -177,7 +177,7 @@ describe('NFT Access Proof Template', () => {
         extra
       )
       await nevermined.keeper.conditions.escrowPaymentCondition.fulfillInstance(
-        agreementData.instances[2] as ConditionInstance<{}>,
+        agreementData.instances[2] as ConditionInstance<any>,
         {}
       )
     })

@@ -64,7 +64,7 @@ class ProofServicePlugin<Params, T extends GenericAccessProof<Params>>
           creator: publisher.getId(),
           datePublished: metadata.main.datePublished,
           name: this.template.name(),
-          timeout: 3600,
+          timeout: 0,
           _hash: metadata.additionalInformation!.poseidonHash,
           _providerPub: [
             metadata.additionalInformation!.providerKey!.x,

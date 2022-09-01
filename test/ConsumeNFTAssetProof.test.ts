@@ -12,7 +12,7 @@ import { NFTAccessProofTemplate } from '../src/NFTAccessProofTemplate'
 import { config } from './config'
 import { getMetadataForDTP, sleep } from './utils'
 
-describe.skip('Consume NFT Asset (Gateway w/ proofs)', () => {
+describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   let nevermined: Nevermined
   let keyTransfer
   let dtp: Dtp

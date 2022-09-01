@@ -21,7 +21,7 @@ import {
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
 import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 
-describe.skip('NFT Access Proof Template', () => {
+describe('NFT Access Proof Template', () => {
   let nevermined: Nevermined
 
   let accessProofTemplate: NFTSalesWithAccessTemplate

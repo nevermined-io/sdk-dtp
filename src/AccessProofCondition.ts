@@ -53,7 +53,13 @@ export class AccessProofCondition extends Condition<
         )
         const proof = await keytransfer.prove(buyerPub, providerPub, providerK, data)
         // const hash = await keytransfer.hashKey(data)
-        return [zeroX(_hash), buyerPub.param(), providerPub.param(), cipher.param(), proof]
+        return [
+          zeroX(_hash),
+          buyerPub.param(),
+          providerPub.param(),
+          cipher.param(),
+          proof
+        ]
       }
     }
   }

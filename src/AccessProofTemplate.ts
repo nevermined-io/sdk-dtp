@@ -33,6 +33,14 @@ export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams>
     return accessTemplateServiceAgreementTemplate
   }
 
+  public name(): string {
+    return 'dataAssetAccessProofServiceAgreement'
+  }
+
+  public description(): string {
+    return 'Data Asset Access Service Agreement w/ proof'
+  }
+
   public service(): ServiceType {
     return 'access-proof'
   }

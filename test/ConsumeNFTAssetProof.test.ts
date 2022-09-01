@@ -1,23 +1,29 @@
 import { Nevermined, Account, DDO, MetaData } from '@nevermined-io/nevermined-sdk-js'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { NFTUpgradeable } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions/NFTs/NFTUpgradable'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
+import { generateId, zeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp } from '../src/Dtp'
 import { makeKeyTransfer } from '../src/KeyTransfer'
+import { NFTAccessProofTemplate } from '../src/NFTAccessProofTemplate'
 import { config } from './config'
 import { getMetadataForDTP, sleep } from './utils'
 
-describe('Consume Asset (Gateway w/ proofs)', () => {
+describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   let nevermined: Nevermined
   let keyTransfer
   let dtp: Dtp
 
   let publisher: Account
   let consumer: Account
+  let token: NFTUpgradeable
 
   let ddo: DDO
   let agreementId: string
+  let template: NFTAccessProofTemplate
 
   const providerKey = {
     x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
@@ -36,6 +42,8 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
 
     dtp = await Dtp.getInstance(instanceConfig)
     keyTransfer = await makeKeyTransfer()
+    template = dtp.nftAccessProofTemplate
+    token = nevermined.keeper.nftUpgradeable
 
     // Accounts
     ;[publisher, consumer] = await nevermined.accounts.list()
@@ -71,33 +79,60 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
   })
 
   it('should register an asset', async () => {
-    const steps: any[] = []
-    ddo = await nevermined.assets
-      .create(metadata, publisher, undefined, ['access-proof'])
-      .next(step => steps.push(step))
+    ddo = await nevermined.assets.createNft(
+      metadata,
+      publisher,
+      undefined,
+      undefined,
+      100,
+      undefined,
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ['nft-access-proof']
+    )
+
+    await token.transferNft(ddo.id, consumer.getId(), 10, publisher.getId())
 
     assert.instanceOf(ddo, DDO)
-    assert.deepEqual(steps, [0, 1, 2, 3, 4, 5, 6, 9, 10, 11])
   })
 
   it('should order the asset', async () => {
-    try {
-      await consumer.requestTokens(
-        +metadata.main.price * 10 ** -(await nevermined.keeper.token.decimals())
-      )
-    } catch {}
-
-    const steps: any[] = []
-    agreementId = await nevermined.assets
-      .order(ddo.id, 'access-proof', consumer)
-      .next(step => steps.push(step))
-
-    assert.isDefined(agreementId)
-    assert.deepEqual(steps, [0, 1, 2, 3])
+    const agreementIdSeed = zeroX(generateId())
+    const params = template.params(consumer, consumer.getId(), 1)
+    console.log(consumer.getId())
+    agreementId = await template.createAgreementFromDDO(
+      agreementIdSeed,
+      ddo,
+      params,
+      consumer,
+      consumer
+    )
+    const agreementData = await template.instanceFromDDO(
+      agreementIdSeed,
+      ddo,
+      consumer.getId(),
+      params
+    )
+    await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
+      agreementData.instances[0] as ConditionInstance<any>,
+      {},
+      consumer
+    )
+    console.log(agreementData.instances.map(a => a.id))
   })
 
   it('should consume and store the assets', async () => {
-    const passwd = await dtp.consumeProof(agreementId, ddo.id, consumer)
+    const passwd = await dtp.consumeProof(
+      agreementId,
+      ddo.id,
+      consumer,
+      'nft-access-proof'
+    )
     assert.deepEqual(passwd, origPasswd)
   })
 

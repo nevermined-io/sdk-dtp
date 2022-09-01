@@ -148,7 +148,6 @@ export class KeyTransfer {
     const sig_R8 = [this.F.e(sig.R8[0]), this.F.e(sig.R8[1])]
     const sig_S = BigInt(sig.S)
     const A = [this.F.e(pubkey.x), this.F.e(pubkey.y)]
-    // console.log(A, sig_R8)
     if (!babyjub.inCurve(sig_R8)) return false
     if (!babyjub.inCurve(A)) return false
     if (BigInt(sig.S) >= subOrder) return false

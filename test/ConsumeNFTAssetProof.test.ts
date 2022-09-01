@@ -34,7 +34,6 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
 
   let metadata: MetaData
   before(async () => {
-    // config.graphHttpUri = undefined
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
       ...generateIntantiableConfigFromConfig(config),
@@ -48,8 +47,6 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
 
     // Accounts
     ;[publisher, consumer] = await nevermined.accounts.list()
-
-    // console.log(publisher)
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 

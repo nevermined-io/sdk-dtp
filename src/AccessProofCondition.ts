@@ -1,6 +1,6 @@
 import { Account, Condition } from '@nevermined-io/nevermined-sdk-js'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import { ConditionContext } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { ConditionContext, ProviderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
 import {
   BabyjubPublicKey,
@@ -18,7 +18,7 @@ export interface AccessProofConditionExtra {
   providerK: string
 }
 
-export class AccessProofCondition extends Condition<
+export class AccessProofCondition extends ProviderCondition<
   AccessProofConditionContext,
   AccessProofConditionExtra
 > {

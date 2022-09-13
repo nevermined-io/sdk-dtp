@@ -1,11 +1,13 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import { ServiceType, ValidationParams } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+import { NFT721HolderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import {
   BaseTemplate,
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AccessProofCondition } from './AccessProofCondition'
 import { Dtp } from './Dtp'
 import { nft721AccessTemplateServiceAgreementTemplate } from './NFT721AccessProofTemplate.serviceAgreementTemplate'
 
@@ -33,7 +35,21 @@ export class NFT721AccessProofTemplate extends BaseTemplate<
   }
 
   public service(): ServiceType {
-    return 'nft721-access-proof'
+    return 'nft-access'
+  }
+
+  public async paramsGen(params: ValidationParams): Promise<NFT721AccessProofTemplateParams> {
+    const consumer = await this.dtp.babyjubPublicAccount('0x'+params.buyer.substring(0,64), '0x'+params.buyer.substring(64,128))
+    return this.params(params.consumer_address, consumer)
+  }
+
+  public conditions(): [AccessProofCondition, NFT721HolderCondition] {
+    const { nft721HolderCondition } = this.nevermined.keeper.conditions
+    const { accessProofCondition } = this.dtp
+    return [
+      accessProofCondition,
+      nft721HolderCondition
+    ]
   }
 
   public name(): string {

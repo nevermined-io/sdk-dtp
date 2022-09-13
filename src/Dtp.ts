@@ -9,9 +9,9 @@ import { Account, MetaData, Nevermined } from '@nevermined-io/nevermined-sdk-js'
 import {
   ServiceAccessProof,
   ServiceCommon,
+  ServicePlugin,
   ServiceType
 } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { ServicePlugin } from '@nevermined-io/nevermined-sdk-js/dist/node/nevermined/Assets'
 import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
 import {
   AssetError,
@@ -24,46 +24,34 @@ import {
   MimcCipher
 } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
+import { AccessService, NFTAccessService } from '@nevermined-io/nevermined-sdk-js/dist/node/nevermined/AccessService'
 import { EventOptions } from '@nevermined-io/nevermined-sdk-js/dist/node/events'
 import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
 import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
 
-interface GenericAccessProof<Params> extends BaseTemplate<Params> {
-  name(): string
-}
-
-class ProofServicePlugin<Params, T extends GenericAccessProof<Params>>
-  implements ServicePlugin {
-  public dtp: Dtp
-  public nevermined: Nevermined
-  public template: T
-
-  constructor(dtp: Dtp, nevermined: Nevermined, template: T) {
-    this.dtp = dtp
-    this.nevermined = nevermined
-    this.template = template
-  }
-
+export abstract class ProofTemplate<Params> extends BaseTemplate<Params> {
   public async createService(
     publisher: Account,
     metadata: MetaData
   ): Promise<ServiceCommon> {
-    const serviceAgreementTemplate = await this.template.getServiceAgreementTemplate()
+    const serviceAgreementTemplate = await this.getServiceAgreementTemplate()
     return {
-      type: this.template.service(),
+      type: this.service(),
       index: 10,
+      isDTP: true,
       serviceEndpoint: this.nevermined.gateway.getServiceEndpoint(
-        this.template.service()
+        this.service()
       ),
-      templateId: this.template.getAddress(),
+      templateId: this.getAddress(),
       attributes: {
         main: {
           creator: publisher.getId(),
           datePublished: metadata.main.datePublished,
-          name: this.template.name(),
+          name: this.name(),
           timeout: 0,
           _hash: metadata.additionalInformation!.poseidonHash,
           _providerPub: [
@@ -73,9 +61,10 @@ class ProofServicePlugin<Params, T extends GenericAccessProof<Params>>
         },
         serviceAgreementTemplate
       }
-    } as ServiceAccessProof
+    } as ServiceCommon
   }
 }
+
 
 export class Dtp extends Instantiable {
   public accessProofCondition: AccessProofCondition
@@ -129,30 +118,12 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.templateList.push(dtp.nftAccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nft721AccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftSalesWithAccessTemplate)
-    config.nevermined.keeper.templateList.push(dtp.nft721SalesWithAccessTemplate)
-    config.nevermined.assets.servicePlugin['access-proof'] = new ProofServicePlugin(
-      dtp,
-      config.nevermined,
-      dtp.accessProofTemplate
-    )
-    config.nevermined.assets.servicePlugin['nft-access-proof'] = new ProofServicePlugin(
-      dtp,
-      config.nevermined,
-      dtp.nftAccessProofTemplate
-    )
-    config.nevermined.assets.servicePlugin['nft-sales-proof'] = new ProofServicePlugin(
-      dtp,
-      config.nevermined,
-      dtp.nftSalesWithAccessTemplate
-    )
-    config.nevermined.assets.servicePlugin[
-      'nft721-access-proof'
-    ] = new ProofServicePlugin(dtp, config.nevermined, dtp.nft721AccessProofTemplate)
-    config.nevermined.assets.servicePlugin['nft721-sales-proof'] = new ProofServicePlugin(
-      dtp,
-      config.nevermined,
-      dtp.nft721SalesWithAccessTemplate
-    )
+    config.nevermined.keeper.templateList.push(dtp.nft721SalesWithAccessTemplate);
+    (config.nevermined.assets.servicePlugin['access'] as AccessService).proof = dtp.accessProofTemplate;
+    (config.nevermined.assets.servicePlugin['nft-access'] as NFTAccessService).proof = dtp.nftAccessProofTemplate;
+    (config.nevermined.assets.servicePlugin['nft-access'] as NFTAccessService).proof721 = dtp.nft721AccessProofTemplate;
+    (config.nevermined.assets.servicePlugin['nft-sales'] as NFTAccessService).proof = dtp.nftSalesWithAccessTemplate;
+    (config.nevermined.assets.servicePlugin['nft-sales'] as NFTAccessService).proof721 = dtp.nft721SalesWithAccessTemplate;
     dtp.keytransfer = await makeKeyTransfer()
     return dtp
   }
@@ -165,7 +136,7 @@ export class Dtp extends Instantiable {
     agreementId: string,
     did: string,
     consumerAccount: Account,
-    service: ServiceType = 'access-proof'
+    service: ServiceType = 'access'
   ): Promise<string | true> {
     const ddo = await this.nevermined.assets.resolve(did)
     const { serviceEndpoint } = ddo.findServiceByType(service)

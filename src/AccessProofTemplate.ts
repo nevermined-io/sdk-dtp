@@ -1,10 +1,12 @@
-import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import { Account, AgreementTemplate, Condition, DDO } from '@nevermined-io/nevermined-sdk-js'
+import { ServiceType, ValidationParams } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+import { LockPaymentCondition, EscrowPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import {
   BaseTemplate,
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'
 
@@ -42,11 +44,28 @@ export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams>
   }
 
   public service(): ServiceType {
-    return 'access-proof'
+    return 'access'
+  }
+
+  public async paramsGen(params: ValidationParams): Promise<AccessProofTemplateParams> {
+    const consumer = await this.dtp.babyjubPublicAccount('0x'+params.buyer.substring(0,64), '0x'+params.buyer.substring(64,128))
+    return this.params(consumer)
   }
 
   public params(consumer: Account): AccessProofTemplateParams {
     return { consumer, consumerId: consumer.getId() }
+  }
+
+  public conditions(): [AccessProofCondition, LockPaymentCondition, EscrowPaymentCondition] {
+    const {
+      lockPaymentCondition,
+      escrowPaymentCondition
+    } = this.nevermined.keeper.conditions
+    const { accessProofCondition } = this.dtp
+    return [
+      accessProofCondition,
+      lockPaymentCondition,
+      escrowPaymentCondition]
   }
 
   public async instanceFromDDO(

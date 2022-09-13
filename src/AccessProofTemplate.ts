@@ -3,19 +3,18 @@ import { ServiceType, ValidationParams } from '@nevermined-io/nevermined-sdk-js/
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { LockPaymentCondition, EscrowPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import {
-  BaseTemplate,
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
-import { Dtp } from './Dtp'
+import { Dtp, ProofTemplate } from './Dtp'
 
 export interface AccessProofTemplateParams {
   consumer: Account
   consumerId: string
 }
 
-export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams> {
+export class AccessProofTemplate extends ProofTemplate<AccessProofTemplateParams> {
   public dtp: Dtp
   public static async getInstanceDtp(
     config: InstantiableConfig,

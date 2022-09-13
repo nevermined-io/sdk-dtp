@@ -8,7 +8,7 @@ import {
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Dtp } from './Dtp'
+import { Dtp, ProofTemplate } from './Dtp'
 import { nft721SalesTemplateServiceAgreementTemplate } from './NFT721SalesWithAccessTemplate.serviceAgreementTemplate'
 
 export interface NFT721SalesWithAccessTemplateParams {
@@ -17,7 +17,7 @@ export interface NFT721SalesWithAccessTemplateParams {
   expiration: number
 }
 
-export class NFT721SalesWithAccessTemplate extends BaseTemplate<
+export class NFT721SalesWithAccessTemplate extends ProofTemplate<
   NFT721SalesWithAccessTemplateParams
 > {
   public dtp: Dtp

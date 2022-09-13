@@ -4,11 +4,10 @@ import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { NFT721HolderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import {
-  BaseTemplate,
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Dtp } from './Dtp'
+import { Dtp, ProofTemplate } from './Dtp'
 import { nft721AccessTemplateServiceAgreementTemplate } from './NFT721AccessProofTemplate.serviceAgreementTemplate'
 
 export interface NFT721AccessProofTemplateParams {
@@ -16,7 +15,7 @@ export interface NFT721AccessProofTemplateParams {
   consumer: Account
 }
 
-export class NFT721AccessProofTemplate extends BaseTemplate<
+export class NFT721AccessProofTemplate extends ProofTemplate<
   NFT721AccessProofTemplateParams
 > {
   public dtp: Dtp

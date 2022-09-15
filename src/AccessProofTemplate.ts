@@ -7,7 +7,8 @@ import {
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
-import { Dtp, ProofTemplate } from './Dtp'
+import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 
 export interface AccessProofTemplateParams {
   consumer: Account

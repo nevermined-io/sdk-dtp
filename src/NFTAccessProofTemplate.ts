@@ -8,8 +8,9 @@ import {
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Dtp, ProofTemplate } from './Dtp'
 import { nftAccessTemplateServiceAgreementTemplate } from './NFTAccessProofTemplate.serviceAgreementTemplate'
+import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 
 export interface NFTAccessProofTemplateParams {
   holderAddress: string

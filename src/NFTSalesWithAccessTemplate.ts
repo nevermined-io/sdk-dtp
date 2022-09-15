@@ -5,11 +5,12 @@ import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/I
 import {
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import { Dtp, ProofTemplate } from './Dtp'
 import { nftSalesTemplateServiceAgreementTemplate } from './NFTSalesWithAccessTemplate.serviceAgreementTemplate'
 import { LockPaymentCondition, TransferNFTCondition, EscrowPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import { AccessProofCondition } from './AccessProofCondition'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
+import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 
 export interface NFTSalesWithAccessTemplateParams {
   consumerId: string

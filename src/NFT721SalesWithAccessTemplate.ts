@@ -4,11 +4,11 @@ import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { LockPaymentCondition, TransferNFT721Condition, EscrowPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import {
-  BaseTemplate,
   AgreementInstance
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Dtp, ProofTemplate } from './Dtp'
+import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 import { nft721SalesTemplateServiceAgreementTemplate } from './NFT721SalesWithAccessTemplate.serviceAgreementTemplate'
 
 export interface NFT721SalesWithAccessTemplateParams {

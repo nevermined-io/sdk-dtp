@@ -317,7 +317,7 @@ describe('Register Escrow Access Proof Template', () => {
         ])
       )
       ddo = await nevermined.assets.create(metadata, publisher, assetRewards, [
-        'access-proof'
+        'access'
       ])
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')

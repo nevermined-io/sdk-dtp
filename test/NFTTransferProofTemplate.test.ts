@@ -108,16 +108,16 @@ describe('NFT Access Proof Template', () => {
         publisher,
         assetRewards,
         undefined,
-        100,
+        BigNumber.from(100),
         undefined,
-        20,
-        undefined,
-        undefined,
+        BigNumber.from(20),
         undefined,
         undefined,
         undefined,
         undefined,
-        ['nft-sales-proof']
+        undefined,
+        undefined,
+        ['nft-sales']
       )
 
       keyTransfer = await makeKeyTransfer()
@@ -131,7 +131,7 @@ describe('NFT Access Proof Template', () => {
     })
 
     it('should create a new agreement (short way)', async () => {
-      const params = accessProofTemplate.params(consumer, publisher.getId(), 1)
+      const params = accessProofTemplate.params(consumer, publisher.getId(), BigNumber.from(1))
       agreementId = await accessProofTemplate.createAgreementFromDDO(
         agreementIdSeed,
         ddo,

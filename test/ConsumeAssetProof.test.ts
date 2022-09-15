@@ -73,7 +73,7 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
   it('should register an asset', async () => {
     const steps: any[] = []
     ddo = await nevermined.assets
-      .create(metadata, publisher, undefined, ['access-proof'])
+      .create(metadata, publisher, undefined, ['access'])
       .next(step => steps.push(step))
 
     assert.instanceOf(ddo, DDO)
@@ -89,7 +89,7 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
 
     const steps: any[] = []
     agreementId = await nevermined.assets
-      .order(ddo.id, 'access-proof', consumer)
+      .order(ddo.id, 'access', consumer)
       .next(step => steps.push(step))
 
     assert.isDefined(agreementId)

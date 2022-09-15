@@ -47,7 +47,7 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
   }
 
   public async paramsGen(params: ValidationParams): Promise<NFTSalesWithAccessTemplateParams> {
-    const consumer = await this.dtp.babyjubPublicAccount('0x'+params.buyer.substring(0,64), '0x'+params.buyer.substring(64,128))
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
     return this.params(consumer, params.nft_holder)
   }
 

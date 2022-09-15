@@ -211,6 +211,13 @@ export class Dtp extends Instantiable {
     return account
   }
 
+  public async consumerAccount(baby: string, eth: string): Promise<Account> {
+    const account = new Account(eth)
+    account.babyX = '0x'+baby.substring(0,64)
+    account.babyY = '0x'+baby.substring(64,128)
+    return account
+  }
+
   public async babyjubPublicAccount(x: string, y: string): Promise<Account> {
     const account = new Account()
     account.babyX = x

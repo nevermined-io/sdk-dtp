@@ -48,7 +48,7 @@ export class AccessProofTemplate extends ProofTemplate<AccessProofTemplateParams
   }
 
   public async paramsGen(params: ValidationParams): Promise<AccessProofTemplateParams> {
-    const consumer = await this.dtp.babyjubPublicAccount('0x'+params.buyer.substring(0,64), '0x'+params.buyer.substring(64,128))
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
     return this.params(consumer)
   }
 
@@ -86,6 +86,9 @@ export class AccessProofTemplate extends ProofTemplate<AccessProofTemplateParams
       ...this.standardContext(ddo, creator),
       ...parameters
     }
+
+    console.log("creating instance", parameters)
+    console.log("rewards", ctx.rewards)
 
     const lockPaymentConditionInstance = await lockPaymentCondition.instanceFromDDO(
       agreementId,

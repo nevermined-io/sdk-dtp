@@ -40,7 +40,7 @@ export class NFT721SalesWithAccessTemplate extends ProofTemplate<
   }
 
   public async paramsGen(params: ValidationParams): Promise<NFT721SalesWithAccessTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address, params.babysig)
     return this.params(consumer)
   }
 

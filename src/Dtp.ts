@@ -9,7 +9,7 @@ import { Account } from '@nevermined-io/nevermined-sdk-js'
 import {
   ServiceType,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
+import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import {
   AssetError,
   GatewayError,
@@ -211,10 +211,14 @@ export class Dtp extends Instantiable {
     return account
   }
 
-  public async consumerAccount(baby: string, eth: string): Promise<Account> {
+  public async consumerAccount(baby: string, eth: string, babysig: Babysig): Promise<Account> {
     const account = new Account(eth)
     account.babyX = '0x'+baby.substring(0,64)
     account.babyY = '0x'+baby.substring(64,128)
+    const buyerPub = new BabyjubPublicKey(account.babyX, account.babyY)
+    if (babysig && !await this.keytransfer.verifyBabyjub(buyerPub, BigInt(eth), babysig)) {
+      throw new Error(`Bad signature for address ${eth}`);
+    }
     return account
   }
 

@@ -48,7 +48,7 @@ export class AccessProofTemplate extends ProofTemplate<AccessProofTemplateParams
   }
 
   public async paramsGen(params: ValidationParams): Promise<AccessProofTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address, params.babysig)
     return this.params(consumer)
   }
 

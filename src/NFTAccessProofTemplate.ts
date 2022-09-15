@@ -47,7 +47,7 @@ export class NFTAccessProofTemplate extends ProofTemplate<NFTAccessProofTemplate
   }
 
   public async paramsGen(params: ValidationParams): Promise<NFTAccessProofTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address, params.babysig)
     return this.params(consumer, params.consumer_address, params.nft_amount)
   }
 

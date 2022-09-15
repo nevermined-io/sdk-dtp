@@ -51,12 +51,12 @@ export class NFTAccessProofTemplate extends ProofTemplate<NFTAccessProofTemplate
     return this.params(consumer, params.consumer_address, params.nft_amount)
   }
 
-  public conditions(): [AccessProofCondition, NFTHolderCondition] {
+  public conditions(): [NFTHolderCondition, AccessProofCondition] {
     const { nftHolderCondition } = this.nevermined.keeper.conditions
     const { accessProofCondition } = this.dtp
     return [
-      accessProofCondition,
-      nftHolderCondition
+      nftHolderCondition,
+      accessProofCondition
     ]
   }
 

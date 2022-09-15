@@ -43,12 +43,12 @@ export class NFT721AccessProofTemplate extends ProofTemplate<
     return this.params(params.consumer_address, consumer)
   }
 
-  public conditions(): [AccessProofCondition, NFT721HolderCondition] {
+  public conditions(): [NFT721HolderCondition, AccessProofCondition] {
     const { nft721HolderCondition } = this.nevermined.keeper.conditions
     const { accessProofCondition } = this.dtp
     return [
+      nft721HolderCondition,
       accessProofCondition,
-      nft721HolderCondition
     ]
   }
 

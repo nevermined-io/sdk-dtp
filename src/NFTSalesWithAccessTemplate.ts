@@ -51,16 +51,16 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
     return this.params(consumer, params.nft_holder)
   }
 
-  public conditions(): [AccessProofCondition, TransferNFTCondition, LockPaymentCondition, EscrowPaymentCondition] {
+  public conditions(): [TransferNFTCondition, LockPaymentCondition, EscrowPaymentCondition, AccessProofCondition] {
     const { transferNftCondition,
       lockPaymentCondition,
       escrowPaymentCondition } = this.nevermined.keeper.conditions
     const { accessProofCondition } = this.dtp
     return [
-      accessProofCondition,
       transferNftCondition,
       lockPaymentCondition,
-      escrowPaymentCondition
+      escrowPaymentCondition,
+      accessProofCondition,
     ]
   }
 

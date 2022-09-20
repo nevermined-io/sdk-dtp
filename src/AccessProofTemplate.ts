@@ -87,9 +87,6 @@ export class AccessProofTemplate extends ProofTemplate<AccessProofTemplateParams
       ...parameters
     }
 
-    console.log("creating instance", parameters)
-    console.log("rewards", ctx.rewards)
-
     const lockPaymentConditionInstance = await lockPaymentCondition.instanceFromDDO(
       agreementId,
       ctx

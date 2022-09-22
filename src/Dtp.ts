@@ -6,9 +6,7 @@ import {
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { AccessProofCondition } from './AccessProofCondition'
 import { Account } from '@nevermined-io/nevermined-sdk-js'
-import {
-  ServiceType,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import {
   AssetError,
@@ -21,13 +19,15 @@ import {
   MimcCipher
 } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
-import { AccessService, NFTAccessService } from '@nevermined-io/nevermined-sdk-js/dist/node/nevermined/AccessService'
+import {
+  AccessService,
+  NFTAccessService
+} from '@nevermined-io/nevermined-sdk-js/dist/node/nevermined/AccessService'
 import { EventOptions } from '@nevermined-io/nevermined-sdk-js/dist/node/events'
 import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
-
 
 export class Dtp extends Instantiable {
   public accessProofCondition: AccessProofCondition
@@ -81,12 +81,17 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.templateList.push(dtp.nftAccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nft721AccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftSalesWithAccessTemplate)
-    config.nevermined.keeper.templateList.push(dtp.nft721SalesWithAccessTemplate);
-    (config.nevermined.assets.servicePlugin['access'] as AccessService).proof = dtp.accessProofTemplate;
-    (config.nevermined.assets.servicePlugin['nft-access'] as NFTAccessService).proof = dtp.nftAccessProofTemplate;
-    (config.nevermined.assets.servicePlugin['nft-access'] as NFTAccessService).proof721 = dtp.nft721AccessProofTemplate;
-    (config.nevermined.assets.servicePlugin['nft-sales'] as NFTAccessService).proof = dtp.nftSalesWithAccessTemplate;
-    (config.nevermined.assets.servicePlugin['nft-sales'] as NFTAccessService).proof721 = dtp.nft721SalesWithAccessTemplate;
+    config.nevermined.keeper.templateList.push(dtp.nft721SalesWithAccessTemplate)
+    ;(config.nevermined.assets.servicePlugin['access'] as AccessService).proof =
+      dtp.accessProofTemplate
+    ;(config.nevermined.assets.servicePlugin['nft-access'] as NFTAccessService).proof =
+      dtp.nftAccessProofTemplate
+    ;(config.nevermined.assets.servicePlugin['nft-access'] as NFTAccessService).proof721 =
+      dtp.nft721AccessProofTemplate
+    ;(config.nevermined.assets.servicePlugin['nft-sales'] as NFTAccessService).proof =
+      dtp.nftSalesWithAccessTemplate
+    ;(config.nevermined.assets.servicePlugin['nft-sales'] as NFTAccessService).proof721 =
+      dtp.nft721SalesWithAccessTemplate
     dtp.keytransfer = await makeKeyTransfer()
     return dtp
   }
@@ -211,13 +216,20 @@ export class Dtp extends Instantiable {
     return account
   }
 
-  public async consumerAccount(baby: string, eth: string, babysig: Babysig): Promise<Account> {
+  public async consumerAccount(
+    baby: string,
+    eth: string,
+    babysig: Babysig
+  ): Promise<Account> {
     const account = new Account(eth)
-    account.babyX = '0x'+baby.substring(0,64)
-    account.babyY = '0x'+baby.substring(64,128)
+    account.babyX = '0x' + baby.substring(0, 64)
+    account.babyY = '0x' + baby.substring(64, 128)
     const buyerPub = new BabyjubPublicKey(account.babyX, account.babyY)
-    if (babysig && !await this.keytransfer.verifyBabyjub(buyerPub, BigInt(eth), babysig)) {
-      throw new Error(`Bad signature for address ${eth}`);
+    if (
+      babysig &&
+      !(await this.keytransfer.verifyBabyjub(buyerPub, BigInt(eth), babysig))
+    ) {
+      throw new Error(`Bad signature for address ${eth}`)
     }
     return account
   }

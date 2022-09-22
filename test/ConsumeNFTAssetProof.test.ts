@@ -97,7 +97,12 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       ['nft-access']
     )
 
-    await token.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
+    await token.transferNft(
+      ddo.id,
+      consumer.getId(),
+      BigNumber.from(10),
+      publisher.getId()
+    )
 
     assert.instanceOf(ddo, DDO)
   })
@@ -126,12 +131,7 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   })
 
   it('should consume and store the assets', async () => {
-    const passwd = await dtp.consumeProof(
-      agreementId,
-      ddo.id,
-      consumer,
-      'nft-access'
-    )
+    const passwd = await dtp.consumeProof(agreementId, ddo.id, consumer, 'nft-access')
     assert.deepEqual(passwd, origPasswd)
   })
 

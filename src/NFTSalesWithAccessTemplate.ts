@@ -1,12 +1,17 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType, ValidationParams } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import {
+  ServiceType,
+  ValidationParams
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import {
-  AgreementInstance
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { nftSalesTemplateServiceAgreementTemplate } from './NFTSalesWithAccessTemplate.serviceAgreementTemplate'
-import { LockPaymentCondition, TransferNFTCondition, EscrowPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import {
+  LockPaymentCondition,
+  TransferNFTCondition,
+  EscrowPaymentCondition
+} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import { AccessProofCondition } from './AccessProofCondition'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { Dtp } from './Dtp'
@@ -46,21 +51,34 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
     return 'dataAssetNFTSalesProofServiceAgreement'
   }
 
-  public async paramsGen(params: ValidationParams): Promise<NFTSalesWithAccessTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address, params.babysig)
+  public async paramsGen(
+    params: ValidationParams
+  ): Promise<NFTSalesWithAccessTemplateParams> {
+    const consumer = await this.dtp.consumerAccount(
+      params.buyer,
+      params.consumer_address,
+      params.babysig
+    )
     return this.params(consumer, params.nft_holder)
   }
 
-  public conditions(): [TransferNFTCondition, LockPaymentCondition, EscrowPaymentCondition, AccessProofCondition] {
-    const { transferNftCondition,
+  public conditions(): [
+    TransferNFTCondition,
+    LockPaymentCondition,
+    EscrowPaymentCondition,
+    AccessProofCondition
+  ] {
+    const {
+      transferNftCondition,
       lockPaymentCondition,
-      escrowPaymentCondition } = this.nevermined.keeper.conditions
+      escrowPaymentCondition
+    } = this.nevermined.keeper.conditions
     const { accessProofCondition } = this.dtp
     return [
       transferNftCondition,
       lockPaymentCondition,
       escrowPaymentCondition,
-      accessProofCondition,
+      accessProofCondition
     ]
   }
 

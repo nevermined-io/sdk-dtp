@@ -125,7 +125,11 @@ describe('NFT Access Proof Template', () => {
     })
 
     it('should create a new agreement (short way)', async () => {
-      const params = accessProofTemplate.params(consumer, publisher.getId(), BigNumber.from(1))
+      const params = accessProofTemplate.params(
+        consumer,
+        publisher.getId(),
+        BigNumber.from(1)
+      )
       agreementId = await accessProofTemplate.createAgreementFromDDO(
         agreementIdSeed,
         ddo,

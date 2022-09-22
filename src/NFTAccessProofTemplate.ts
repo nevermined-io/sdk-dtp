@@ -1,11 +1,12 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType, ValidationParams } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import {
+  ServiceType,
+  ValidationParams
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { NFTHolderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import {
-  AgreementInstance
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { AccessProofCondition } from './AccessProofCondition'
 import { nftAccessTemplateServiceAgreementTemplate } from './NFTAccessProofTemplate.serviceAgreementTemplate'
@@ -46,18 +47,21 @@ export class NFTAccessProofTemplate extends ProofTemplate<NFTAccessProofTemplate
     return 'Data Asset NFT 1155 Access Service Agreement w/ proof'
   }
 
-  public async paramsGen(params: ValidationParams): Promise<NFTAccessProofTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address, params.babysig)
+  public async paramsGen(
+    params: ValidationParams
+  ): Promise<NFTAccessProofTemplateParams> {
+    const consumer = await this.dtp.consumerAccount(
+      params.buyer,
+      params.consumer_address,
+      params.babysig
+    )
     return this.params(consumer, params.consumer_address, params.nft_amount)
   }
 
   public conditions(): [NFTHolderCondition, AccessProofCondition] {
     const { nftHolderCondition } = this.nevermined.keeper.conditions
     const { accessProofCondition } = this.dtp
-    return [
-      nftHolderCondition,
-      accessProofCondition
-    ]
+    return [nftHolderCondition, accessProofCondition]
   }
 
   public params(

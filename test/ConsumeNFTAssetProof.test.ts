@@ -105,7 +105,6 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   it('should order the asset', async () => {
     const agreementIdSeed = zeroX(generateId())
     const params = template.params(consumer, consumer.getId(), BigNumber.from(1))
-    console.log(consumer.getId())
     agreementId = await template.createAgreementFromDDO(
       agreementIdSeed,
       ddo,
@@ -124,7 +123,6 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       {},
       consumer
     )
-    console.log(agreementData.instances.map(a => a.id))
   })
 
   it('should consume and store the assets', async () => {

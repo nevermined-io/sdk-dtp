@@ -4,6 +4,7 @@ import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/ke
 import { NFTUpgradeable } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions/NFTs/NFTUpgradable'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { generateId, zeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
+import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp } from '../src/Dtp'
@@ -84,27 +85,31 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       publisher,
       undefined,
       undefined,
-      100,
+      BigNumber.from(100),
       undefined,
-      1,
-      undefined,
-      undefined,
+      BigNumber.from(1),
       undefined,
       undefined,
       undefined,
       undefined,
-      ['nft-access-proof']
+      undefined,
+      undefined,
+      ['nft-access']
     )
 
-    await token.transferNft(ddo.id, consumer.getId(), 10, publisher.getId())
+    await token.transferNft(
+      ddo.id,
+      consumer.getId(),
+      BigNumber.from(10),
+      publisher.getId()
+    )
 
     assert.instanceOf(ddo, DDO)
   })
 
   it('should order the asset', async () => {
     const agreementIdSeed = zeroX(generateId())
-    const params = template.params(consumer, consumer.getId(), 1)
-    console.log(consumer.getId())
+    const params = template.params(consumer, consumer.getId(), BigNumber.from(1))
     agreementId = await template.createAgreementFromDDO(
       agreementIdSeed,
       ddo,
@@ -123,16 +128,10 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       {},
       consumer
     )
-    console.log(agreementData.instances.map(a => a.id))
   })
 
   it('should consume and store the assets', async () => {
-    const passwd = await dtp.consumeProof(
-      agreementId,
-      ddo.id,
-      consumer,
-      'nft-access-proof'
-    )
+    const passwd = await dtp.consumeProof(agreementId, ddo.id, consumer, 'nft-access')
     assert.deepEqual(passwd, origPasswd)
   })
 

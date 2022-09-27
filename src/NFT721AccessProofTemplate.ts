@@ -1,20 +1,23 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import {
+  ServiceType,
+  ValidationParams
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import {
-  BaseTemplate,
-  AgreementInstance
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import { Dtp } from './Dtp'
+import { NFT721HolderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AccessProofCondition } from './AccessProofCondition'
 import { nft721AccessTemplateServiceAgreementTemplate } from './NFT721AccessProofTemplate.serviceAgreementTemplate'
+import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 
 export interface NFT721AccessProofTemplateParams {
   holderAddress: string
   consumer: Account
 }
 
-export class NFT721AccessProofTemplate extends BaseTemplate<
+export class NFT721AccessProofTemplate extends ProofTemplate<
   NFT721AccessProofTemplateParams
 > {
   public dtp: Dtp
@@ -33,7 +36,24 @@ export class NFT721AccessProofTemplate extends BaseTemplate<
   }
 
   public service(): ServiceType {
-    return 'nft721-access-proof'
+    return 'nft-access'
+  }
+
+  public async paramsGen(
+    params: ValidationParams
+  ): Promise<NFT721AccessProofTemplateParams> {
+    const consumer = await this.dtp.consumerAccount(
+      params.buyer,
+      params.consumer_address,
+      params.babysig
+    )
+    return this.params(params.consumer_address, consumer)
+  }
+
+  public conditions(): [NFT721HolderCondition, AccessProofCondition] {
+    const { nft721HolderCondition } = this.nevermined.keeper.conditions
+    const { accessProofCondition } = this.dtp
+    return [nft721HolderCondition, accessProofCondition]
   }
 
   public name(): string {

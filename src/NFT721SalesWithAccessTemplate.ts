@@ -1,12 +1,19 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import {
+  ServiceType,
+  ValidationParams
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import {
-  BaseTemplate,
-  AgreementInstance
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+  LockPaymentCondition,
+  TransferNFT721Condition,
+  EscrowPaymentCondition
+} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AccessProofCondition } from './AccessProofCondition'
 import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 import { nft721SalesTemplateServiceAgreementTemplate } from './NFT721SalesWithAccessTemplate.serviceAgreementTemplate'
 
 export interface NFT721SalesWithAccessTemplateParams {
@@ -15,7 +22,7 @@ export interface NFT721SalesWithAccessTemplateParams {
   expiration: number
 }
 
-export class NFT721SalesWithAccessTemplate extends BaseTemplate<
+export class NFT721SalesWithAccessTemplate extends ProofTemplate<
   NFT721SalesWithAccessTemplateParams
 > {
   public dtp: Dtp
@@ -34,7 +41,38 @@ export class NFT721SalesWithAccessTemplate extends BaseTemplate<
   }
 
   public service(): ServiceType {
-    return 'nft721-sales-proof'
+    return 'nft-sales'
+  }
+
+  public async paramsGen(
+    params: ValidationParams
+  ): Promise<NFT721SalesWithAccessTemplateParams> {
+    const consumer = await this.dtp.consumerAccount(
+      params.buyer,
+      params.consumer_address,
+      params.babysig
+    )
+    return this.params(consumer)
+  }
+
+  public conditions(): [
+    TransferNFT721Condition,
+    LockPaymentCondition,
+    EscrowPaymentCondition,
+    AccessProofCondition
+  ] {
+    const {
+      transferNft721Condition,
+      lockPaymentCondition,
+      escrowPaymentCondition
+    } = this.nevermined.keeper.conditions
+    const { accessProofCondition } = this.dtp
+    return [
+      transferNft721Condition,
+      lockPaymentCondition,
+      escrowPaymentCondition,
+      accessProofCondition
+    ]
   }
 
   public description(): string {

@@ -1,21 +1,25 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import {
+  ServiceType,
+  ValidationParams
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import {
-  BaseTemplate,
-  AgreementInstance
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import { Dtp } from './Dtp'
+import { NFTHolderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
+import { AccessProofCondition } from './AccessProofCondition'
 import { nftAccessTemplateServiceAgreementTemplate } from './NFTAccessProofTemplate.serviceAgreementTemplate'
+import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 
 export interface NFTAccessProofTemplateParams {
   holderAddress: string
-  amount: number
+  amount: BigNumber
   consumer: Account
 }
 
-export class NFTAccessProofTemplate extends BaseTemplate<NFTAccessProofTemplateParams> {
+export class NFTAccessProofTemplate extends ProofTemplate<NFTAccessProofTemplateParams> {
   public dtp: Dtp
   public static async getInstanceDtp(
     config: InstantiableConfig,
@@ -32,7 +36,7 @@ export class NFTAccessProofTemplate extends BaseTemplate<NFTAccessProofTemplateP
   }
 
   public service(): ServiceType {
-    return 'nft-access-proof'
+    return 'nft-access'
   }
 
   public name(): string {
@@ -43,10 +47,27 @@ export class NFTAccessProofTemplate extends BaseTemplate<NFTAccessProofTemplateP
     return 'Data Asset NFT 1155 Access Service Agreement w/ proof'
   }
 
+  public async paramsGen(
+    params: ValidationParams
+  ): Promise<NFTAccessProofTemplateParams> {
+    const consumer = await this.dtp.consumerAccount(
+      params.buyer,
+      params.consumer_address,
+      params.babysig
+    )
+    return this.params(consumer, params.consumer_address, params.nft_amount)
+  }
+
+  public conditions(): [NFTHolderCondition, AccessProofCondition] {
+    const { nftHolderCondition } = this.nevermined.keeper.conditions
+    const { accessProofCondition } = this.dtp
+    return [nftHolderCondition, accessProofCondition]
+  }
+
   public params(
     consumer: Account,
     holderAddress: string,
-    amount: number
+    amount: BigNumber
   ): NFTAccessProofTemplateParams {
     return { holderAddress, amount, consumer }
   }

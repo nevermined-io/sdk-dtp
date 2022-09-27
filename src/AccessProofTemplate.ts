@@ -1,19 +1,25 @@
 import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import {
+  ServiceType,
+  ValidationParams
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import {
-  BaseTemplate,
-  AgreementInstance
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+  LockPaymentCondition,
+  EscrowPaymentCondition
+} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'
+import { ProofTemplate } from './ProofTemplate'
 
 export interface AccessProofTemplateParams {
   consumer: Account
   consumerId: string
 }
 
-export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams> {
+export class AccessProofTemplate extends ProofTemplate<AccessProofTemplateParams> {
   public dtp: Dtp
   public static async getInstanceDtp(
     config: InstantiableConfig,
@@ -42,11 +48,33 @@ export class AccessProofTemplate extends BaseTemplate<AccessProofTemplateParams>
   }
 
   public service(): ServiceType {
-    return 'access-proof'
+    return 'access'
+  }
+
+  public async paramsGen(params: ValidationParams): Promise<AccessProofTemplateParams> {
+    const consumer = await this.dtp.consumerAccount(
+      params.buyer,
+      params.consumer_address,
+      params.babysig
+    )
+    return this.params(consumer)
   }
 
   public params(consumer: Account): AccessProofTemplateParams {
     return { consumer, consumerId: consumer.getId() }
+  }
+
+  public conditions(): [
+    AccessProofCondition,
+    LockPaymentCondition,
+    EscrowPaymentCondition
+  ] {
+    const {
+      lockPaymentCondition,
+      escrowPaymentCondition
+    } = this.nevermined.keeper.conditions
+    const { accessProofCondition } = this.dtp
+    return [accessProofCondition, lockPaymentCondition, escrowPaymentCondition]
   }
 
   public async instanceFromDDO(

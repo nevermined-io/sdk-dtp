@@ -3,17 +3,20 @@ import { AccessProofConditionExtra } from './AccessProofCondition'
 import { Account, MetaData, Nevermined } from '@nevermined-io/nevermined-sdk-js'
 import {
   ServiceCommon,
+  serviceIndex,
   ValidationParams
 } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { decrypt } from './utils'
 import { Dtp } from './Dtp'
 
+type AssetData = { url: string; content_type: string }
+
 export async function getAssetUrl(
   nevermined: Nevermined,
   did: string,
   index: number
-): Promise<{ url: string; content_type: string }> {
+): Promise<AssetData> {
   // get url for DID
   const asset = await nevermined.assets.resolve(did)
   const service = asset.findServiceByType('metadata')
@@ -40,7 +43,7 @@ export abstract class ProofTemplate<Params> extends BaseTemplate<Params> {
     const serviceAgreementTemplate = await this.getServiceAgreementTemplate()
     return {
       type: this.service(),
-      index: 10,
+      index: serviceIndex[this.service()],
       isDTP: true,
       serviceEndpoint: this.nevermined.gateway.getServiceEndpoint(this.service()),
       templateId: this.getAddress(),

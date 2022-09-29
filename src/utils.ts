@@ -1,13 +1,13 @@
-import { ethers } from 'ethers';
-import crypto from 'crypto';
-import { encrypt as ec_encrypt, decrypt as ec_decrypt} from 'eciesjs';
-import NodeRSA from 'node-rsa';
+import { ethers } from 'ethers'
+import crypto from 'crypto'
+import { encrypt as ec_encrypt, decrypt as ec_decrypt } from 'eciesjs'
+import NodeRSA from 'node-rsa'
 
 export interface CryptoConfig {
-  provider_key: string,
-  provider_password: string,
-  provider_rsa_public: string,
-  provider_rsa_private: string,
+  provider_key: string
+  provider_password: string
+  provider_rsa_public: string
+  provider_rsa_private: string
 }
 
 const get_aes_private_key = (passphrase: string) => {
@@ -21,15 +21,15 @@ const BLOCK_SIZE = 16
 const AES_BLOCK_SIZE = 16
 
 function mod(a: number, n: number) {
-  return a - (n * Math.floor(a/n));
+  return a - n * Math.floor(a / n)
 }
 
-const pad = (s:string) => {
+const pad = (s: string) => {
   const md = BLOCK_SIZE - mod(s.length, BLOCK_SIZE)
   return s + String.fromCharCode(md).repeat(md)
 }
 
-const unpad = (s:string) => {
+const unpad = (s: string) => {
   const num = s.charCodeAt(s.length - 1)
   return s.substring(0, s.length - num)
 }
@@ -48,7 +48,11 @@ const aes_decryption = (data64, passphrase) => {
   const data = Buffer.from(data64, 'base64')
   const iv = data.slice(0, AES_BLOCK_SIZE)
   const cipher = crypto.createDecipheriv('aes-128-cbc', private_key, iv)
-  let res = cipher.update(data.slice(AES_BLOCK_SIZE).toString('binary'), 'binary', 'binary')
+  let res = cipher.update(
+    data.slice(AES_BLOCK_SIZE).toString('binary'),
+    'binary',
+    'binary'
+  )
   res += cipher.final('binary')
   return unpad(res)
 }
@@ -61,7 +65,9 @@ export const aes_encryption_256 = (data, passphrase) => {
   const cipher = crypto.createCipheriv('aes-256-cbc', private_key, iv)
   let res = cipher.update(pad(data), 'binary', 'binary')
   res += cipher.final('binary')
-  return Buffer.from('Salted__' + salt.toString('binary') + res, 'binary').toString('binary')
+  return Buffer.from('Salted__' + salt.toString('binary') + res, 'binary').toString(
+    'binary'
+  )
 }
 
 export const aes_decryption_256 = (encrypted, password) => {
@@ -78,12 +84,21 @@ export const aes_decryption_256 = (encrypted, password) => {
   return unpad(decrypted)
 }
 
-export const encrypt = async (config: CryptoConfig, cipherText: string, method: string): Promise<{publicKey: string, result: string}> => {
+export const encrypt = async (
+  config: CryptoConfig,
+  cipherText: string,
+  method: string
+): Promise<{ publicKey: string; result: string }> => {
   if (method === 'PSK-ECDSA') {
-    const wallet = await ethers.Wallet.fromEncryptedJson(config.provider_key, config.provider_password)
-    let ecdh = crypto.createECDH('secp256k1');
+    const wallet = await ethers.Wallet.fromEncryptedJson(
+      config.provider_key,
+      config.provider_password
+    )
+    const ecdh = crypto.createECDH('secp256k1')
     ecdh.setPrivateKey(Buffer.from(wallet.privateKey.substring(2), 'hex'))
-    const result = ec_encrypt(ecdh.getPublicKey(), Buffer.from(cipherText)).toString('binary')
+    const result = ec_encrypt(ecdh.getPublicKey(), Buffer.from(cipherText)).toString(
+      'binary'
+    )
     const res = {
       publicKey: wallet.publicKey,
       result
@@ -96,15 +111,25 @@ export const encrypt = async (config: CryptoConfig, cipherText: string, method: 
     const encrypted_aes_key = key.encrypt(aes_key)
     return {
       publicKey: key.exportKey('public'),
-      result: Buffer.from(encrypted_data).toString('hex') + '|' + Buffer.from(encrypted_aes_key).toString('hex'),
+      result:
+        Buffer.from(encrypted_data).toString('hex') +
+        '|' +
+        Buffer.from(encrypted_aes_key).toString('hex')
     }
   }
-};
+}
 
-export const decrypt = async (config: CryptoConfig, cipherText: string, method: string) => {
+export const decrypt = async (
+  config: CryptoConfig,
+  cipherText: string,
+  method: string
+) => {
   if (method === 'PSK-ECDSA') {
-    const wallet = await ethers.Wallet.fromEncryptedJson(config.provider_key, config.provider_password)
-    let ecdh = crypto.createECDH('secp256k1');
+    const wallet = await ethers.Wallet.fromEncryptedJson(
+      config.provider_key,
+      config.provider_password
+    )
+    const ecdh = crypto.createECDH('secp256k1')
     ecdh.setPrivateKey(Buffer.from(wallet.privateKey.substring(2), 'hex'))
     return ec_decrypt(ecdh.getPrivateKey(), Buffer.from(cipherText, 'binary')).toString()
   } else if (method === 'PSK-RSA') {
@@ -113,5 +138,4 @@ export const decrypt = async (config: CryptoConfig, cipherText: string, method: 
     const aes_key = key.decrypt(Buffer.from(encrypted_aes_key, 'hex'))
     return aes_decryption(Buffer.from(data, 'hex').toString(), aes_key)
   }
-};
-
+}

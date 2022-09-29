@@ -65,7 +65,12 @@ export abstract class ProofTemplate<Params> extends BaseTemplate<Params> {
     } as ServiceCommon
   }
   public async extraGen(params: ValidationParams): Promise<any> {
-    const { url } = await getAssetUrl(this.nevermined, this.dtp.cryptoConfig, params.did, 0)
+    const { url } = await getAssetUrl(
+      this.nevermined,
+      this.dtp.cryptoConfig,
+      params.did,
+      0
+    )
     const data = Buffer.from(url, 'hex')
     const extra: AccessProofConditionExtra = {
       providerK: this.dtp.keytransfer.makeKey(process.env.PROVIDER_BABYJUB_SECRET),

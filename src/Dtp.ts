@@ -40,7 +40,10 @@ export class Dtp extends Instantiable {
   public keytransfer: KeyTransfer
   public cryptoConfig: CryptoConfig
 
-  public static async getInstance(config: InstantiableConfig, cryptoConfig: CryptoConfig): Promise<Dtp> {
+  public static async getInstance(
+    config: InstantiableConfig,
+    cryptoConfig: CryptoConfig
+  ): Promise<Dtp> {
     const dtp = new Dtp()
     dtp.cryptoConfig = cryptoConfig
     dtp.setInstanceConfig(config)

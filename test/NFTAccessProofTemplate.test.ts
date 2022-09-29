@@ -9,7 +9,7 @@ import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 import { Dtp } from '../src/Dtp'
 import { AccessProofConditionExtra } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
-import { getMetadataForDTP } from './utils'
+import { cryptoConfig, getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import {
@@ -42,7 +42,7 @@ describe('NFT Access Proof Template', () => {
       nevermined
     }
 
-    dtp = await Dtp.getInstance(instanceConfig)
+    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
     accessProofTemplate = dtp.nftAccessProofTemplate
 
     // Accounts

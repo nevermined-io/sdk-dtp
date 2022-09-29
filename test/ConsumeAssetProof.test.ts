@@ -6,7 +6,7 @@ import { decodeJwt } from 'jose'
 import { Dtp } from '../src/Dtp'
 import { makeKeyTransfer } from '../src/KeyTransfer'
 import { config } from './config'
-import { getMetadataForDTP, sleep } from './utils'
+import { cryptoConfig, getMetadataForDTP, sleep } from './utils'
 
 describe('Consume Asset (Gateway w/ proofs)', () => {
   let nevermined: Nevermined
@@ -34,7 +34,7 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
       nevermined
     }
 
-    dtp = await Dtp.getInstance(instanceConfig)
+    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
     keyTransfer = await makeKeyTransfer()
 
     // Accounts

@@ -7,13 +7,14 @@ import {
   ValidationParams
 } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
 import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import { decrypt } from './utils'
+import { CryptoConfig, decrypt } from './utils'
 import { Dtp } from './Dtp'
 
 type AssetData = { url: string; content_type: string }
 
 export async function getAssetUrl(
   nevermined: Nevermined,
+  config: CryptoConfig,
   did: string,
   index: number
 ): Promise<AssetData> {
@@ -25,7 +26,7 @@ export async function getAssetUrl(
   const auth_method = asset.findServiceByType('authorization').service || 'RSAES-OAEP'
   if (auth_method === 'RSAES-OAEP') {
     const filelist = JSON.parse(
-      await decrypt(service.attributes.encryptedFiles, 'PSK-RSA')
+      await decrypt(config, service.attributes.encryptedFiles, 'PSK-RSA')
     )
     // download url or what?
     const { url } = filelist[index]
@@ -64,7 +65,7 @@ export abstract class ProofTemplate<Params> extends BaseTemplate<Params> {
     } as ServiceCommon
   }
   public async extraGen(params: ValidationParams): Promise<any> {
-    const { url } = await getAssetUrl(this.nevermined, params.did, 0)
+    const { url } = await getAssetUrl(this.nevermined, this.dtp.cryptoConfig, params.did, 0)
     const data = Buffer.from(url, 'hex')
     const extra: AccessProofConditionExtra = {
       providerK: this.dtp.keytransfer.makeKey(process.env.PROVIDER_BABYJUB_SECRET),

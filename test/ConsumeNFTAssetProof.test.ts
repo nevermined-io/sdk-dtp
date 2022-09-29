@@ -11,7 +11,7 @@ import { Dtp } from '../src/Dtp'
 import { makeKeyTransfer } from '../src/KeyTransfer'
 import { NFTAccessProofTemplate } from '../src/NFTAccessProofTemplate'
 import { config } from './config'
-import { getMetadataForDTP, sleep } from './utils'
+import { cryptoConfig, getMetadataForDTP, sleep } from './utils'
 
 describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   let nevermined: Nevermined
@@ -41,7 +41,7 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
       nevermined
     }
 
-    dtp = await Dtp.getInstance(instanceConfig)
+    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
     keyTransfer = await makeKeyTransfer()
     template = dtp.nftAccessProofTemplate
     token = nevermined.keeper.nftUpgradeable

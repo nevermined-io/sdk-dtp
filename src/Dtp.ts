@@ -28,6 +28,7 @@ import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
+import { CryptoConfig } from './utils'
 
 export class Dtp extends Instantiable {
   public accessProofCondition: AccessProofCondition
@@ -37,9 +38,14 @@ export class Dtp extends Instantiable {
   public nftSalesWithAccessTemplate: NFTSalesWithAccessTemplate
   public nft721SalesWithAccessTemplate: NFT721SalesWithAccessTemplate
   public keytransfer: KeyTransfer
+  public cryptoConfig: CryptoConfig
 
-  public static async getInstance(config: InstantiableConfig): Promise<Dtp> {
+  public static async getInstance(
+    config: InstantiableConfig,
+    cryptoConfig: CryptoConfig
+  ): Promise<Dtp> {
     const dtp = new Dtp()
+    dtp.cryptoConfig = cryptoConfig
     dtp.setInstanceConfig(config)
     dtp.accessProofCondition = await AccessProofCondition.getInstance(config)
     dtp.accessProofTemplate = await AccessProofTemplate.getInstanceDtp(config, dtp)

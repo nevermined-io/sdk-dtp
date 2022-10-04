@@ -42,7 +42,7 @@ jobs:
           yarn pack
           cp *.tgz gateway-ts/dtp.tgz
 
-          cd ../gateway-ts
+          cd gateway-ts
           sed -i "/sdk-dtp/c\\    \"@nevermined-io/nevermined-sdk-dtp\": \"./dtp.tgz\"," package.json
           yarn
           yarn run setup:dev

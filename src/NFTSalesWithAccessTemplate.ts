@@ -86,7 +86,7 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
     consumer: Account,
     providerId: string,
     nftAmount: BigNumber = BigNumber.from(1),
-    expiration: number = 0
+    expiration = 0
   ): NFTSalesWithAccessTemplateParams {
     return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId }
   }

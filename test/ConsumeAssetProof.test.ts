@@ -1,4 +1,4 @@
-import { Nevermined, Account, DDO, MetaData } from '@nevermined-io/nevermined-sdk-js'
+import { Nevermined, Account, DDO, MetaData, Logger } from '@nevermined-io/nevermined-sdk-js'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { assert } from 'chai'
@@ -57,7 +57,9 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
   after(() => {
     try {
       localStorage.clear()
-    } catch {}
+    } catch (error) {
+      Logger.error(error);
+    }
   })
 
   it('should fetch the RSA publicKey from the gateway', async () => {
@@ -85,7 +87,9 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
       await consumer.requestTokens(
         +metadata.main.price * 10 ** -(await nevermined.keeper.token.decimals())
       )
-    } catch {}
+    } catch (error) {
+      Logger.error(error);
+    }
 
     const steps: any[] = []
     agreementId = await nevermined.assets

@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { config } from './config'
-import { Nevermined, Account, DDO } from '@nevermined-io/nevermined-sdk-js'
+import { Nevermined, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js'
 import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
@@ -156,7 +156,9 @@ describe('NFT Access Proof Template', () => {
     it('should fulfill the conditions from consumer side', async () => {
       try {
         await consumer.requestTokens(totalAmount)
-      } catch {}
+      } catch (error) {
+        Logger.error(error);
+      }
 
       await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
       await lockPaymentCondition.fulfillInstance(

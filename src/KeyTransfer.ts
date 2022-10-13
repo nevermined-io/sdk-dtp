@@ -4,7 +4,6 @@ import {
 } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
-import * as circomlibjs from 'circomlibjs';
 
 const SEED = 'mimcsponge'
 const NROUNDS = 220
@@ -19,10 +18,11 @@ class Circom {
   private poseidon
   private mimcsponge
 
+  /* eslint-disable @typescript-eslint/no-var-requires */
   public async init() {
-    this.babyjub = await circomlibjs.buildBabyjub()
-    this.poseidon = await circomlibjs.buildPoseidonReference()
-    this.mimcsponge = await circomlibjs.buildMimcSponge()
+    this.babyjub = await require('circomlibjs').buildBabyjub()
+    this.poseidon = await require('circomlibjs').buildPoseidonReference()
+    this.mimcsponge = await require('circomlibjs').buildMimcSponge()
   }
 
   public getBabyjub() {

@@ -18,6 +18,7 @@ class Circom {
   private poseidon
   private mimcsponge
 
+  /* eslint-disable @typescript-eslint/no-var-requires */
   public async init() {
     this.babyjub = await require('circomlibjs').buildBabyjub()
     this.poseidon = await require('circomlibjs').buildPoseidonReference()

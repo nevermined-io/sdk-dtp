@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { config } from './config'
-import { Nevermined, Keeper, Account, DDO } from '@nevermined-io/nevermined-sdk-js'
+import { Nevermined, Keeper, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js'
 import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
@@ -221,7 +221,9 @@ describe('Register Escrow Access Proof Template', () => {
     it('should fulfill LockPaymentCondition', async () => {
       try {
         await consumer.requestTokens(totalAmount)
-      } catch {}
+      } catch (error) {
+        Logger.error(error);
+      }
 
       await keeper.token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
 
@@ -342,7 +344,9 @@ describe('Register Escrow Access Proof Template', () => {
     it('should fulfill the conditions from consumer side', async () => {
       try {
         await consumer.requestTokens(totalAmount)
-      } catch {}
+      } catch (error) {
+        Logger.error(error);
+      }
 
       await nevermined.agreements.conditions.lockPayment(
         agreementId,

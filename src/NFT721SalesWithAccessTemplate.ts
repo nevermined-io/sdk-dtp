@@ -85,7 +85,7 @@ export class NFT721SalesWithAccessTemplate extends ProofTemplate<
 
   public params(
     consumer: Account,
-    expiration: number = 0
+    expiration = 0
   ): NFT721SalesWithAccessTemplateParams {
     return { consumer, consumerId: consumer.getId(), expiration }
   }

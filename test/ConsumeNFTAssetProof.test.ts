@@ -1,4 +1,4 @@
-import { Nevermined, Account, DDO, MetaData } from '@nevermined-io/nevermined-sdk-js'
+import { Nevermined, Account, DDO, MetaData, Logger } from '@nevermined-io/nevermined-sdk-js'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 import { NFTUpgradeable } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions/NFTs/NFTUpgradable'
@@ -66,7 +66,9 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
   after(() => {
     try {
       localStorage.clear()
-    } catch {}
+    } catch (error) {
+      Logger.error(error);
+    }
   })
 
   it('should fetch the RSA publicKey from the gateway', async () => {

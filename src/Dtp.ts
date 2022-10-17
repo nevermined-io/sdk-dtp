@@ -26,7 +26,7 @@ import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate';
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate';
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate';
 import { CryptoConfig } from './utils';
-import { NFTAccessProofService, NFTSalesProofService } from './Service';
+import { AccessProofService, NFTAccessProofService, NFTSalesProofService } from './Service';
 
 export class Dtp extends Instantiable {
   public accessProofCondition: AccessProofCondition;
@@ -81,7 +81,10 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.templateList.push(dtp.nftSalesWithAccessTemplate);
     config.nevermined.keeper.templateList.push(dtp.nft721SalesWithAccessTemplate);
 
-    config.nevermined.assets.servicePlugin['access'] = dtp.accessProofTemplate;
+    config.nevermined.assets.servicePlugin['access'] = new AccessProofService(
+      config,
+      dtp.accessProofTemplate,
+    );
     config.nevermined.assets.servicePlugin['nft-access'] = new NFTAccessProofService(
       config,
       dtp.nftAccessProofTemplate,
@@ -114,7 +117,6 @@ export class Dtp extends Instantiable {
         'Consume asset failed, service definition is missing the `serviceEndpoint`.',
       );
     }
-
     return await this.consumeProofService(
       did,
       agreementId,

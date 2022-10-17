@@ -63,7 +63,7 @@ jobs:
           SEED_WORDS: taxi music thumb unique chat sand crew more leg another off lamp
         run: |
           ls circuits
-          yarn test || yarn test || yarn test
+          yarn test
       - name: Upload logs
         uses: actions/upload-artifact@v2
         if: failure()

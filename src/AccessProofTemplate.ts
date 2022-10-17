@@ -1,12 +1,5 @@
+import { Account, AgreementTemplate, DDO, MetaData } from '@nevermined-io/nevermined-sdk-js';
 import {
-  Account,
-  AgreementTemplate,
-  DDO,
-  MetaData,
-  MetaDataMain,
-} from '@nevermined-io/nevermined-sdk-js';
-import {
-  ServicePlugin,
   ServiceType,
   ValidationParams,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service';
@@ -15,11 +8,7 @@ import {
   LockPaymentCondition,
   EscrowPaymentCondition,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
-import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase';
-import {
-  AccessTemplate,
-  AgreementInstance,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
 import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
 import { AccessProofCondition } from './AccessProofCondition';
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate';
@@ -32,11 +21,11 @@ export interface AccessProofTemplateParams {
   consumerId: string;
 }
 
-export class AccessProofTemplate
-  extends ProofTemplate<AccessProofTemplateParams, ServiceAccessProof>
-  implements ServicePlugin<ServiceAccessProof> {
+export class AccessProofTemplate extends ProofTemplate<
+  AccessProofTemplateParams,
+  ServiceAccessProof
+> {
   public dtp: Dtp;
-  private normal: AccessTemplate;
 
   public static async getInstanceDtp(
     config: InstantiableConfig,
@@ -49,7 +38,6 @@ export class AccessProofTemplate
       true,
     );
     res.dtp = dtp;
-    res.normal = config.nevermined.keeper.templates.accessTemplate;
     return res;
   }
 
@@ -60,26 +48,6 @@ export class AccessProofTemplate
     erc20TokenAddress?: string,
   ): Promise<ServiceAccessProof> {
     return await super.createService(publisher, metadata, assetRewards, erc20TokenAddress, true);
-  }
-
-  // essential method is to select between two services
-  public select(main: MetaDataMain): AccessTemplate | AccessProofTemplate {
-    return this.isDTP(main) ? this : this.normal;
-  }
-
-  public async process(
-    params: ValidationParams,
-    from: Account,
-    txparams?: TxParameters,
-  ): Promise<void> {
-    const ddo = await this.nevermined.assets.resolve(params.did);
-    const metadata = ddo.findServiceByType('metadata').attributes.main;
-    return this.select(metadata).process(params, from, txparams);
-  }
-  public async accept(params: ValidationParams): Promise<boolean> {
-    const ddo = await this.nevermined.assets.resolve(params.did);
-    const metadata = ddo.findServiceByType('metadata').attributes.main;
-    return this.select(metadata).accept(params);
   }
 
   public async getServiceAgreementTemplate() {

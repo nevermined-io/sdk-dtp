@@ -26,7 +26,7 @@ import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate';
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate';
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate';
 import { CryptoConfig } from './utils';
-import { NFTAccessProofService, NFTSalesProofService } from './Service';
+import { AccessProofService, NFTAccessProofService, NFTSalesProofService } from './Service';
 
 export class Dtp extends Instantiable {
   public accessProofCondition: AccessProofCondition;
@@ -81,7 +81,10 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.templateList.push(dtp.nftSalesWithAccessTemplate);
     config.nevermined.keeper.templateList.push(dtp.nft721SalesWithAccessTemplate);
 
-    config.nevermined.assets.servicePlugin['access'] = dtp.accessProofTemplate;
+    config.nevermined.assets.servicePlugin['access'] = new AccessProofService(
+      config,
+      dtp.accessProofTemplate,
+    );
     config.nevermined.assets.servicePlugin['nft-access'] = new NFTAccessProofService(
       config,
       dtp.nftAccessProofTemplate,
@@ -106,7 +109,9 @@ export class Dtp extends Instantiable {
     consumerAccount: Account,
     service: ServiceType = 'access',
   ): Promise<string | true> {
+    console.log('consumeProof');
     const ddo = await this.nevermined.assets.resolve(did);
+    console.log('ddo');
     const { serviceEndpoint } = ddo.findServiceByType(service);
 
     if (!serviceEndpoint) {
@@ -114,7 +119,7 @@ export class Dtp extends Instantiable {
         'Consume asset failed, service definition is missing the `serviceEndpoint`.',
       );
     }
-
+    console.log('before consumeProofService');
     return await this.consumeProofService(
       did,
       agreementId,
@@ -137,11 +142,15 @@ export class Dtp extends Instantiable {
 
     if (!jwt.tokenCache.has(cacheKey)) {
       const address = account.getId();
+      console.log('address', address);
       const grantToken = await jwt.generateToken(account, agreementId, did, '/' + service, {
         babysig: await this.signBabyjub(account, BigInt(address)),
         buyer: account.getPublic(),
       });
+      console.log('grantToken', grantToken);
       accessToken = await this.nevermined.gateway.fetchToken(grantToken);
+      console.log('');
+      console.log('accessToken', accessToken);
       jwt.tokenCache.set(cacheKey, accessToken);
     } else {
       accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!;

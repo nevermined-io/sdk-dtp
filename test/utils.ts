@@ -1,15 +1,15 @@
-import { MetaData } from '@nevermined-io/nevermined-sdk-js'
-import { readFileSync } from 'fs'
-import { makeKeyTransfer } from '../src/KeyTransfer'
-import { CryptoConfig } from '../src/utils'
+import { MetaData } from '@nevermined-io/nevermined-sdk-js';
+import { readFileSync } from 'fs';
+import { makeKeyTransfer } from '../src/KeyTransfer';
+import { CryptoConfig } from '../src/utils';
 
-export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function read(a) {
   if (!a) {
-    return ''
+    return '';
   } else {
-    return readFileSync(a).toString()
+    return readFileSync(a).toString();
   }
 }
 
@@ -17,32 +17,31 @@ export const cryptoConfig: CryptoConfig = {
   provider_key: process.env.PROVIDER_KEY,
   provider_password: read(process.env.PROVIDER_PASSWORD),
   provider_rsa_public: read(process.env.PROVIDER_RSA_PUB),
-  provider_rsa_private: read(process.env.PROVIDER_RSA_PRIV)
-}
+  provider_rsa_private: read(process.env.PROVIDER_RSA_PRIV),
+};
 
 export async function getMetadataForDTP(
   name: string,
   passwd: string,
-  providerKey: any
+  providerKey: any,
 ): Promise<MetaData> {
-  const keytransfer = await makeKeyTransfer()
+  const keytransfer = await makeKeyTransfer();
   return {
     main: {
       name,
-      isDTP: true,
       type: 'dataset',
       dateCreated: '2012-10-10T17:00:00Z',
       datePublished: '2012-10-10T17:00:00Z',
       author: 'Met Office',
       license: 'CC-BY',
-      price: '21' + '0'.repeat(18),
       files: [
         {
           index: 1,
           contentType: 'text/plain',
-          url: passwd
-        }
-      ]
+          url: passwd,
+          encryption: 'dtp',
+        },
+      ],
     },
     additionalInformation: {
       description: 'Weather information of UK including temperature and humidity',
@@ -52,7 +51,7 @@ export async function getMetadataForDTP(
       categories: ['Economy', 'Data Science'],
       poseidonHash: await keytransfer.hashKey(Buffer.from(passwd, 'hex')),
       providerKey,
-      tags: ['weather', 'uk', '2011', 'temperature', 'humidity']
-    }
-  }
+      tags: ['weather', 'uk', '2011', 'temperature', 'humidity'],
+    },
+  };
 }

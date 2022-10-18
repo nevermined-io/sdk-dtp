@@ -46,6 +46,9 @@ jobs:
           ./scripts/wait-nevermined.sh
           ls circuits
 
+          # wait for marketplace-api
+          wget -q --waitretry=1 --retry-connrefused -T 180 -O - http://localhost:3100/api/v1/metadata/assets
+
       - name: Run integration tests
         env:
           NO_GRAPH: true

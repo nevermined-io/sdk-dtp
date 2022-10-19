@@ -25,17 +25,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      #- name: Build SDK
-      #  run: |
-      #    git clone https://github.com/nevermined-io/sdk-js
-      #    cd sdk-js
-      #    git checkout fix/artifact-ref
-      #    yarn
-      #    yarn build
-      #    yarn pack
-      #    cp *.tgz ..
-      #    cd ..
-      #    rm -rf sdk-js
       - name: Install dependencies
         run: |
           yarn
@@ -56,6 +45,9 @@ jobs:
           cd ..
           ./scripts/wait-nevermined.sh
           ls circuits
+
+          # wait for marketplace-api
+          ./scripts/wait-service.sh http://localhost:3100/api/v1/metadata/assets
 
       - name: Run integration tests
         env:

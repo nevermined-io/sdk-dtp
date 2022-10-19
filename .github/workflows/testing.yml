@@ -47,7 +47,7 @@ jobs:
           ls circuits
 
           # wait for marketplace-api
-          ./scripts/wait-marketplace-api.sh
+          ./scripts/wait-service.sh http://localhost:3100/api/v1/metadata/assets
 
       - name: Run integration tests
         env:

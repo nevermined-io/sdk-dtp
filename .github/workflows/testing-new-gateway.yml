@@ -67,6 +67,10 @@ jobs:
           cd gateway-ts
           ./scripts/wait-nevermined.sh
           yarn start 2>&1 | tee gateway_log.txt &
+          
+          # wait for gateway
+          cd .. 
+          ./scripts/wait-service.sh http://localhost:8030
 
       - name: Run integration tests
         env:

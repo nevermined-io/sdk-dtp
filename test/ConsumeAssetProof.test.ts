@@ -8,7 +8,7 @@ import { makeKeyTransfer } from '../src/KeyTransfer';
 import { config } from './config';
 import { cryptoConfig, getMetadataForDTP, sleep } from './utils';
 
-describe('Consume Asset (Gateway w/ proofs)', () => {
+describe('Consume Asset (Node w/ proofs)', () => {
   let nevermined: Nevermined;
   let keyTransfer;
   let dtp: Dtp;
@@ -62,8 +62,8 @@ describe('Consume Asset (Gateway w/ proofs)', () => {
     }
   });
 
-  it('should fetch the RSA publicKey from the gateway', async () => {
-    const rsaPublicKey = await nevermined.gateway.getRsaPublicKey();
+  it('should fetch the RSA publicKey from the node', async () => {
+    const rsaPublicKey = await nevermined.node.getRsaPublicKey();
     assert.isDefined(rsaPublicKey);
   });
 

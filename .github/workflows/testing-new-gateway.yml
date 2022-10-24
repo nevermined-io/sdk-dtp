@@ -1,4 +1,4 @@
-name: Testing w/ new gateway depending on SDK changes
+name: Testing w/ Nevermined Node depending on SDK changes
 
 on:
   push:
@@ -31,17 +31,17 @@ jobs:
         run: npm run lint
       - uses: actions/checkout@v3
         with:
-          repository: nevermined-io/gateway-ts
-          path: gateway-ts
+          repository: nevermined-io/node
+          path: node
           token: ${{ secrets.API_TOKEN_GITHUB }}
 
-      - name: Build SDK-DTP package and gateway
+      - name: Build SDK-DTP package and node
         run: |
           yarn build
           yarn pack
-          cp *.tgz gateway-ts/dtp.tgz
+          cp *.tgz node/dtp.tgz
 
-          cd gateway-ts
+          cd node
           sed -i "/sdk-dtp/c\\    \"@nevermined-io/nevermined-sdk-dtp\": \"./dtp.tgz\"," package.json
           yarn
           yarn run setup:dev
@@ -52,23 +52,25 @@ jobs:
           docker login -u ${{ secrets.NEVERMINED_DOCKER_USERNAME }} -p ${{ secrets.NEVERMINED_DOCKER_TOKEN}}
           sudo chmod go+r /etc/hosts
           sudo echo "127.0.0.1  nevermined-metadata" | sudo tee -a /etc/hosts
-          git clone https://github.com/nevermined-io/tools
+
+          # TODO: Use `master` when the renaming is done
+          git clone https://github.com/nevermined-io/tools -b feauture/node_name
           cd tools
 
           export KEEPER_OWNER_ROLE_ADDRESS="0xe2DD09d719Da89e5a3D0F2549c7E24566e947260"
           rm -rf "${HOME}/.nevermined/nevermined-contracts/artifacts"
 
-          ./start_nevermined.sh --latest ${{ matrix.network }} --no-graph --no-gateway 2>&1 | tee nevermined_tools.txt &
+          ./start_nevermined.sh --latest ${{ matrix.network }} --no-graph --no-node 2>&1 | tee nevermined_tools.txt &
           cd ..
           ./scripts/wait-nevermined.sh
 
-      - name: Run gateway
+      - name: Run node
         run: |
-          cd gateway-ts
+          cd node
           ./scripts/wait-nevermined.sh
-          yarn start 2>&1 | tee gateway_log.txt &
+          yarn start 2>&1 | tee node_log.txt &
           
-          # wait for gateway
+          # wait for node
           cd .. 
           ./scripts/wait-service.sh http://localhost:8030
 
@@ -88,5 +90,5 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: gateway-output
-          path: gateway-ts/gateway_log.txt
+          name: node-output
+          path: node-ts/node_log.txt

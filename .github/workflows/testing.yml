@@ -52,7 +52,7 @@ jobs:
       - name: Run integration tests
         env:
           NO_GRAPH: true
-          SEED_WORDS: ${{ secrets.seedWords }}
+          SEED_WORDS: ${{ secrets.TEST_MNEMONIC }}
         run: |
           ls circuits
           yarn test

@@ -67,7 +67,7 @@ if (process.env.NETWORK_NAME === 'mumbai') {
     marketplaceUri: 'https://metadata.mumbai.nevermined.rocks',
     faucetUri: 'https://faucet.mumbai.nevermined.rocks',
     neverminedNodeUri: 'https://node.mumbai.nevermined.rocks',
-    nodeUri: `https://rpc-mumbai.maticvigil.com/v1/e145ac0424e2a2b3c340685c80a08e77099ce020`,
+    web3ProviderUri: `https://rpc-mumbai.maticvigil.com/v1/e145ac0424e2a2b3c340685c80a08e77099ce020`,
     neverminedNodeAddress: '0x068Ed00cF0441e4829D9784fCBe7b9e26D4BD8d0',
   } as Config);
 }
@@ -77,7 +77,7 @@ if (process.env.SEED_WORDS) {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  configBase.web3Provider = new HDWalletProvider(seedphrase, configBase.nodeUri, 0, 10);
+  configBase.web3Provider = new HDWalletProvider(seedphrase, configBase.web3ProviderUri, 0, 10);
 }
 
 export const config: Config & { forceVerbose: Config } = configBase as any;

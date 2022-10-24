@@ -76,7 +76,7 @@ jobs:
 
       - name: Run integration tests
         env:
-          SEED_WORDS: taxi music thumb unique chat sand crew more leg another off lamp
+          SEED_WORDS: ${{ secrets.seedWords }}
           NO_GRAPH: true
         run: |
           yarn test

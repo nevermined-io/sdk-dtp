@@ -35,7 +35,7 @@ jobs:
           docker login -u ${{ secrets.NEVERMINED_DOCKER_USERNAME }} -p ${{ secrets.NEVERMINED_DOCKER_TOKEN}}
           sudo chmod go+r /etc/hosts
           sudo echo "127.0.0.1  nevermined-metadata" | sudo tee -a /etc/hosts
-          git clone https://github.com/nevermined-io/tools
+          git clone https://github.com/nevermined-io/tools -b feauture/node_name
           cd tools
 
           export KEEPER_OWNER_ROLE_ADDRESS="0xe2DD09d719Da89e5a3D0F2549c7E24566e947260"
@@ -52,7 +52,7 @@ jobs:
       - name: Run integration tests
         env:
           NO_GRAPH: true
-          SEED_WORDS: taxi music thumb unique chat sand crew more leg another off lamp
+          SEED_WORDS: ${{ secrets.seedWords }}
         run: |
           ls circuits
           yarn test

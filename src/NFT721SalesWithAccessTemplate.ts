@@ -1,152 +1,146 @@
-import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
+import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js';
 import {
   ServiceType,
-  ValidationParams
-} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+  ValidationParams,
+} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service';
+import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate';
+import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
 import {
   LockPaymentCondition,
   TransferNFT721Condition,
-  EscrowPaymentCondition
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import { AccessProofCondition } from './AccessProofCondition'
-import { Dtp } from './Dtp'
-import { ProofTemplate } from './ProofTemplate'
-import { nft721SalesTemplateServiceAgreementTemplate } from './NFT721SalesWithAccessTemplate.serviceAgreementTemplate'
+  EscrowPaymentCondition,
+} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
+import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
+import { AccessProofCondition } from './AccessProofCondition';
+import { Dtp } from './Dtp';
+import { ProofTemplate } from './ProofTemplate';
+import { nft721SalesTemplateServiceAgreementTemplate } from './NFT721SalesWithAccessTemplate.serviceAgreementTemplate';
+import { ServiceNFTSalesProof } from './Service';
 
 export interface NFT721SalesWithAccessTemplateParams {
-  consumerId: string
-  consumer: Account
-  expiration: number
+  consumerId: string;
+  consumer: Account;
+  expiration: number;
 }
 
 export class NFT721SalesWithAccessTemplate extends ProofTemplate<
-  NFT721SalesWithAccessTemplateParams
+  NFT721SalesWithAccessTemplateParams,
+  ServiceNFTSalesProof
 > {
-  public dtp: Dtp
+  public dtp: Dtp;
   public static async getInstanceDtp(
     config: InstantiableConfig,
-    dtp: Dtp
+    dtp: Dtp,
   ): Promise<NFT721SalesWithAccessTemplate> {
     const res = await AgreementTemplate.getInstance(
       config,
       'NFT721SalesWithAccessTemplate',
       NFT721SalesWithAccessTemplate,
-      true
-    )
-    res.dtp = dtp
-    return res
+      true,
+    );
+    res.dtp = dtp;
+    return res;
   }
 
   public service(): ServiceType {
-    return 'nft-sales'
+    return 'nft-sales';
   }
 
-  public async paramsGen(
-    params: ValidationParams
-  ): Promise<NFT721SalesWithAccessTemplateParams> {
+  public async paramsGen(params: ValidationParams): Promise<NFT721SalesWithAccessTemplateParams> {
     const consumer = await this.dtp.consumerAccount(
       params.buyer,
       params.consumer_address,
-      params.babysig
-    )
-    return this.params(consumer)
+      params.babysig,
+    );
+    return this.params(consumer);
   }
 
   public conditions(): [
     TransferNFT721Condition,
     LockPaymentCondition,
     EscrowPaymentCondition,
-    AccessProofCondition
+    AccessProofCondition,
   ] {
     const {
       transferNft721Condition,
       lockPaymentCondition,
-      escrowPaymentCondition
-    } = this.nevermined.keeper.conditions
-    const { accessProofCondition } = this.dtp
+      escrowPaymentCondition,
+    } = this.nevermined.keeper.conditions;
+    const { accessProofCondition } = this.dtp;
     return [
       transferNft721Condition,
       lockPaymentCondition,
       escrowPaymentCondition,
-      accessProofCondition
-    ]
+      accessProofCondition,
+    ];
   }
 
   public description(): string {
-    return 'Data Asset NFT Transfer Service Agreement w/ proof'
+    return 'Data Asset NFT Transfer Service Agreement w/ proof';
   }
 
   public name(): string {
-    return 'dataAssetNFT721SalesProofServiceAgreement'
+    return 'dataAssetNFT721SalesProofServiceAgreement';
   }
 
-  public params(
-    consumer: Account,
-    expiration = 0
-  ): NFT721SalesWithAccessTemplateParams {
-    return { consumer, consumerId: consumer.getId(), expiration }
+  public params(consumer: Account, expiration = 0): NFT721SalesWithAccessTemplateParams {
+    return { consumer, consumerId: consumer.getId(), expiration };
   }
 
   public lockConditionIndex(): number {
-    return 0
+    return 0;
   }
 
   public async instanceFromDDO(
     agreementIdSeed: string,
     ddo: DDO,
     creator: string,
-    parameters: NFT721SalesWithAccessTemplateParams
+    parameters: NFT721SalesWithAccessTemplateParams,
   ): Promise<AgreementInstance<NFT721SalesWithAccessTemplateParams>> {
     const {
       transferNft721Condition,
       lockPaymentCondition,
-      escrowPaymentCondition
-    } = this.nevermined.keeper.conditions
-    const { accessProofCondition } = this.dtp
+      escrowPaymentCondition,
+    } = this.nevermined.keeper.conditions;
+    const { accessProofCondition } = this.dtp;
 
-    const agreementId = await this.agreementId(agreementIdSeed, creator)
+    const agreementId = await this.agreementId(agreementIdSeed, creator);
     const ctx = {
       ...this.standardContext(ddo, creator),
-      ...parameters
-    }
+      ...parameters,
+    };
 
     const lockPaymentConditionInstance = await lockPaymentCondition.instanceFromDDO(
       agreementId,
-      ctx
-    )
+      ctx,
+    );
     const transferConditionInstance = await transferNft721Condition.instanceFromDDO(
       agreementId,
       ctx,
-      lockPaymentConditionInstance
-    )
-    const accessConditionInstance = await accessProofCondition.instanceFromDDO(
-      agreementId,
-      ctx
-    )
+      lockPaymentConditionInstance,
+    );
+    const accessConditionInstance = await accessProofCondition.instanceFromDDO(agreementId, ctx);
     const escrowPaymentConditionInstance = await escrowPaymentCondition.instanceFromDDO(
       agreementId,
       ctx,
       transferConditionInstance,
       lockPaymentConditionInstance,
-      accessConditionInstance
-    )
+      accessConditionInstance,
+    );
 
     return {
       instances: [
         lockPaymentConditionInstance,
         transferConditionInstance,
         escrowPaymentConditionInstance,
-        accessConditionInstance
+        accessConditionInstance,
       ],
       list: parameters,
-      agreementId
-    }
+      agreementId,
+    };
   }
 
   public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-    return nft721SalesTemplateServiceAgreementTemplate
+    return nft721SalesTemplateServiceAgreementTemplate;
   }
 }

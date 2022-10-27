@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs'
-import { decrypt, encrypt } from '../src/utils'
+import { read, readFileSync } from 'fs'
+import { decrypt, encrypt, aes_decryption_256, aes_encryption_256 } from '../src/utils'
 import { assert } from 'chai'
 
 describe('utils', () => {
@@ -24,5 +24,21 @@ describe('utils', () => {
     const { result } = await encrypt(config, msg, 'PSK-ECDSA')
     const msg_ = await decrypt(config, result, 'PSK-ECDSA')
     assert.equal(msg_, msg)
+  })
+  it('should encrypt and decrypt using password', async() => {
+    const passwd = 'eMo4geeoHD6Buv3lwT1ljlVc7SHMcX9zx4uuEdEpj2M'
+    let msg = readFileSync('./test.data').toString()
+    /*for (let i = 0; i < 12; i++) {
+      msg = msg + msg
+    }*/
+    const ctext = aes_encryption_256(msg, passwd)
+    // const res = aes_decryption_256(ctext, passwd)
+    let msg2 = readFileSync('./test2.data').toString('binary')
+    try {
+      const res = aes_decryption_256(msg2, passwd)
+      assert.equal(msg, res)
+    } catch (e) {
+      console.log(e)
+    }
   })
 })

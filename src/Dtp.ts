@@ -10,7 +10,7 @@ import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Serv
 import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer';
 import {
   AssetError,
-  GatewayError,
+  NeverminedNodeError,
   KeeperError,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/errors';
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
@@ -143,7 +143,7 @@ export class Dtp extends Instantiable {
         babysig: await this.signBabyjub(account, BigInt(address)),
         buyer: account.getPublic(),
       });
-      accessToken = await this.nevermined.gateway.fetchToken(grantToken);
+      accessToken = await this.nevermined.node.fetchToken(grantToken);
       jwt.tokenCache.set(cacheKey, accessToken);
     } else {
       accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!;
@@ -156,7 +156,7 @@ export class Dtp extends Instantiable {
     try {
       return await this.nevermined.utils.fetch.downloadUrl(consumeUrl, headers);
     } catch (e) {
-      throw new GatewayError(`Error consuming assets - ${e}`);
+      throw new NeverminedNodeError(`Error consuming assets - ${e}`);
     }
   }
 

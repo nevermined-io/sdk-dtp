@@ -41,7 +41,10 @@ jobs:
           export KEEPER_OWNER_ROLE_ADDRESS="0xe2DD09d719Da89e5a3D0F2549c7E24566e947260"
           rm -rf "${HOME}/.nevermined/nevermined-contracts/artifacts"
 
-          ./start_nevermined.sh --latest --no-graph --new-gateway ${{ matrix.network }} 2>&1 | tee nevermined_tools.txt &
+          # TODO: Use the default Node when merged into master
+          export KEEPER_VERSION=latest
+          export NODE_VERSION=testing
+          ./start_nevermined.sh --no-graph ${{ matrix.network }} 2>&1 | tee nevermined_tools.txt &
           cd ..
           ./scripts/wait-nevermined.sh
           ls circuits
@@ -52,7 +55,7 @@ jobs:
       - name: Run integration tests
         env:
           NO_GRAPH: true
-          SEED_WORDS: taxi music thumb unique chat sand crew more leg another off lamp
+          SEED_WORDS: ${{ secrets.TEST_MNEMONIC }}
         run: |
           ls circuits
           yarn test

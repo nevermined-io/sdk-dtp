@@ -13,7 +13,7 @@ import { NFTAccessProofTemplate } from '../src/NFTAccessProofTemplate';
 import { config } from './config';
 import { cryptoConfig, getMetadataForDTP, sleep } from './utils';
 
-describe('Consume NFT Asset (Gateway w/ proofs)', () => {
+describe('Consume NFT Asset (Node w/ proofs)', () => {
   let nevermined: Nevermined;
   let keyTransfer;
   let dtp: Dtp;
@@ -71,8 +71,8 @@ describe('Consume NFT Asset (Gateway w/ proofs)', () => {
     }
   });
 
-  it('should fetch the RSA publicKey from the gateway', async () => {
-    const rsaPublicKey = await nevermined.gateway.getRsaPublicKey();
+  it('should fetch the RSA publicKey from the node', async () => {
+    const rsaPublicKey = await nevermined.node.getRsaPublicKey();
     assert.isDefined(rsaPublicKey);
   });
 

@@ -89,7 +89,7 @@ describe('NFT Transfer Proof Template', () => {
 
       await nevermined.services.marketplace.login(clientAssertion)
 
-      const payload = decodeJwt(config.marketplaceAuthToken)
+      const payload = decodeJwt(config.marketplaceAuthToken!)
       metadata.userId = payload.sub
 
       const assetPrice = new AssetPrice(
@@ -112,22 +112,6 @@ describe('NFT Transfer Proof Template', () => {
           nftAttributes,
           publisher
       )
-
-      // ddo = await nevermined.assets.createNft(
-      //   metadata,
-      //   publisher,
-      //   assetPrice,
-      //   undefined,
-      //   BigNumber.from(100),
-      //   undefined,
-      //   BigNumber.from(20),
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   ['nft-sales'],
-      // );
 
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')

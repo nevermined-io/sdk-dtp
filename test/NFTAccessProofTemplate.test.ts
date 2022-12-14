@@ -108,22 +108,6 @@ describe('NFT Access Proof Template', () => {
           publisher
       )
 
-      // ddo = await nevermined.assets.createNft(
-      //   metadata,
-      //   publisher,
-      //   assetPrice,
-      //   undefined,
-      //   BigNumber.from(100),
-      //   undefined,
-      //   BigNumber.from(20),
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   ['nft-access'],
-      // );
-
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')
       buyerPub = await keyTransfer.secretToPublic(buyerK)

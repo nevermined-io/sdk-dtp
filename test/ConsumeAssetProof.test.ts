@@ -45,7 +45,7 @@ describe('Consume Asset (Node w/ proofs)', () => {
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
     await nevermined.services.marketplace.login(clientAssertion)
-    const payload = decodeJwt(config.marketplaceAuthToken)
+    const payload = decodeJwt(config.marketplaceAuthToken!)
 
     consumer.babyX = '0x0d7cdd240c2f5b0640839c49fbaaf016a8c5571b8f592e2b62ea939063545981'
     consumer.babyY = '0x14b14fa0a30ec744dde9f32d519c65ebaa749bfe991a32deea44b83a4e5c65bb'
@@ -53,11 +53,18 @@ describe('Consume Asset (Node w/ proofs)', () => {
 
     metadata = await getMetadataForDTP('foo' + Math.random(), origPasswd, providerKey)
 
-    metadata.userId = payload.sub
-    
+    metadata.userId = payload.sub    
+
     const assetAttributes = AssetAttributes.getInstance({
       metadata
     })        
+    console.log(`User Id: ${assetAttributes.metadata.userId}`)
+    console.log(`Publisher: ${publisher.getId()}`)
+    console.log(`App Id: ${assetAttributes.appId}`)
+    
+    const testDDO = DDO.getInstance(assetAttributes.metadata.userId!, publisher.getId(), assetAttributes.appId)
+    console.log(JSON.stringify(testDDO))
+
     ddo = await nevermined.assets
       .create(assetAttributes, publisher)
 

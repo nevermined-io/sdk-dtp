@@ -1,15 +1,15 @@
-import { MetaData } from '@nevermined-io/nevermined-sdk-js';
-import { readFileSync } from 'fs';
-import { makeKeyTransfer } from '../src/KeyTransfer';
-import { CryptoConfig } from '../src/utils';
+import { MetaData } from '@nevermined-io/nevermined-sdk-js'
+import { readFileSync } from 'fs'
+import { makeKeyTransfer } from '../src/KeyTransfer'
+import { CryptoConfig } from '../src/utils'
 
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 function read(a) {
   if (!a) {
-    return '';
+    return ''
   } else {
-    return readFileSync(a).toString();
+    return readFileSync(a).toString()
   }
 }
 
@@ -18,14 +18,14 @@ export const cryptoConfig: CryptoConfig = {
   provider_password: read(process.env.PROVIDER_PASSWORD),
   provider_rsa_public: read(process.env.PROVIDER_RSA_PUB),
   provider_rsa_private: read(process.env.PROVIDER_RSA_PRIV),
-};
+}
 
 export async function getMetadataForDTP(
   name: string,
   passwd: string,
   providerKey: any,
 ): Promise<MetaData> {
-  const keytransfer = await makeKeyTransfer();
+  const keytransfer = await makeKeyTransfer()
   return {
     main: {
       name,
@@ -53,5 +53,5 @@ export async function getMetadataForDTP(
       providerKey,
       tags: ['weather', 'uk', '2011', 'temperature', 'humidity'],
     },
-  };
+  }
 }

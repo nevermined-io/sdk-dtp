@@ -223,7 +223,7 @@ describe('Register Escrow Access Proof Template', () => {
       try {
         await consumer.requestTokens(totalAmount)
       } catch (error) {
-        Logger.error(error);
+        Logger.error(error)
       }
 
       await keeper.token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
@@ -357,7 +357,7 @@ describe('Register Escrow Access Proof Template', () => {
       try {
         await consumer.requestTokens(totalAmount)
       } catch (error) {
-        Logger.error(error);
+        Logger.error(error)
       }
 
       await nevermined.agreements.conditions.lockPayment(

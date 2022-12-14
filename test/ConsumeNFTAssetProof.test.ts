@@ -1,8 +1,9 @@
 import { Nevermined, Account, DDO, MetaData, Logger } from '@nevermined-io/nevermined-sdk-js';
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
 import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
-import { NFTUpgradeable } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions/NFTs/NFTUpgradable';
+import { Nft1155Contract } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Nft1155Contract';
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer';
+import { NFTAttributes } from '@nevermined-io/nevermined-sdk-js/dist/node/models/NFTAttributes';
 import { generateId, zeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber';
 import { assert } from 'chai';
@@ -20,7 +21,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
 
   let publisher: Account;
   let consumer: Account;
-  let token: NFTUpgradeable;
+  let nftContract: Nft1155Contract;
 
   let ddo: DDO;
   let agreementId: string;
@@ -44,14 +45,14 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig);
     keyTransfer = await makeKeyTransfer();
     template = dtp.nftAccessProofTemplate;
-    token = nevermined.keeper.nftUpgradeable;
+    nftContract = nevermined.keeper.nftUpgradeable;
 
     // Accounts
     [publisher, consumer] = await nevermined.accounts.list();
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher);
 
-    await nevermined.marketplace.login(clientAssertion);
+    await nevermined.services.marketplace.login(clientAssertion);
     const payload = decodeJwt(config.marketplaceAuthToken);
 
     consumer.babyX = '0x0d7cdd240c2f5b0640839c49fbaaf016a8c5571b8f592e2b62ea939063545981';
@@ -72,7 +73,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   });
 
   it('should fetch the RSA publicKey from the node', async () => {
-    const rsaPublicKey = await nevermined.node.getRsaPublicKey();
+    const rsaPublicKey = await nevermined.services.node.getRsaPublicKey();
     assert.isDefined(rsaPublicKey);
   });
 
@@ -82,23 +83,36 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   });
 
   it('should register an asset', async () => {
-    ddo = await nevermined.assets.createNft(
-      metadata,
-      publisher,
-      undefined,
-      undefined,
-      BigNumber.from(100),
-      undefined,
-      BigNumber.from(1),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      ['nft-access'],
-    );
 
-    await token.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId());
+    const nftAttributes = NFTAttributes.getNFT1155Instance({
+      metadata,
+      serviceTypes: ['nft-sales', 'nft-access'],
+      nftContractAddress: nftContract.address,
+      cap: BigNumber.from(100),
+      amount: BigNumber.from(1)
+    })            
+    ddo = await nevermined.nfts1155.create(
+        nftAttributes,
+        publisher
+    )
+
+    // ddo = await nevermined.nfts1155.create(
+    //   metadata,
+    //   publisher,
+    //   undefined,
+    //   undefined,
+    //   BigNumber.from(100),
+    //   undefined,
+    //   BigNumber.from(1),
+    //   undefined,
+    //   undefined,
+    //   undefined,
+    //   undefined,
+    //   undefined,
+    //   ['nft-access'],
+    // );
+
+    await nftContract.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId());
 
     assert.instanceOf(ddo, DDO);
   });

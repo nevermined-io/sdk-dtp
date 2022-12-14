@@ -2,7 +2,6 @@ import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { config } from './config'
 import { Nevermined, Keeper, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js'
-import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
 import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
@@ -18,6 +17,8 @@ import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { cryptoConfig, getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
+import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice'
+import { AssetAttributes } from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetAttributes'
 
 describe('Register Escrow Access Proof Template', () => {
   let nevermined: Nevermined
@@ -307,18 +308,29 @@ describe('Register Escrow Access Proof Template', () => {
         publisher
       )
 
-      await nevermined.marketplace.login(clientAssertion)
+      await nevermined.services.marketplace.login(clientAssertion)
 
       const payload = decodeJwt(config.marketplaceAuthToken)
       metadata.userId = payload.sub
 
-      const assetRewards = new AssetRewards(
+      const assetPrice = new AssetPrice(
         new Map([
           [receivers[0], amounts[0]],
           [receivers[1], amounts[1]]
         ])
       )
-      ddo = await nevermined.assets.create(metadata, publisher, assetRewards, ['access'])
+
+      const assetAttributes = AssetAttributes.getInstance({
+        metadata,
+        price: assetPrice,
+        serviceTypes: ['access']
+    })
+      ddo = await nevermined.assets.create(
+        assetAttributes,
+        publisher
+      )  
+
+      // ddo = await nevermined.assets.create(metadata, publisher, assetPrice, ['access'])
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')
       providerK = await keyTransfer.makeKey('abc')

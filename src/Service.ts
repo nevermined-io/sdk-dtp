@@ -12,7 +12,7 @@ import {
 } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
 import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase';
 import { AccessTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
-import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
+import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice';
 import {
   NFTAccessService,
   NFTSalesService,
@@ -65,13 +65,13 @@ export class AccessProofService extends Instantiable
   public async createService(
     publisher: Account,
     metadata: MetaData,
-    assetRewards: AssetRewards,
+    assetPrice: AssetPrice,
     erc20TokenAddress: string,
   ): Promise<ServiceAccess | ServiceAccessProof> {
     return this.select(metadata.main).createService(
       publisher,
       metadata,
-      assetRewards,
+      assetPrice,
       erc20TokenAddress,
       false,
     );
@@ -122,13 +122,13 @@ export class NFTAccessProofService extends Instantiable
   public async createService(
     publisher: Account,
     metadata: MetaData,
-    assetRewards: AssetRewards,
+    assetPrice: AssetPrice,
     erc20TokenAddress: string,
   ) {
     return this.select(metadata.main).createService(
       publisher,
       metadata,
-      assetRewards,
+      assetPrice,
       erc20TokenAddress,
       false,
     );
@@ -183,13 +183,13 @@ export class NFTSalesProofService extends Instantiable
   public async createService(
     publisher: Account,
     metadata: MetaData,
-    assetRewards: AssetRewards,
+    assetPrice: AssetPrice,
     erc20TokenAddress: string,
   ): Promise<ServiceNFTSales | ServiceNFTSalesProof> {
     return this.select(metadata.main).createService(
       publisher,
       metadata,
-      assetRewards,
+      assetPrice,
       erc20TokenAddress,
       true,
     );

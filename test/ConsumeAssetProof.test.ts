@@ -1,5 +1,6 @@
 import { Nevermined, Account, DDO, MetaData, Logger } from '@nevermined-io/nevermined-sdk-js';
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
+import { AssetAttributes } from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetAttributes';
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer';
 import { assert } from 'chai';
 import { decodeJwt } from 'jose';
@@ -42,7 +43,7 @@ describe('Consume Asset (Node w/ proofs)', () => {
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher);
 
-    await nevermined.marketplace.login(clientAssertion);
+    await nevermined.services.marketplace.login(clientAssertion);
     const payload = decodeJwt(config.marketplaceAuthToken);
 
     consumer.babyX = '0x0d7cdd240c2f5b0640839c49fbaaf016a8c5571b8f592e2b62ea939063545981';
@@ -63,7 +64,7 @@ describe('Consume Asset (Node w/ proofs)', () => {
   });
 
   it('should fetch the RSA publicKey from the node', async () => {
-    const rsaPublicKey = await nevermined.node.getRsaPublicKey();
+    const rsaPublicKey = await nevermined.services.node.getRsaPublicKey();
     assert.isDefined(rsaPublicKey);
   });
 
@@ -74,8 +75,12 @@ describe('Consume Asset (Node w/ proofs)', () => {
 
   it('should register an asset', async () => {
     const steps: any[] = [];
+    const assetAttributes = AssetAttributes.getInstance({
+      metadata,
+      serviceTypes: ['access']
+  })
     ddo = await nevermined.assets
-      .create(metadata, publisher, undefined, ['access'])
+      .create(assetAttributes, publisher)
       .next((step) => steps.push(step));
 
     assert.instanceOf(ddo, DDO);
@@ -93,7 +98,7 @@ describe('Consume Asset (Node w/ proofs)', () => {
 
     const steps: any[] = [];
     agreementId = await nevermined.assets
-      .order(ddo.id, 'access', consumer)
+      .order(ddo.id, consumer)
       .next((step) => steps.push(step));
 
     assert.isDefined(agreementId);

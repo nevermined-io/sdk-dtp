@@ -5,7 +5,7 @@ import { Service, ValidationParams } from '@nevermined-io/nevermined-sdk-js/dist
 import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
 import { CryptoConfig, decrypt } from './utils';
 import { Dtp } from './Dtp';
-import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
+import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice';
 
 type AssetData = { url: string; content_type: string };
 
@@ -38,14 +38,14 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
   public async createService(
     publisher: Account,
     metadata: MetaData,
-    assetRewards?: AssetRewards,
+    assetPrice?: AssetPrice,
     erc20TokenAddress?: string,
     priced?: boolean,
   ): Promise<S> {
     const service = await super.createService(
       publisher,
       metadata,
-      assetRewards,
+      assetPrice,
       erc20TokenAddress,
       priced,
     );

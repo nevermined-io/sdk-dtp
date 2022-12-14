@@ -143,7 +143,7 @@ export class Dtp extends Instantiable {
         babysig: await this.signBabyjub(account, BigInt(address)),
         buyer: account.getPublic(),
       });
-      accessToken = await this.nevermined.node.fetchToken(grantToken);
+      accessToken = await this.nevermined.services.node.fetchToken(grantToken);
       jwt.tokenCache.set(cacheKey, accessToken);
     } else {
       accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!;

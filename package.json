@@ -1,6 +1,6 @@
 {
   "name": "@nevermined-io/nevermined-sdk-dtp",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Javascript SDK for connecting with Nevermined Data Platform (Data Transfer proofs module)",
   "main": "./dist/index.js",
   "typings": "./dist/node/index.d.ts",

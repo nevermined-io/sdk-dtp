@@ -9,7 +9,7 @@ import {
   EscrowPaymentCondition,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
 import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
-import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
+import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice';
 import { AccessProofCondition } from './AccessProofCondition';
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate';
 import { Dtp } from './Dtp';
@@ -44,10 +44,10 @@ export class AccessProofTemplate extends ProofTemplate<
   public async createService(
     publisher: Account,
     metadata: MetaData,
-    assetRewards?: AssetRewards,
+    assetPrice?: AssetPrice,
     erc20TokenAddress?: string,
   ): Promise<ServiceAccessProof> {
-    return await super.createService(publisher, metadata, assetRewards, erc20TokenAddress, true);
+    return await super.createService(publisher, metadata, assetPrice, erc20TokenAddress, true);
   }
 
   public async getServiceAgreementTemplate() {

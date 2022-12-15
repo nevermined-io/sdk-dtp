@@ -139,7 +139,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   })
 
   it('buyer should have the key', async () => {
-    await sleep(10000)
+    // await sleep(10000)
     await dtp.readKey(
         agreementId,
         keyTransfer.makeKey(consumer.babySecret),

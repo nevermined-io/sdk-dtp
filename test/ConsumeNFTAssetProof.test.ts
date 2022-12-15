@@ -98,9 +98,11 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
         publisher
     )
 
+    const nftContractOwner = new Account(await nftContract.owner())
+    await nftContract.setProxyApproval(publisher.getId(), true, nftContractOwner)
+
     await nftContract.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
     const balance = await nftContract.balance(consumer.getId(), ddo.id)
-    console.log(`Balance: ${balance.toString()}`)
     assert(balance.eq(BigNumber.from(10)))
   })
 

@@ -62,8 +62,6 @@ describe('Consume Asset (Node w/ proofs)', () => {
     ddo = await nevermined.assets
       .create(assetAttributes, publisher)
 
-    // console.log(`Asset registered: ${ddo.id}`)
-    // console.log(JSON.stringify(ddo.findServiceByType('metadata').attributes))
     assert.instanceOf(ddo, DDO)        
   })
 

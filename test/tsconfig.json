@@ -1,16 +1,3 @@
-// DTP
-// {
-//   "compilerOptions": {
-//     "moduleResolution": "Node",
-//     "lib": ["es6", "es7", "dom"],
-//     "noUnusedLocals": true,
-//     "esModuleInterop": true,
-//     "target": "ES2020",
-//     "allowSyntheticDefaultImports": true
-//   }
-// }
-
-// SDK-JS
 {
   "compilerOptions": {
     "resolveJsonModule": true,

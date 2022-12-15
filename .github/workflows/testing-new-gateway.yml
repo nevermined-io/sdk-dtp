@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: nevermined-io/node
-          rel: 'develop' # TODO: Remove when everything is in main branch
+          ref: 'develop' # TODO: Remove when everything is in main branch
           path: node
           token: ${{ secrets.API_TOKEN_GITHUB }}
 

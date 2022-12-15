@@ -258,12 +258,16 @@ export class Dtp extends Instantiable {
     const timeToSleep = 3000    
 
     let ev
-    for (let timesTried = 0; timesTried < timesToRetry; timesTried++) {    
+    for (let timesTried = 0; timesTried < timesToRetry; timesTried++) {
+      console.log(`Trying to pickup events [${timesTried}]`)
       ev = await this.accessProofCondition.events.once((events) => events, evOptions)
-      if (!ev.length)
+      if (!ev.length) {
+        console.log(`Events not found, going to sleep`)
         await this.sleep(timeToSleep)
-      else
+      } else {
+        console.log(`Events found!`)
         break
+      }        
     }
 
     if (!ev.length) {

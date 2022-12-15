@@ -41,10 +41,10 @@ jobs:
           export KEEPER_OWNER_ROLE_ADDRESS="0xe2DD09d719Da89e5a3D0F2549c7E24566e947260"
           rm -rf "${HOME}/.nevermined/nevermined-contracts/artifacts"
 
-          # TODO: Use the default Node when merged into master
+          # TODO: Use the default versions when merged into master
           export KEEPER_VERSION=develop
           export SUBGRAPH_VERSION=develop
-          export NODE_VERSION=latest
+          export NODE_VERSION=develop
           ./start_nevermined.sh --no-graph ${{ matrix.network }} 2>&1 | tee nevermined_tools.txt &
           cd ..
           ./scripts/wait-nevermined.sh

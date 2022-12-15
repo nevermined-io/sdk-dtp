@@ -139,6 +139,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   })
 
   it('buyer should have the key', async () => {
+    console.log(`Checking if we have the key`)
 
     // Picking up events fails in the CI because events are not there sometimes
     // Here we retry a few times to ensure we pick the event
@@ -147,7 +148,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     let timesTried
     let found = false
 
-    for (timesTried = 0; timesToRetry < timesToRetry; timesTried++) {
+    for (timesTried = 0; timesTried < timesToRetry; timesTried++) {
       try {
         const key = await dtp.readKey(
           agreementId,

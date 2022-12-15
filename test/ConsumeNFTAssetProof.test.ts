@@ -139,11 +139,13 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   })
 
   it('buyer should have the key', async () => {
-    // wait for subgraph to pick up the events
-    
+
+    // Picking up events fails in the CI because events are not there sometimes
+    // Here we retry a few times to ensure we pick the event
     const timesToRetry = 5
     const timeToSleep = 3000
     let timesTried
+    let found = false
 
     for (timesTried = 0; timesToRetry < timesToRetry; timesTried++) {
       try {
@@ -155,17 +157,13 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
         
         assert.equal(key.toString('hex'), origPasswd)
         console.log(`Key found!`)
+        found = true
         break
       } catch (error) {
         console.log(`Unable to find event [${timesTried}], sleeping (${timeToSleep} ms)....`)
         await sleep(timeToSleep)
-      }            
+      }                  
     }
-    // const key = await dtp.readKey(
-    //   agreementId,
-    //   keyTransfer.makeKey(consumer.babySecret),
-    //   new BabyjubPublicKey(providerKey.x, providerKey.y),
-    // )
-    // assert.equal(key.toString('hex'), origPasswd)
+    assert(found)
   })
 })

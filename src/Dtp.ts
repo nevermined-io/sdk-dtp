@@ -254,7 +254,7 @@ export class Dtp extends Instantiable {
         _conditionId: true,
       },
     }
-    const timesToRetry = 5
+    const timesToRetry = 30
     const timeToSleep = 3000    
 
     let ev

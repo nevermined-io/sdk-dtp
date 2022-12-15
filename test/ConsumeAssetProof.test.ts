@@ -58,17 +58,12 @@ describe('Consume Asset (Node w/ proofs)', () => {
     const assetAttributes = AssetAttributes.getInstance({
       metadata
     })        
-    console.log(`User Id: ${assetAttributes.metadata.userId}`)
-    console.log(`Publisher: ${publisher.getId()}`)
-    console.log(`App Id: ${assetAttributes.appId}`)
-    
-    const testDDO = DDO.getInstance(assetAttributes.metadata.userId!, publisher.getId(), assetAttributes.appId)
-    console.log(JSON.stringify(testDDO))
 
     ddo = await nevermined.assets
       .create(assetAttributes, publisher)
 
-    console.log(`Asset registered: ${ddo.id}`)
+    // console.log(`Asset registered: ${ddo.id}`)
+    // console.log(JSON.stringify(ddo.findServiceByType('metadata').attributes))
     assert.instanceOf(ddo, DDO)        
   })
 

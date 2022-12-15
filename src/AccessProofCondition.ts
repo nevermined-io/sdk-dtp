@@ -32,6 +32,7 @@ export class AccessProofCondition extends ProviderCondition<
   public async paramsFromDDO({ service, consumer }: AccessProofConditionContext) {
     const keytransfer = await makeKeyTransfer()
     const { _hash, _providerPub } = service.attributes.main
+    
     const buyerPub: BabyjubPublicKey = keytransfer.makePublic(consumer.babyX!, consumer.babyY!)
     const providerPub: BabyjubPublicKey = keytransfer.makePublic(_providerPub.x, _providerPub.y)
     return {

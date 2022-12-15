@@ -54,7 +54,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
     await nevermined.services.marketplace.login(clientAssertion)
-    const payload = decodeJwt(config.marketplaceAuthToken)
+    const payload = decodeJwt(config.marketplaceAuthToken!)
 
     consumer.babyX = '0x0d7cdd240c2f5b0640839c49fbaaf016a8c5571b8f592e2b62ea939063545981'
     consumer.babyY = '0x14b14fa0a30ec744dde9f32d519c65ebaa749bfe991a32deea44b83a4e5c65bb'
@@ -63,19 +63,6 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     metadata = await getMetadataForDTP('foo' + Math.random(), origPasswd, providerKey)
 
     metadata.userId = payload.sub
-
-    const nftAttributes = NFTAttributes.getNFT1155Instance({
-      metadata,
-      serviceTypes: ['nft-sales', 'nft-access'],
-      nftContractAddress: nftContract.address,
-      cap: BigNumber.from(100),
-      amount: BigNumber.from(1)
-    })            
-    ddo = await nevermined.nfts1155.create(
-        nftAttributes,
-        publisher
-    )
-    assert.instanceOf(ddo, DDO)
 
   })
 
@@ -97,56 +84,46 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     await consumer.authenticate()
   })
 
-  it('should transfer an asset', async () => {
+  it('should register and transfer an asset', async () => {
 
-    // const nftAttributes = NFTAttributes.getNFT1155Instance({
-    //   metadata,
-    //   serviceTypes: ['nft-sales', 'nft-access'],
-    //   nftContractAddress: nftContract.address,
-    //   cap: BigNumber.from(100),
-    //   amount: BigNumber.from(1)
-    // })            
-    // ddo = await nevermined.nfts1155.create(
-    //     nftAttributes,
-    //     publisher
-    // )
-
-    // // ddo = await nevermined.nfts1155.create(
-    // //   metadata,
-    // //   publisher,
-    // //   undefined,
-    // //   undefined,
-    // //   BigNumber.from(100),
-    // //   undefined,
-    // //   BigNumber.from(1),
-    // //   undefined,
-    // //   undefined,
-    // //   undefined,
-    // //   undefined,
-    // //   undefined,
-    // //   ['nft-access'],
-    // // );
+    const nftAttributes = NFTAttributes.getNFT1155Instance({
+      metadata,
+      serviceTypes: ['nft-access'],
+      nftContractAddress: nftContract.address,
+      cap: BigNumber.from(100),
+      amount: BigNumber.from(1)
+    })            
+    ddo = await nevermined.nfts1155.create(
+        nftAttributes,
+        publisher
+    )
 
     await nftContract.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
-
+    const balance = await nftContract.balance(consumer.getId(), ddo.id)
+    console.log(`Balance: ${balance.toString()}`)
+    assert(balance.eq(BigNumber.from(10)))
   })
 
   it('should order the asset', async () => {
     const agreementIdSeed = zeroX(generateId())
+
     const params = template.params(consumer, consumer.getId(), BigNumber.from(1))
+
     agreementId = await template.createAgreementFromDDO(
       agreementIdSeed,
       ddo,
       params,
       consumer,
       consumer,
-    )
+    )    
+
     const agreementData = await template.instanceFromDDO(
       agreementIdSeed,
       ddo,
       consumer.getId(),
       params,
     )
+
     await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
       agreementData.instances[0] as ConditionInstance<any>,
       {},

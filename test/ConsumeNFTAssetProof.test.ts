@@ -140,7 +140,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
 
   it('buyer should have the key', async () => {
     // wait for subgraph to pick up the events
-    await sleep(3000)
+    await sleep(5000)
     const key = await dtp.readKey(
       agreementId,
       keyTransfer.makeKey(consumer.babySecret),

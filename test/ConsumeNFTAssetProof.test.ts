@@ -21,7 +21,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
 
   let publisher: Account
   let consumer: Account
-  let nftContract: Nft1155Contract
+  let token: Nft1155Contract
 
   let ddo: DDO
   let agreementId: string
@@ -35,7 +35,6 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   const origPasswd = Buffer.from('passwd_32_letters_1234567890asdF').toString('hex')
 
   let metadata: MetaData
-  
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
@@ -46,7 +45,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
     keyTransfer = await makeKeyTransfer()
     template = dtp.nftAccessProofTemplate
-    nftContract = nevermined.keeper.nftUpgradeable;
+    token = nevermined.keeper.nftUpgradeable;
 
     // Accounts
     [publisher, consumer] = await nevermined.accounts.list()
@@ -63,7 +62,6 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     metadata = await getMetadataForDTP('foo' + Math.random(), origPasswd, providerKey)
 
     metadata.userId = payload.sub
-
   })
 
   after(() => {
@@ -84,12 +82,12 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     await consumer.authenticate()
   })
 
-  it('should register and transfer an asset', async () => {
+  it('should register an asset', async () => {
 
     const nftAttributes = NFTAttributes.getNFT1155Instance({
       metadata,
       serviceTypes: ['nft-access'],
-      nftContractAddress: nftContract.address,
+      nftContractAddress: token.address,
       cap: BigNumber.from(100),
       amount: BigNumber.from(1)
     })            
@@ -98,34 +96,30 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
         publisher
     )
 
-    const nftContractOwner = new Account(await nftContract.owner())
-    await nftContract.setProxyApproval(publisher.getId(), true, nftContractOwner)
+    const nftContractOwner = new Account(await token.owner())
+    await token.setProxyApproval(publisher.getId(), true, nftContractOwner)
 
-    await nftContract.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
-    const balance = await nftContract.balance(consumer.getId(), ddo.id)
+    await token.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
+    const balance = await token.balance(consumer.getId(), ddo.id)
     assert(balance.eq(BigNumber.from(10)))
   })
 
   it('should order the asset', async () => {
     const agreementIdSeed = zeroX(generateId())
-
     const params = template.params(consumer, consumer.getId(), BigNumber.from(1))
-
     agreementId = await template.createAgreementFromDDO(
       agreementIdSeed,
       ddo,
       params,
       consumer,
       consumer,
-    )    
-
+    )
     const agreementData = await template.instanceFromDDO(
       agreementIdSeed,
       ddo,
       consumer.getId(),
       params,
     )
-
     await nevermined.keeper.conditions.nftHolderCondition.fulfillInstance(
       agreementData.instances[0] as ConditionInstance<any>,
       {},
@@ -139,41 +133,13 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   })
 
   it('buyer should have the key', async () => {
-    await sleep(1000)
-    await dtp.readKey(
-        agreementId,
-        keyTransfer.makeKey(consumer.babySecret),
-        new BabyjubPublicKey(providerKey.x, providerKey.y),
-      ).then(key => {
-        assert.equal(key.toString('hex'), origPasswd)  
-      })      
+    // wait for subgraph to pick up the events
+    await sleep(3000)
+    const key = await dtp.readKey(
+      agreementId,
+      keyTransfer.makeKey(consumer.babySecret),
+      new BabyjubPublicKey(providerKey.x, providerKey.y),
+    )
+    assert.equal(key.toString('hex'), origPasswd)
   })
-  // it('buyer should have the key', async () => {
-  //   console.log(`Checking if we have the key`)
-
-  //   // Picking up events fails in the CI because events are not there sometimes
-  //   // Here we retry a few times to ensure we pick the event
-  //   const timesToRetry = 5
-  //   const timeToSleep = 3000    
-  //   let found = false
-
-  //   for (let timesTried = 0; timesTried < timesToRetry; timesTried++) {
-  //     try {
-  //       const key = await dtp.readKey(
-  //         agreementId,
-  //         keyTransfer.makeKey(consumer.babySecret),
-  //         new BabyjubPublicKey(providerKey.x, providerKey.y),
-  //       )
-        
-  //       assert.equal(key.toString('hex'), origPasswd)
-  //       console.log(`Key found!`)
-  //       found = true
-  //       break
-  //     } catch (error) {
-  //       console.log(`Unable to find event [${timesTried}], sleeping (${timeToSleep} ms)....`)
-  //       await sleep(timeToSleep)
-  //     }                  
-  //   }
-  //   assert(found)
-  // })
 })

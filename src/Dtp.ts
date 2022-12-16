@@ -254,21 +254,7 @@ export class Dtp extends Instantiable {
         _conditionId: true,
       },
     }
-    const timesToRetry = 30
-    const timeToSleep = 3000    
-
-    let ev
-    for (let timesTried = 0; timesTried < timesToRetry; timesTried++) {
-      console.log(`Trying to pickup events [${timesTried}]`)
-      ev = await this.accessProofCondition.events.once((events) => events, evOptions)
-      if (!ev.length) {
-        console.log(`Events not found, going to sleep`)
-        await this.sleep(timeToSleep)
-      } else {
-        console.log(`Events found!`)
-        break
-      }        
-    }
+    const ev = await this.accessProofCondition.events.once((events) => events, evOptions)    
 
     if (!ev.length) {
       throw new KeeperError('No events are returned')
@@ -282,7 +268,4 @@ export class Dtp extends Instantiable {
       await keyTransfer.ecdh(buyerK, providerPub),
     )
   }
-
-  sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
 }

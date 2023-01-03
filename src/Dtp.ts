@@ -152,7 +152,7 @@ export class Dtp extends Instantiable {
       Authorization: 'Bearer ' + accessToken,
     };
 
-    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0`;
+    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0?result=url`;
     try {
       return await this.nevermined.utils.fetch.downloadUrl(consumeUrl, headers);
     } catch (e) {

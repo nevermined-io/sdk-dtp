@@ -139,35 +139,8 @@ describe('NFT Transfer Proof Template', () => {
     });
 
     it('should fulfill the conditions from publisher side', async () => {
-      await dtp.transferForDelegate(ddo.id, agreementId, consumer, BigNumber.from(1), publisher.getId())
-      /*
-      const result = await nevermined.nfts.transferForDelegate(
-        agreementId,
-        publisher.getId(),
-        collector1.getId(),
-        numberNFTs
-      )
+      const result = await dtp.transferForDelegate(ddo.id, agreementId, consumer, BigNumber.from(1), publisher.getId())
       assert.isTrue(result)
-      */
-    /*
-      const extra: AccessProofConditionExtra = {
-        providerK,
-        data,
-      };
-      await nevermined.keeper.conditions.transferNftCondition.fulfillInstance(
-        agreementData.instances[1] as ConditionInstance<any>,
-        {},
-        publisher,
-      );
-      await dtp.accessProofCondition.fulfillInstance(
-        agreementData.instances[3] as ConditionInstance<AccessProofConditionExtra>,
-        extra,
-      );
-      await nevermined.keeper.conditions.escrowPaymentCondition.fulfillInstance(
-        agreementData.instances[2] as ConditionInstance<any>,
-        {},
-      );
-      */
     });
 
     it('buyer should have the key', async () => {

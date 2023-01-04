@@ -169,9 +169,7 @@ export class Dtp extends Instantiable {
     nftAmount: BigNumber,
     nftHolder: string
   ): Promise<boolean> {
-    console.log(did)
     const ddo = await this.nevermined.assets.resolve(didZeroX(did));
-    // console.log(ddo)
     const service = 'nft-sales'
     const { serviceEndpoint } = ddo.findServiceByType(service);
     const { jwt } = this.nevermined.utils;
@@ -181,10 +179,6 @@ export class Dtp extends Instantiable {
     if (!jwt.tokenCache.has(cacheKey)) {
       const address = account.getId();
       const babysig = await this.signBabyjub(account, BigInt(address))
-      console.log(
-        'check sig',
-        await this.keytransfer.verifyBabyjub(await this.keytransfer.makePublic(account.babyX, account.babyY), BigInt(address), babysig)
-      )
       const grantToken = await jwt.generateToken(account, agreementId, did, '/nft-sales', {
         babysig,
         buyer: account.getPublic(),
@@ -198,7 +192,6 @@ export class Dtp extends Instantiable {
       Authorization: `Bearer ${accessToken}`,
     };
 
-    console.log('buyer', account.getPublic())
 
     // const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}`;
     const response = await this.nevermined.utils.fetch.post(

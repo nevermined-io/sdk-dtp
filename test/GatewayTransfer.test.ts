@@ -7,24 +7,16 @@ import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/mod
 import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
 
 import { Dtp } from '../src/Dtp';
-import { AccessProofConditionExtra } from '../src/AccessProofCondition';
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer';
 import { cryptoConfig, getMetadataForDTP } from './utils';
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber';
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
-import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
-import {
-  NFTSalesWithAccessTemplate,
-  NFTSalesWithAccessTemplateParams,
-} from '../src/NFTSalesWithAccessTemplate';
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token';
 import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
 
 describe('NFT Transfer Proof Template', () => {
   let nevermined: Nevermined;
 
-  let accessProofTemplate: NFTSalesWithAccessTemplate;
   let lockPaymentCondition: LockPaymentCondition;
 
   const totalAmount = BigNumber.from(12);
@@ -46,7 +38,6 @@ describe('NFT Transfer Proof Template', () => {
     };
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig);
-    accessProofTemplate = dtp.nftSalesWithAccessTemplate;
     ({ lockPaymentCondition } = nevermined.keeper.conditions);
 
     // Accounts
@@ -65,8 +56,6 @@ describe('NFT Transfer Proof Template', () => {
     let providerPub: BabyjubPublicKey;
     let keyTransfer: KeyTransfer;
     let token: Token;
-
-    let agreementData: AgreementInstance<NFTSalesWithAccessTemplateParams>;
 
     const providerKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
@@ -113,8 +102,6 @@ describe('NFT Transfer Proof Template', () => {
         ['nft-sales'],
       );
 
-      console.log('did', ddo.id)
-
       keyTransfer = await makeKeyTransfer();
       buyerK = await keyTransfer.makeKey('abd');
       buyerPub = await keyTransfer.secretToPublic(buyerK);
@@ -147,5 +134,9 @@ describe('NFT Transfer Proof Template', () => {
       const key = await dtp.readKey(agreementId, buyerK, providerPub);
       assert.equal(key.toString(), data.toString());
     });
+
+    it('access the asset using key', async () => {
+      await nevermined.assets.download(ddo.id, consumer, undefined, 1, true, 'nft-sales')
+    })
   });
 });

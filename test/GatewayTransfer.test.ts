@@ -93,13 +93,13 @@ describe('NFT Transfer Proof Template', () => {
         undefined,
         BigNumber.from(100),
         undefined,
-        BigNumber.from(20),
+        BigNumber.from(1),
         undefined,
         undefined,
         undefined,
         undefined,
         undefined,
-        ['nft-sales'],
+        ['nft-sales', 'nft-access'],
       );
 
       keyTransfer = await makeKeyTransfer();

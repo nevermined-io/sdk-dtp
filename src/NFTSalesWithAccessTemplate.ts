@@ -59,7 +59,7 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
       params.consumer_address,
       params.babysig,
     );
-    return this.params(consumer, params.nft_holder);
+    return this.params(consumer, params.nft_holder, params.nft_amount);
   }
 
   public conditions(): [

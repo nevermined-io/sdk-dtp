@@ -4,8 +4,6 @@ import { config } from './config';
 import { Nevermined, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js';
 import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer';
-import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
-
 import { Dtp } from '../src/Dtp';
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer';
 import { cryptoConfig, getMetadataForDTP } from './utils';
@@ -47,7 +45,7 @@ describe('NFT Transfer Proof Template', () => {
   });
 
   describe('Short flow', () => {
-    let agreementId, agreementIdSeed: string;
+    let agreementId: string;
     let ddo: DDO;
 
     let buyerK: string;
@@ -84,7 +82,6 @@ describe('NFT Transfer Proof Template', () => {
           [receivers[1], amounts[1]],
         ]),
       );
-      agreementIdSeed = generateId();
 
       ddo = await nevermined.assets.createNft(
         metadata,

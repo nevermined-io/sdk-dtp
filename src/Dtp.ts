@@ -13,7 +13,7 @@ import {
   NeverminedNodeError,
   KeeperError,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/errors';
-import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
+import { didZeroX, generateId, noZeroX, zeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
 import {
   BabyjubPublicKey,
   MimcCipher,
@@ -27,6 +27,8 @@ import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate';
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate';
 import { CryptoConfig } from './utils';
 import { AccessProofService, NFTAccessProofService, NFTSalesProofService } from './Service';
+import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber';
+import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
 
 export class Dtp extends Instantiable {
   public accessProofCondition: AccessProofCondition;
@@ -160,6 +162,60 @@ export class Dtp extends Instantiable {
     }
   }
 
+  public async transferForDelegate(
+    did: string,
+    agreementId: string,
+    account: Account,
+    nftAmount: BigNumber,
+    nftHolder: string
+  ): Promise<boolean> {
+    console.log(did)
+    const ddo = await this.nevermined.assets.resolve(didZeroX(did));
+    // console.log(ddo)
+    const service = 'nft-sales'
+    const { serviceEndpoint } = ddo.findServiceByType(service);
+    const { jwt } = this.nevermined.utils;
+    let accessToken: string;
+    const cacheKey = jwt.generateCacheKey(account.getId(), agreementId, did);
+
+    if (!jwt.tokenCache.has(cacheKey)) {
+      const address = account.getId();
+      const babysig = await this.signBabyjub(account, BigInt(address))
+      console.log(
+        'check sig',
+        await this.keytransfer.verifyBabyjub(await this.keytransfer.makePublic(account.babyX, account.babyY), BigInt(address), babysig)
+      )
+      const grantToken = await jwt.generateToken(account, agreementId, did, '/nft-sales', {
+        babysig,
+        buyer: account.getPublic(),
+      });
+      accessToken = await this.nevermined.node.fetchToken(grantToken);
+      jwt.tokenCache.set(cacheKey, accessToken);
+    } else {
+      accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!;
+    }
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    console.log('buyer', account.getPublic())
+
+    // const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}`;
+    const response = await this.nevermined.utils.fetch.post(
+      serviceEndpoint,
+      JSON.stringify({
+          agreementId,
+          nftHolder,
+          nftReceiver: account.getId(),
+          buyer: account.getPublic(),
+          nftAmount: nftAmount.toString(),
+          nftType: 1155
+      }),
+      headers
+    )
+    return response.ok
+  }
+
   /**
    * Transfer the key to the buyer.
    * @param agreementId - Agreement ID.
@@ -267,5 +323,38 @@ export class Dtp extends Instantiable {
       new MimcCipher(cipherL, cipherR),
       await keyTransfer.ecdh(buyerK, providerPub),
     );
+  }
+
+  public async order(did: string,
+    nftAmount: BigNumber,
+    consumer: Account,
+    publisher: string,
+    txParams?: TxParameters) {
+    const agreementIdSeed = zeroX(generateId())
+    const accessProofTemplate = this.nftSalesWithAccessTemplate
+    const ddo = await this.nevermined.assets.resolve(did)
+    const params = accessProofTemplate.params(consumer, publisher, nftAmount);
+    const agreementId = await accessProofTemplate.createAgreementFromDDO(
+      agreementIdSeed,
+      ddo,
+      params,
+      consumer,
+      consumer,
+      undefined,
+      txParams
+    );
+    const agreementData = await accessProofTemplate.instanceFromDDO(
+      agreementIdSeed,
+      ddo,
+      consumer.getId(),
+      params,
+    );
+    await this.nevermined.keeper.conditions.lockPaymentCondition.fulfillInstance(
+      agreementData.instances[0] as ConditionInstance<any>,
+      {},
+      consumer,
+      txParams
+    );
+    return agreementId
   }
 }

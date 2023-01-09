@@ -9,13 +9,11 @@ import {
   InstantiableConfig,
   BabyjubPublicKey,
   MimcCipher,
-} from '@nevermined-io/nevermined-sdk-js'
-import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
-import {
   AssetError,
   NeverminedNodeError,
   KeeperError,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/errors'
+} from '@nevermined-io/nevermined-sdk-js'
+import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 
 import { EventOptions } from '@nevermined-io/nevermined-sdk-js/dist/node/events'

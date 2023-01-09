@@ -13,15 +13,15 @@ import {
   LockPaymentCondition,
   generateId,
   Token,
+  BabyjubPublicKey,
+  BigNumber,
+  generateIntantiableConfigFromConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
-import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { AccessProofTemplate } from '../src/AccessProofTemplate'
 import { Dtp } from '../src/Dtp'
 import { AccessProofCondition } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { cryptoConfig, getMetadataForDTP } from './utils'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 
 describe('Register Escrow Access Proof Template', () => {
   let nevermined: Nevermined

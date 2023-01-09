@@ -6,8 +6,8 @@ import {
   Logger,
   BabyjubPublicKey,
   AssetAttributes,
+  generateIntantiableConfigFromConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp } from '../src/Dtp'

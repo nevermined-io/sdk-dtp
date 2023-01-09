@@ -6,8 +6,8 @@ import {
   NFTHolderCondition,
   AgreementInstance,
   BigNumber,
+  InstantiableConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofCondition } from './AccessProofCondition'
 import { nftAccessTemplateServiceAgreementTemplate } from './NFTAccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'

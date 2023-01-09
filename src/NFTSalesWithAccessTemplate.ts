@@ -4,8 +4,8 @@ import {
   ValidationParams,
   ServiceAgreementTemplate,
   AgreementInstance,
+  InstantiableConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { nftSalesTemplateServiceAgreementTemplate } from './NFTSalesWithAccessTemplate.serviceAgreementTemplate'
 import {
   LockPaymentCondition,

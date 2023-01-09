@@ -1,11 +1,15 @@
 // Extension of main nevermined object
-import {
-  Instantiable,
-  InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Account, ServiceType } from '@nevermined-io/nevermined-sdk-js'
+import {
+  Account,
+  ServiceType,
+  TxParameters,
+  Instantiable,
+  InstantiableConfig,
+  BabyjubPublicKey,
+  MimcCipher,
+} from '@nevermined-io/nevermined-sdk-js'
 import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import {
   AssetError,
@@ -13,11 +17,6 @@ import {
   KeeperError,
 } from '@nevermined-io/nevermined-sdk-js/dist/node/errors'
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-import {
-  BabyjubPublicKey,
-  MimcCipher,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
-import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
 
 import { EventOptions } from '@nevermined-io/nevermined-sdk-js/dist/node/events'
 import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'

@@ -7,8 +7,8 @@ import {
   MimcCipher,
   zeroX,
   TxParameters,
+  InstantiableConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { makeKeyTransfer } from './KeyTransfer'
 
 export interface AccessProofConditionContext extends ConditionContext {

@@ -10,11 +10,9 @@ import {
   AssetPrice,
   NFTAccessService,
   NFTSalesService,
-} from '@nevermined-io/nevermined-sdk-js'
-import {
   Instantiable,
   InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
+} from '@nevermined-io/nevermined-sdk-js'
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'

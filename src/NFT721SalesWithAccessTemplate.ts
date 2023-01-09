@@ -7,8 +7,8 @@ import {
   TransferNFT721Condition,
   EscrowPaymentCondition,
   AgreementInstance,
+  InstantiableConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofCondition } from './AccessProofCondition'
 import { Dtp } from './Dtp'
 import { ProofTemplate } from './ProofTemplate'

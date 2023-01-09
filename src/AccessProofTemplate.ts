@@ -9,8 +9,8 @@ import {
   LockPaymentCondition,
   EscrowPaymentCondition,
   AgreementInstance,
+  InstantiableConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'

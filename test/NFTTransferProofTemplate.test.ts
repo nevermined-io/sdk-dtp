@@ -14,9 +14,9 @@ import {
   NFTAttributes,
   Nft1155Contract,
   BabyjubPublicKey,
+  generateId,
+  BigNumber,
 } from '@nevermined-io/nevermined-sdk-js'
-import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { Dtp } from '../src/Dtp'
 import { AccessProofConditionExtra } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'

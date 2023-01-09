@@ -13,13 +13,13 @@ import {
   ConditionInstance,
   NFTAttributes,
   Nft1155Contract,
+  generateIntantiableConfigFromConfig,
+  BigNumber,
 } from '@nevermined-io/nevermined-sdk-js'
 import { Dtp } from '../src/Dtp'
 import { AccessProofConditionExtra } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { cryptoConfig, getMetadataForDTP } from './utils'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 import { NFTAccessProofTemplate, NFTAccessProofTemplateParams } from '../src/NFTAccessProofTemplate'
 
 describe('NFT Access Proof Template', () => {

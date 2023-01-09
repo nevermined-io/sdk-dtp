@@ -1,8 +1,15 @@
 // Extension of main nevermined object
 import { AccessProofConditionExtra } from './AccessProofCondition'
-import { Account, MetaData, MetaDataMain, Nevermined } from '@nevermined-io/nevermined-sdk-js'
-import { Service, ValidationParams, AssetPrice } from '@nevermined-io/nevermined-sdk-js'
-import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js'
+import {
+  Account,
+  MetaData,
+  MetaDataMain,
+  Nevermined,
+  BaseTemplate,
+  Service,
+  ValidationParams,
+  AssetPrice,
+} from '@nevermined-io/nevermined-sdk-js'
 import { CryptoConfig, decrypt } from './utils'
 import { Dtp } from './Dtp'
 

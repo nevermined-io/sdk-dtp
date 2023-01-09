@@ -5,8 +5,7 @@ import {
 } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Account } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
+import { Account, ServiceType } from '@nevermined-io/nevermined-sdk-js'
 import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import {
   AssetError,
@@ -180,10 +179,7 @@ export class Dtp extends Instantiable {
   ) {
     try {
       const keyTransfer = await makeKeyTransfer()
-      const cipher = await keyTransfer.encryptKey(
-        data,
-        await keyTransfer.ecdh(providerK, buyerPub),
-      )
+      const cipher = await keyTransfer.encryptKey(data, await keyTransfer.ecdh(providerK, buyerPub))
       const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data)
       const hash = await keyTransfer.hashKey(data)
       const receipt = await this.accessProofCondition.fulfill(
@@ -254,7 +250,7 @@ export class Dtp extends Instantiable {
         _conditionId: true,
       },
     }
-    const ev = await this.accessProofCondition.events.once((events) => events, evOptions)    
+    const ev = await this.accessProofCondition.events.once((events) => events, evOptions)
 
     if (!ev.length) {
       throw new KeeperError('No events are returned')

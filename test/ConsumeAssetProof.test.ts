@@ -1,7 +1,13 @@
-import { Nevermined, Account, DDO, MetaData, Logger } from '@nevermined-io/nevermined-sdk-js'
+import {
+  Nevermined,
+  Account,
+  DDO,
+  MetaData,
+  Logger,
+  BabyjubPublicKey,
+  AssetAttributes,
+} from '@nevermined-io/nevermined-sdk-js'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import { AssetAttributes } from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetAttributes'
-import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp } from '../src/Dtp'
@@ -37,10 +43,10 @@ describe('Consume Asset (Node w/ proofs)', () => {
     }
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
-    keyTransfer = await makeKeyTransfer();
+    keyTransfer = await makeKeyTransfer()
 
     // Accounts
-    [publisher, consumer] = await nevermined.accounts.list()
+    ;[publisher, consumer] = await nevermined.accounts.list()
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
@@ -53,16 +59,15 @@ describe('Consume Asset (Node w/ proofs)', () => {
 
     metadata = await getMetadataForDTP('foo' + Math.random(), origPasswd, providerKey)
 
-    metadata.userId = payload.sub    
+    metadata.userId = payload.sub
 
     const assetAttributes = AssetAttributes.getInstance({
-      metadata
-    })        
+      metadata,
+    })
 
-    ddo = await nevermined.assets
-      .create(assetAttributes, publisher)
+    ddo = await nevermined.assets.create(assetAttributes, publisher)
 
-    assert.instanceOf(ddo, DDO)        
+    assert.instanceOf(ddo, DDO)
   })
 
   after(() => {
@@ -78,11 +83,6 @@ describe('Consume Asset (Node w/ proofs)', () => {
     assert.isDefined(rsaPublicKey)
   })
 
-  it('should authenticate the accounts', async () => {
-    await publisher.authenticate()
-    await consumer.authenticate()
-  })
-
   it('should order the asset', async () => {
     try {
       await consumer.requestTokens(
@@ -93,9 +93,7 @@ describe('Consume Asset (Node w/ proofs)', () => {
     }
 
     const steps: any[] = []
-    agreementId = await nevermined.assets
-      .order(ddo.id, consumer)
-      .next((step) => steps.push(step))
+    agreementId = await nevermined.assets.order(ddo.id, consumer).next((step) => steps.push(step))
 
     assert.isDefined(agreementId)
     assert.deepEqual(steps, [0, 1, 2, 3])

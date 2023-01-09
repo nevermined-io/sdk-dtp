@@ -1,25 +1,26 @@
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { config } from './config'
-import { Nevermined, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js'
-import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
-import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-
+import {
+  Nevermined,
+  Account,
+  DDO,
+  Logger,
+  BabyjubPublicKey,
+  AssetPrice,
+  generateId,
+  AgreementInstance,
+  ConditionInstance,
+  NFTAttributes,
+  Nft1155Contract,
+} from '@nevermined-io/nevermined-sdk-js'
 import { Dtp } from '../src/Dtp'
 import { AccessProofConditionExtra } from '../src/AccessProofCondition'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { cryptoConfig, getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
-import {
-  NFTAccessProofTemplate,
-  NFTAccessProofTemplateParams,
-} from '../src/NFTAccessProofTemplate'
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice'
-import { NFTAttributes } from '@nevermined-io/nevermined-sdk-js/dist/node/models/NFTAttributes'
-import { Nft1155Contract } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Nft1155Contract'
+import { NFTAccessProofTemplate, NFTAccessProofTemplateParams } from '../src/NFTAccessProofTemplate'
 
 describe('NFT Access Proof Template', () => {
   let nevermined: Nevermined
@@ -47,10 +48,10 @@ describe('NFT Access Proof Template', () => {
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
     accessProofTemplate = dtp.nftAccessProofTemplate
-    nftContract = nevermined.keeper.nftUpgradeable;
+    nftContract = nevermined.keeper.nftUpgradeable
 
     // Accounts
-    [, publisher, consumer, provider] = await nevermined.accounts.list()
+    ;[, publisher, consumer, provider] = await nevermined.accounts.list()
 
     receivers = [publisher.getId(), provider.getId()]
   })
@@ -84,7 +85,7 @@ describe('NFT Access Proof Template', () => {
 
       await nevermined.services.marketplace.login(clientAssertion)
 
-      const payload = decodeJwt(config.marketplaceAuthToken)
+      const payload = decodeJwt(config.marketplaceAuthToken as string)
       metadata.userId = payload.sub
 
       const assetPrice = new AssetPrice(
@@ -101,12 +102,9 @@ describe('NFT Access Proof Template', () => {
         serviceTypes: ['nft-sales', 'nft-access'],
         nftContractAddress: nftContract.address,
         cap: BigNumber.from(100),
-        amount: BigNumber.from(20)
-      })            
-      ddo = await nevermined.nfts1155.create(
-          nftAttributes,
-          publisher
-      )
+        amount: BigNumber.from(20),
+      })
+      ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')

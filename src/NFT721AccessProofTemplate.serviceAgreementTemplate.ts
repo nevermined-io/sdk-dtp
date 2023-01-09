@@ -1,4 +1,4 @@
-import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
+import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js'
 import { access, nftHolder } from './ConditionTemplate'
 
 export const nft721AccessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {
@@ -10,14 +10,14 @@ export const nft721AccessTemplateServiceAgreementTemplate: ServiceAgreementTempl
       handler: {
         moduleName: 'nft721AccessTemplate',
         functionName: 'fulfillNFTHolderCondition',
-        version: '0.1'
-      }
-    }
+        version: '0.1',
+      },
+    },
   ],
   fulfillmentOrder: ['nftHolder.fulfill', 'nftAccess.fulfill'],
   conditionDependency: {
     nftHolder: [],
-    nftAccess: []
+    nftAccess: [],
   },
-  conditions: [nftHolder, access]
+  conditions: [nftHolder, access],
 }

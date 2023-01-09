@@ -2,11 +2,11 @@ import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-j
 import {
   ServiceType,
   ValidationParams,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
+  ServiceAgreementTemplate,
+  NFT721HolderCondition,
+  AgreementInstance,
+} from '@nevermined-io/nevermined-sdk-js'
 import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import { NFT721HolderCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
 import { AccessProofCondition } from './AccessProofCondition'
 import { nft721AccessTemplateServiceAgreementTemplate } from './NFT721AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'
@@ -14,8 +14,8 @@ import { ProofTemplate } from './ProofTemplate'
 import { ServiceNFTAccessProof } from './Service'
 
 export interface NFT721AccessProofTemplateParams {
-  holderAddress: string;
-  consumer: Account;
+  holderAddress: string
+  consumer: Account
 }
 
 export class NFT721AccessProofTemplate extends ProofTemplate<

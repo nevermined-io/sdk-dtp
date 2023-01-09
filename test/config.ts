@@ -1,4 +1,4 @@
-import NeverminedOptions from '@nevermined-io/nevermined-sdk-js/dist/node/models/NeverminedOptions'
+import { NeverminedOptions } from '@nevermined-io/nevermined-sdk-js'
 import { LoggerInstance, LogLevel } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 import HDWalletProvider from '@truffle/hdwallet-provider'
 
@@ -73,5 +73,5 @@ if (process.env.SEED_WORDS) {
   configBase.web3Provider = new HDWalletProvider(seedphrase, configBase.web3ProviderUri, 0, 10)
 }
 
-export const config: NeverminedOptions & { forceVerbose: NeverminedOptions } = configBase as any;
-(config as any).forceVerbose = { ...configBase, verbose: true }
+export const config: NeverminedOptions & { forceVerbose: NeverminedOptions } = configBase as any
+;(config as any).forceVerbose = { ...configBase, verbose: true }

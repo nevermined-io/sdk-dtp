@@ -1,15 +1,16 @@
-import { Account, AgreementTemplate, DDO, MetaData } from '@nevermined-io/nevermined-sdk-js'
 import {
+  Account,
+  AgreementTemplate,
+  DDO,
+  MetaData,
   ServiceType,
   ValidationParams,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import {
+  AssetPrice,
   LockPaymentCondition,
   EscrowPaymentCondition,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice'
+  AgreementInstance,
+} from '@nevermined-io/nevermined-sdk-js'
+import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'
@@ -17,8 +18,8 @@ import { ProofTemplate } from './ProofTemplate'
 import { ServiceAccessProof } from './Service'
 
 export interface AccessProofTemplateParams {
-  consumer: Account;
-  consumerId: string;
+  consumer: Account
+  consumerId: string
 }
 
 export class AccessProofTemplate extends ProofTemplate<

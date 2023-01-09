@@ -1,11 +1,10 @@
 // Extension of main nevermined object
 import { AccessProofConditionExtra } from './AccessProofCondition'
 import { Account, MetaData, MetaDataMain, Nevermined } from '@nevermined-io/nevermined-sdk-js'
-import { Service, ValidationParams } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+import { Service, ValidationParams, AssetPrice } from '@nevermined-io/nevermined-sdk-js'
+import { BaseTemplate } from '@nevermined-io/nevermined-sdk-js'
 import { CryptoConfig, decrypt } from './utils'
 import { Dtp } from './Dtp'
-import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice'
 
 type AssetData = { url: string; content_type: string }
 
@@ -22,9 +21,7 @@ export async function getAssetUrl(
   const content_type = file_attributes.contentType
   const auth_method = asset.findServiceByType('authorization').service || 'RSAES-OAEP'
   if (auth_method === 'RSAES-OAEP') {
-    const filelist = JSON.parse(
-      await decrypt(config, service.attributes.encryptedFiles, 'PSK-RSA'),
-    )
+    const filelist = JSON.parse(await decrypt(config, service.attributes.encryptedFiles, 'PSK-RSA'))
     // download url or what?
     const { url } = filelist[index]
     return { url, content_type }

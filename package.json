@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "1.0.0-rc7",
+    "@nevermined-io/nevermined-sdk-js": "1.0.0-rc8",
     "circomlibjs": "^0.1.1",
     "eciesjs": "^0.3.15",
     "ffjavascript": "^0.2.55",
@@ -84,8 +84,5 @@
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-merge": "^5.8.0"
-  },
-  "resolutions": {
-    "@nevermined-io/nevermined-sdk-js": "1.0.0-rc7"
   }
 }

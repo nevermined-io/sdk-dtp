@@ -17,10 +17,13 @@ import {
   BigNumber,
   generateIntantiableConfigFromConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { AccessProofTemplate } from '../src/AccessProofTemplate'
-import { Dtp } from '../src/Dtp'
-import { AccessProofCondition } from '../src/AccessProofCondition'
-import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
+import {
+  Dtp,
+  AccessProofCondition,
+  KeyTransfer,
+  makeKeyTransfer,
+  AccessProofTemplate,
+} from '../src'
 import { cryptoConfig, getMetadataForDTP } from './utils'
 
 describe('Register Escrow Access Proof Template', () => {

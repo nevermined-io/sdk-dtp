@@ -16,16 +16,17 @@ import {
   BabyjubPublicKey,
   generateId,
   BigNumber,
+  generateIntantiableConfigFromConfig,
 } from '@nevermined-io/nevermined-sdk-js'
-import { Dtp } from '../src/Dtp'
-import { AccessProofConditionExtra } from '../src/AccessProofCondition'
-import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
-import { cryptoConfig, getMetadataForDTP } from './utils'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import {
+  Dtp,
+  AccessProofConditionExtra,
+  KeyTransfer,
+  makeKeyTransfer,
   NFTSalesWithAccessTemplate,
   NFTSalesWithAccessTemplateParams,
-} from '../src/NFTSalesWithAccessTemplate'
+} from '../src'
+import { cryptoConfig, getMetadataForDTP } from './utils'
 
 describe('NFT Transfer Proof Template', () => {
   let nevermined: Nevermined

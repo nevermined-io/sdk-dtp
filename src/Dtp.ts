@@ -32,11 +32,11 @@ export class Dtp extends Instantiable {
   public nftSalesWithAccessTemplate: NFTSalesWithAccessTemplate
   public nft721SalesWithAccessTemplate: NFT721SalesWithAccessTemplate
   public keytransfer: KeyTransfer
-  public cryptoConfig: CryptoConfig
+  public cryptoConfig?: CryptoConfig
 
   public static async getInstance(
     config: InstantiableConfig,
-    cryptoConfig: CryptoConfig,
+    cryptoConfig?: CryptoConfig,
   ): Promise<Dtp> {
     const dtp = new Dtp()
     dtp.cryptoConfig = cryptoConfig

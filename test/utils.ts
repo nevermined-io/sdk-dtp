@@ -1,7 +1,6 @@
 import { MetaData } from '@nevermined-io/nevermined-sdk-js'
 import { readFileSync } from 'fs'
-import { makeKeyTransfer } from '../src/KeyTransfer'
-import { CryptoConfig } from '../src/utils'
+import { makeKeyTransfer, CryptoConfig } from '../src'
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -14,7 +13,7 @@ function read(a) {
 }
 
 export const cryptoConfig: CryptoConfig = {
-  provider_key: process.env.PROVIDER_KEY,
+  provider_key: process.env.PROVIDER_KEY as string,
   provider_password: read(process.env.PROVIDER_PASSWORD),
   provider_rsa_public: read(process.env.PROVIDER_RSA_PUB),
   provider_rsa_private: read(process.env.PROVIDER_RSA_PRIV),

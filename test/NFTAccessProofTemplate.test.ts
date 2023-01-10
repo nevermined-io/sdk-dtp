@@ -16,11 +16,15 @@ import {
   generateIntantiableConfigFromConfig,
   BigNumber,
 } from '@nevermined-io/nevermined-sdk-js'
-import { Dtp } from '../src/Dtp'
-import { AccessProofConditionExtra } from '../src/AccessProofCondition'
-import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
+import {
+  AccessProofConditionExtra,
+  KeyTransfer,
+  makeKeyTransfer,
+  NFTAccessProofTemplate,
+  NFTAccessProofTemplateParams,
+  Dtp,
+} from '../src'
 import { cryptoConfig, getMetadataForDTP } from './utils'
-import { NFTAccessProofTemplate, NFTAccessProofTemplateParams } from '../src/NFTAccessProofTemplate'
 
 describe('NFT Access Proof Template', () => {
   let nevermined: Nevermined

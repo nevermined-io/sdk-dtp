@@ -15,12 +15,12 @@ import { Dtp } from './Dtp'
 
 type AssetData = { url: string; content_type: string }
 
-export async function getAssetUrl(
+export const getAssetUrl = async (
   nevermined: Nevermined,
   config: CryptoConfig,
   did: string,
   index: number,
-): Promise<AssetData> {
+): Promise<AssetData> => {
   // get url for DID
   const asset = await nevermined.assets.resolve(did)
   const service = asset.findServiceByType('metadata')

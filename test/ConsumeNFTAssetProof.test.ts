@@ -1,11 +1,18 @@
-import { Nevermined, Account, DDO, MetaData, Logger } from '@nevermined-io/nevermined-sdk-js'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import { Nft1155Contract } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Nft1155Contract'
-import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
-import { NFTAttributes } from '@nevermined-io/nevermined-sdk-js/dist/node/models/NFTAttributes'
-import { generateId, zeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
+import {
+  Nevermined,
+  Account,
+  DDO,
+  MetaData,
+  Logger,
+  ConditionInstance,
+  Nft1155Contract,
+  BabyjubPublicKey,
+  NFTAttributes,
+  generateId,
+  zeroX,
+  BigNumber,
+  generateIntantiableConfigFromConfig,
+} from '@nevermined-io/nevermined-sdk-js'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp } from '../src/Dtp'
@@ -45,10 +52,10 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
     keyTransfer = await makeKeyTransfer()
     template = dtp.nftAccessProofTemplate
-    token = nevermined.keeper.nftUpgradeable;
+    token = nevermined.keeper.nftUpgradeable
 
     // Accounts
-    [publisher, consumer] = await nevermined.accounts.list()
+    ;[publisher, consumer] = await nevermined.accounts.list()
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
@@ -77,24 +84,15 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     assert.isDefined(rsaPublicKey)
   })
 
-  it('should authenticate the accounts', async () => {
-    await publisher.authenticate()
-    await consumer.authenticate()
-  })
-
   it('should register an asset', async () => {
-
     const nftAttributes = NFTAttributes.getNFT1155Instance({
       metadata,
       serviceTypes: ['nft-access'],
       nftContractAddress: token.address,
       cap: BigNumber.from(100),
-      amount: BigNumber.from(1)
-    })            
-    ddo = await nevermined.nfts1155.create(
-        nftAttributes,
-        publisher
-    )
+      amount: BigNumber.from(1),
+    })
+    ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
     const nftContractOwner = new Account(await token.owner())
     await token.setProxyApproval(publisher.getId(), true, nftContractOwner)

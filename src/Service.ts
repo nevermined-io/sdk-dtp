@@ -5,18 +5,14 @@ import {
   ServiceNFTSales,
   ServicePlugin,
   ValidationParams,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import {
-  Instantiable,
-  InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
-import { AccessTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
-import AssetPrice from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetPrice'
-import {
+  TxParameters,
+  AccessTemplate,
+  AssetPrice,
   NFTAccessService,
   NFTSalesService,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/nevermined/AccessService'
+  Instantiable,
+  InstantiableConfig,
+} from '@nevermined-io/nevermined-sdk-js'
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
@@ -26,28 +22,28 @@ import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
 export type ServiceAccessProof = ServiceAccess & {
   attributes: {
     main: {
-      _hash: string;
-      _providerPub: { x: string; y: string };
-    };
-  };
+      _hash: string
+      _providerPub: { x: string; y: string }
+    }
+  }
 }
 
 export type ServiceNFTAccessProof = ServiceNFTAccess & {
   attributes: {
     main: {
-      _hash: string;
-      _providerPub: { x: string; y: string };
-    };
-  };
+      _hash: string
+      _providerPub: { x: string; y: string }
+    }
+  }
 }
 
 export type ServiceNFTSalesProof = ServiceNFTSales & {
   attributes: {
     main: {
-      _hash: string;
-      _providerPub: { x: string; y: string };
-    };
-  };
+      _hash: string
+      _providerPub: { x: string; y: string }
+    }
+  }
 }
 
 export class AccessProofService extends Instantiable

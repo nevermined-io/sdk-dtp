@@ -1,24 +1,20 @@
 // Extension of main nevermined object
-import {
-  Instantiable,
-  InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { AccessProofCondition } from './AccessProofCondition'
-import { Account } from '@nevermined-io/nevermined-sdk-js'
-import { ServiceType } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import {
+  Account,
+  ServiceType,
+  TxParameters,
+  Instantiable,
+  InstantiableConfig,
+  BabyjubPublicKey,
+  MimcCipher,
   AssetError,
   NeverminedNodeError,
   KeeperError,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/errors'
+} from '@nevermined-io/nevermined-sdk-js'
+import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-import {
-  BabyjubPublicKey,
-  MimcCipher,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
-import { TxParameters } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/ContractBase'
 
 import { EventOptions } from '@nevermined-io/nevermined-sdk-js/dist/node/events'
 import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'
@@ -180,10 +176,7 @@ export class Dtp extends Instantiable {
   ) {
     try {
       const keyTransfer = await makeKeyTransfer()
-      const cipher = await keyTransfer.encryptKey(
-        data,
-        await keyTransfer.ecdh(providerK, buyerPub),
-      )
+      const cipher = await keyTransfer.encryptKey(data, await keyTransfer.ecdh(providerK, buyerPub))
       const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data)
       const hash = await keyTransfer.hashKey(data)
       const receipt = await this.accessProofCondition.fulfill(
@@ -254,7 +247,7 @@ export class Dtp extends Instantiable {
         _conditionId: true,
       },
     }
-    const ev = await this.accessProofCondition.events.once((events) => events, evOptions)    
+    const ev = await this.accessProofCondition.events.once((events) => events, evOptions)
 
     if (!ev.length) {
       throw new KeeperError('No events are returned')

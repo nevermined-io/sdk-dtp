@@ -2,10 +2,10 @@ import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-j
 import {
   ServiceType,
   ValidationParams,
-} from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/Service'
-import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
-import { InstantiableConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates'
+  ServiceAgreementTemplate,
+  AgreementInstance,
+  InstantiableConfig,
+} from '@nevermined-io/nevermined-sdk-js'
 import { nftSalesTemplateServiceAgreementTemplate } from './NFTSalesWithAccessTemplate.serviceAgreementTemplate'
 import {
   LockPaymentCondition,
@@ -19,11 +19,11 @@ import { ProofTemplate } from './ProofTemplate'
 import { ServiceNFTSalesProof } from './Service'
 
 export interface NFTSalesWithAccessTemplateParams {
-  consumerId: string;
-  providerId: string;
-  consumer: Account;
-  expiration: number;
-  nftAmount: BigNumber;
+  consumerId: string
+  providerId: string
+  consumer: Account
+  expiration: number
+  nftAmount: BigNumber
 }
 
 export class NFTSalesWithAccessTemplate extends ProofTemplate<

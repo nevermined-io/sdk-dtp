@@ -46,7 +46,7 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
   }
 
   public service(): ServiceType {
-    return 'nft-sales';
+    return 'nft-sales-proof';
   }
 
   public name(): string {

@@ -12,7 +12,7 @@ import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumbe
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token';
 import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
 
-describe('NFT Transfer Proof Template', () => {
+describe('NFT Transfer w/ node Template', () => {
   let nevermined: Nevermined;
 
   let lockPaymentCondition: LockPaymentCondition;
@@ -96,7 +96,7 @@ describe('NFT Transfer Proof Template', () => {
         undefined,
         undefined,
         undefined,
-        ['nft-sales', 'nft-access'],
+        ['nft-sales-proof', 'nft-access'],
       );
 
       keyTransfer = await makeKeyTransfer();
@@ -133,7 +133,7 @@ describe('NFT Transfer Proof Template', () => {
     });
 
     it('access the asset using key', async () => {
-      await nevermined.assets.download(ddo.id, consumer, undefined, 1, true, 'nft-sales')
+      await nevermined.assets.download(ddo.id, consumer, undefined, 1, true, 'nft-sales-proof')
     })
   });
 });

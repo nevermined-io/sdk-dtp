@@ -110,7 +110,7 @@ describe('NFT Transfer Proof Template', () => {
         undefined,
         undefined,
         undefined,
-        ['nft-sales'],
+        ['nft-sales-proof'],
       );
 
       keyTransfer = await makeKeyTransfer();

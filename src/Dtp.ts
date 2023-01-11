@@ -92,7 +92,7 @@ export class Dtp extends Instantiable {
       dtp.nftAccessProofTemplate,
       dtp.nft721AccessProofTemplate,
     );
-    config.nevermined.assets.servicePlugin['nft-sales-with-access'] = new NFTSalesProofService(
+    config.nevermined.assets.servicePlugin['nft-sales-proof'] = new NFTSalesProofService(
       config,
       dtp.nftSalesWithAccessTemplate,
       dtp.nft721SalesWithAccessTemplate,
@@ -170,7 +170,7 @@ export class Dtp extends Instantiable {
     nftHolder: string
   ): Promise<boolean> {
     const ddo = await this.nevermined.assets.resolve(didZeroX(did));
-    const { serviceEndpoint } = ddo.findServiceByType('nft-sales');
+    const { serviceEndpoint } = ddo.findServiceByType('nft-sales-proof');
     const { jwt } = this.nevermined.utils;
     let accessToken: string;
     const cacheKey = jwt.generateCacheKey(account.getId(), agreementId, did);
@@ -178,7 +178,7 @@ export class Dtp extends Instantiable {
     if (!jwt.tokenCache.has(cacheKey)) {
       const address = account.getId();
       const babysig = await this.signBabyjub(account, BigInt(address))
-      const grantToken = await jwt.generateToken(account, agreementId, did, '/nft-sales-with-access', {
+      const grantToken = await jwt.generateToken(account, agreementId, did, '/nft-sales-proof', {
         babysig,
         buyer: account.getPublic(),
       });

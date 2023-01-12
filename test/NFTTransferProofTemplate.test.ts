@@ -108,7 +108,7 @@ describe('NFT Transfer Proof Template', () => {
       const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
         price: assetPrice,
-        serviceTypes: ['nft-sales', 'nft-access'],
+        serviceTypes: ['nft-sales-proof', 'nft-access'],
         nftContractAddress: nftContract.address,
         cap: BigNumber.from(100),
         amount: BigNumber.from(20),

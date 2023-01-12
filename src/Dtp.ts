@@ -12,7 +12,13 @@ import {
   AssetError,
   NeverminedNodeError,
   KeeperError,
-  Babysig
+  Babysig,
+  BigNumber,
+  didZeroX,
+  ConditionInstance,
+  zeroX,
+  generateId,
+  AssetResult,
 } from '@nevermined-io/nevermined-sdk-js'
 import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
@@ -82,12 +88,22 @@ export class Dtp extends Instantiable {
       config,
       dtp.accessProofTemplate,
     )
+    config.nevermined.assets.servicePlugin['nft-access'] = new NFTAccessProofService(
+      config,
+      dtp.nftAccessProofTemplate,
+      dtp.nft721AccessProofTemplate,
+    )
     config.nevermined.nfts1155.servicePlugin['nft-access'] = new NFTAccessProofService(
       config,
       dtp.nftAccessProofTemplate,
       dtp.nft721AccessProofTemplate,
     )
-    config.nevermined.nfts1155.servicePlugin['nft-sales'] = new NFTSalesProofService(
+    config.nevermined.assets.servicePlugin['nft-sales-proof'] = new NFTSalesProofService(
+      config,
+      dtp.nftSalesWithAccessTemplate,
+      dtp.nft721SalesWithAccessTemplate,
+    )
+    config.nevermined.nfts1155.servicePlugin['nft-sales-proof'] = new NFTSalesProofService(
       config,
       dtp.nftSalesWithAccessTemplate,
       dtp.nft721SalesWithAccessTemplate,
@@ -105,6 +121,7 @@ export class Dtp extends Instantiable {
     did: string,
     consumerAccount: Account,
     service: ServiceType = 'access',
+    result: AssetResult = AssetResult.URL,
   ): Promise<string | true> {
     const ddo = await this.nevermined.assets.resolve(did)
     const { serviceEndpoint } = ddo.findServiceByType(service)
@@ -120,6 +137,7 @@ export class Dtp extends Instantiable {
       serviceEndpoint,
       consumerAccount,
       service,
+      result,
     )
   }
 
@@ -129,6 +147,7 @@ export class Dtp extends Instantiable {
     serviceEndpoint: string,
     account: Account,
     service: ServiceType,
+    result: AssetResult = AssetResult.URL,
   ): Promise<string> {
     const { jwt } = this.nevermined.utils
     let accessToken: string
@@ -149,12 +168,57 @@ export class Dtp extends Instantiable {
       Authorization: 'Bearer ' + accessToken,
     }
 
-    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0`
+    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0?result=${result}`
     try {
       return await this.nevermined.utils.fetch.downloadUrl(consumeUrl, headers)
     } catch (e) {
       throw new NeverminedNodeError(`Error consuming assets - ${e}`)
     }
+  }
+
+  public async transferForDelegate(
+    did: string,
+    agreementId: string,
+    account: Account,
+    nftAmount: BigNumber,
+    nftHolder: string,
+  ): Promise<boolean> {
+    const ddo = await this.nevermined.assets.resolve(didZeroX(did))
+    const { serviceEndpoint } = ddo.findServiceByType('nft-sales-proof')
+    const { jwt } = this.nevermined.utils
+    let accessToken: string
+    const cacheKey = jwt.generateCacheKey(account.getId(), agreementId, did)
+
+    if (!jwt.tokenCache.has(cacheKey)) {
+      const address = account.getId()
+      const babysig = await this.signBabyjub(account, BigInt(address))
+      const grantToken = await jwt.generateToken(account, agreementId, did, '/nft-sales-proof', {
+        babysig,
+        buyer: account.getPublic(),
+      })
+      accessToken = await this.nevermined.services.node.fetchToken(grantToken)
+      jwt.tokenCache.set(cacheKey, accessToken)
+    } else {
+      accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!
+    }
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    }
+
+    // const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}`;
+    const response = await this.nevermined.utils.fetch.post(
+      serviceEndpoint,
+      JSON.stringify({
+        agreementId,
+        nftHolder,
+        nftReceiver: account.getId(),
+        buyer: account.getPublic(),
+        nftAmount: nftAmount.toString(),
+        nftType: 1155,
+      }),
+      headers,
+    )
+    return response.ok
   }
 
   /**
@@ -261,5 +325,40 @@ export class Dtp extends Instantiable {
       new MimcCipher(cipherL, cipherR),
       await keyTransfer.ecdh(buyerK, providerPub),
     )
+  }
+
+  public async order(
+    did: string,
+    nftAmount: BigNumber,
+    consumer: Account,
+    publisher: string,
+    txParams?: TxParameters,
+  ) {
+    const agreementIdSeed = zeroX(generateId())
+    const accessProofTemplate = this.nftSalesWithAccessTemplate
+    const ddo = await this.nevermined.assets.resolve(did)
+    const params = accessProofTemplate.params(consumer, publisher, nftAmount)
+    const agreementId = await accessProofTemplate.createAgreementFromDDO(
+      agreementIdSeed,
+      ddo,
+      params,
+      consumer,
+      consumer,
+      undefined,
+      txParams,
+    )
+    const agreementData = await accessProofTemplate.instanceFromDDO(
+      agreementIdSeed,
+      ddo,
+      consumer.getId(),
+      params,
+    )
+    await this.nevermined.keeper.conditions.lockPaymentCondition.fulfillInstance(
+      agreementData.instances[0] as ConditionInstance<any>,
+      {},
+      consumer,
+      txParams,
+    )
+    return agreementId
   }
 }

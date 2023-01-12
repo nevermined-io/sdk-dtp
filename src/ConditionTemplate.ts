@@ -8,23 +8,23 @@ export const nftHolder = {
     {
       name: '_did',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_holderAddress',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_numberNfts',
       type: 'uint256',
-      value: ''
+      value: '',
     },
     {
       name: '_contractAddress',
       type: 'address',
-      value: ''
-    }
+      value: '',
+    },
   ],
   events: [
     {
@@ -33,10 +33,10 @@ export const nftHolder = {
       handler: {
         moduleName: 'nftHolderCondition',
         functionName: 'fulfillNFTHolderCondition',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }
 
 export const nftHolder721 = {
@@ -49,23 +49,23 @@ export const nftHolder721 = {
     {
       name: '_did',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_holderAddress',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_numberNfts',
       type: 'uint256',
-      value: ''
+      value: '',
     },
     {
       name: '_contractAddress',
       type: 'address',
-      value: ''
-    }
+      value: '',
+    },
   ],
   events: [
     {
@@ -74,10 +74,10 @@ export const nftHolder721 = {
       handler: {
         moduleName: 'nftHolderCondition',
         functionName: 'fulfillNFTHolderCondition',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }
 
 export const access = {
@@ -90,28 +90,28 @@ export const access = {
     {
       name: '_documentId',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_grantee',
       type: 'uint[2]',
-      value: ''
+      value: '',
     },
     {
       name: '_provider',
       type: 'uint[2]',
-      value: ''
+      value: '',
     },
     {
       name: '_cipher',
       type: 'uint[2]',
-      value: ''
+      value: '',
     },
     {
       name: '_proof',
       type: 'bytes',
-      value: ''
-    }
+      value: '',
+    },
   ],
   events: [
     {
@@ -120,8 +120,8 @@ export const access = {
       handler: {
         moduleName: 'access',
         functionName: 'fulfillEscrowPaymentCondition',
-        version: '0.1'
-      }
+        version: '0.1',
+      },
     },
     {
       name: 'TimedOut',
@@ -129,10 +129,10 @@ export const access = {
       handler: {
         moduleName: 'access',
         functionName: 'fulfillEscrowPaymentCondition',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }
 
 export const escrowPayment = {
@@ -145,38 +145,38 @@ export const escrowPayment = {
     {
       name: '_did',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_amounts',
       type: 'uint256[]',
-      value: ''
+      value: '',
     },
     {
       name: '_receivers',
       type: 'address[]',
-      value: ''
+      value: '',
     },
     {
       name: '_sender',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_tokenAddress',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_lockCondition',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_releaseCondition',
       type: 'bytes32',
-      value: ''
-    }
+      value: '',
+    },
   ],
   events: [
     {
@@ -185,10 +185,10 @@ export const escrowPayment = {
       handler: {
         moduleName: 'escrowPaymentCondition',
         functionName: 'verifyRewardTokens',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }
 
 export const lockPayment = {
@@ -201,28 +201,28 @@ export const lockPayment = {
     {
       name: '_did',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_rewardAddress',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_tokenAddress',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_amounts',
       type: 'uint256[]',
-      value: []
+      value: [],
     },
     {
       name: '_receivers',
       type: 'address[]',
-      value: []
-    }
+      value: [],
+    },
   ],
   events: [
     {
@@ -231,10 +231,10 @@ export const lockPayment = {
       handler: {
         moduleName: 'lockPaymentCondition',
         functionName: 'fulfillAccessCondition',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }
 
 export const transferNFT721 = {
@@ -247,43 +247,43 @@ export const transferNFT721 = {
     {
       name: '_documentId',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_receiver',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_numberNfts',
       type: 'uint256',
-      value: ''
+      value: '',
     },
     {
       name: '_conditionId',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_nftHolder',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_nftTransfer',
       type: 'boolean',
-      value: 'false'
+      value: 'false',
     },
     {
       name: '_duration',
       type: 'uint256',
-      value: '0'
+      value: '0',
     },
     {
       name: '_contractAddress',
       type: 'address',
-      value: ''
-    }
+      value: '',
+    },
   ],
   events: [
     {
@@ -292,8 +292,8 @@ export const transferNFT721 = {
       handler: {
         moduleName: 'transferNFT',
         functionName: 'fulfillEscrowPaymentCondition',
-        version: '0.1'
-      }
+        version: '0.1',
+      },
     },
     {
       name: 'TimedOut',
@@ -301,10 +301,10 @@ export const transferNFT721 = {
       handler: {
         moduleName: 'access',
         functionName: 'fulfillEscrowPaymentCondition',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }
 
 export const transferNFT = {
@@ -317,43 +317,43 @@ export const transferNFT = {
     {
       name: '_documentId',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_receiver',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_numberNfts',
       type: 'uint256',
-      value: ''
+      value: '',
     },
     {
       name: '_conditionId',
       type: 'bytes32',
-      value: ''
+      value: '',
     },
     {
       name: '_nftHolder',
       type: 'address',
-      value: ''
+      value: '',
     },
     {
       name: '_nftTransfer',
       type: 'boolean',
-      value: 'false'
+      value: 'false',
     },
     {
       name: '_duration',
       type: 'uint256',
-      value: '0'
+      value: '0',
     },
     {
       name: '_contractAddress',
       type: 'address',
-      value: ''
-    }
+      value: '',
+    },
   ],
   events: [
     {
@@ -362,8 +362,8 @@ export const transferNFT = {
       handler: {
         moduleName: 'transferNFT',
         functionName: 'fulfillEscrowPaymentCondition',
-        version: '0.1'
-      }
+        version: '0.1',
+      },
     },
     {
       name: 'TimedOut',
@@ -371,8 +371,8 @@ export const transferNFT = {
       handler: {
         moduleName: 'access',
         functionName: 'fulfillEscrowPaymentCondition',
-        version: '0.1'
-      }
-    }
-  ]
+        version: '0.1',
+      },
+    },
+  ],
 }

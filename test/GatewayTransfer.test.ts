@@ -107,6 +107,10 @@ describe('NFT Transfer w/ node Template', () => {
       consumer.babyX = buyerPub.x;
       consumer.babyY = buyerPub.y;
       consumer.babySecret = 'abd';
+
+      const gatewayAddress = await nevermined.node.getProviderAddress()
+      await nevermined.nfts.setApprovalForAll(gatewayAddress, true, publisher)
+
     });
 
     it('should create a new agreement (short way)', async () => {

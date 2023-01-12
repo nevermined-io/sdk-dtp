@@ -10,6 +10,7 @@ import {
   EscrowPaymentCondition,
   AgreementInstance,
   InstantiableConfig,
+  AccessProofTemplateParams,
 } from '@nevermined-io/nevermined-sdk-js'
 import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
@@ -17,13 +18,11 @@ import { Dtp } from './Dtp'
 import { ProofTemplate } from './ProofTemplate'
 import { ServiceAccessProof } from './Service'
 
-export interface AccessProofTemplateParams {
-  consumer: Account
-  consumerId: string
-}
+
+type AccessProofTemplateParamsDtp = Pick<AccessProofTemplateParams, "consumer" | "consumerId">
 
 export class AccessProofTemplate extends ProofTemplate<
-  AccessProofTemplateParams,
+  AccessProofTemplateParamsDtp,
   ServiceAccessProof
 > {
   public dtp: Dtp
@@ -67,7 +66,7 @@ export class AccessProofTemplate extends ProofTemplate<
     return 'access'
   }
 
-  public async paramsGen(params: ValidationParams): Promise<AccessProofTemplateParams> {
+  public async paramsGen(params: ValidationParams): Promise<AccessProofTemplateParamsDtp> {
     const consumer = await this.dtp.consumerAccount(
       params.buyer,
       params.consumer_address,
@@ -76,7 +75,7 @@ export class AccessProofTemplate extends ProofTemplate<
     return this.params(consumer)
   }
 
-  public params(consumer: Account): AccessProofTemplateParams {
+  public params(consumer: Account): AccessProofTemplateParamsDtp {
     return { consumer, consumerId: consumer.getId() }
   }
 

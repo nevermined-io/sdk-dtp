@@ -46,7 +46,7 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
   }
 
   public service(): ServiceType {
-    return 'nft-sales-proof';
+    return 'nft-sales-proof'
   }
 
   public name(): string {
@@ -58,8 +58,8 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
       params.buyer,
       params.consumer_address,
       params.babysig,
-    );
-    return this.params(consumer, params.nft_holder, params.nft_amount);
+    )
+    return this.params(consumer, params.nft_holder, params.nft_amount)
   }
 
   public conditions(): [

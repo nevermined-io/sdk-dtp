@@ -154,7 +154,7 @@ export class Dtp extends Instantiable {
       Authorization: 'Bearer ' + accessToken,
     }
 
-    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0?result=url`;
+    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0?result=url`
     try {
       return await this.nevermined.utils.fetch.downloadUrl(consumeUrl, headers)
     } catch (e) {
@@ -169,27 +169,27 @@ export class Dtp extends Instantiable {
     nftAmount: BigNumber,
     nftHolder: string
   ): Promise<boolean> {
-    const ddo = await this.nevermined.assets.resolve(didZeroX(did));
-    const { serviceEndpoint } = ddo.findServiceByType('nft-sales-proof');
-    const { jwt } = this.nevermined.utils;
-    let accessToken: string;
-    const cacheKey = jwt.generateCacheKey(account.getId(), agreementId, did);
+    const ddo = await this.nevermined.assets.resolve(didZeroX(did))
+    const { serviceEndpoint } = ddo.findServiceByType('nft-sales-proof')
+    const { jwt } = this.nevermined.utils
+    let accessToken: string
+    const cacheKey = jwt.generateCacheKey(account.getId(), agreementId, did)
 
     if (!jwt.tokenCache.has(cacheKey)) {
-      const address = account.getId();
+      const address = account.getId()
       const babysig = await this.signBabyjub(account, BigInt(address))
       const grantToken = await jwt.generateToken(account, agreementId, did, '/nft-sales-proof', {
         babysig,
         buyer: account.getPublic(),
-      });
-      accessToken = await this.nevermined.services.node.fetchToken(grantToken);
-      jwt.tokenCache.set(cacheKey, accessToken);
+      })
+      accessToken = await this.nevermined.services.node.fetchToken(grantToken)
+      jwt.tokenCache.set(cacheKey, accessToken)
     } else {
-      accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!;
+      accessToken = this.nevermined.utils.jwt.tokenCache.get(cacheKey)!
     }
     const headers = {
       Authorization: `Bearer ${accessToken}`,
-    };
+    }
 
 
     // const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}`;
@@ -322,7 +322,7 @@ export class Dtp extends Instantiable {
     const agreementIdSeed = zeroX(generateId())
     const accessProofTemplate = this.nftSalesWithAccessTemplate
     const ddo = await this.nevermined.assets.resolve(did)
-    const params = accessProofTemplate.params(consumer, publisher, nftAmount);
+    const params = accessProofTemplate.params(consumer, publisher, nftAmount)
     const agreementId = await accessProofTemplate.createAgreementFromDDO(
       agreementIdSeed,
       ddo,
@@ -331,19 +331,19 @@ export class Dtp extends Instantiable {
       consumer,
       undefined,
       txParams
-    );
+    )
     const agreementData = await accessProofTemplate.instanceFromDDO(
       agreementIdSeed,
       ddo,
       consumer.getId(),
       params,
-    );
+    )
     await this.nevermined.keeper.conditions.lockPaymentCondition.fulfillInstance(
       agreementData.instances[0] as ConditionInstance<any>,
       {},
       consumer,
       txParams
-    );
+    )
     return agreementId
   }
 }

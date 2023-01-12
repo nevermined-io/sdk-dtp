@@ -1,3 +1,3 @@
 module.exports = {
-    ...require('eslint-config-nevermined/prettier.config'),
-};
+  ...require('eslint-config-nevermined/prettier.config'),
+}

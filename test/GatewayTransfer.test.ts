@@ -1,7 +1,14 @@
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { config } from './config'
-import { Nevermined, Account, DDO, Logger, Token, NFTAttributes } from '@nevermined-io/nevermined-sdk-js'
+import {
+  Nevermined,
+  Account,
+  DDO,
+  Logger,
+  Token,
+  NFTAttributes,
+} from '@nevermined-io/nevermined-sdk-js'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { Dtp } from '../src/Dtp'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
@@ -30,12 +37,11 @@ describe('NFT Transfer w/ node Template', () => {
       nevermined,
     }
 
-    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig);
-    ({ lockPaymentCondition } = nevermined.keeper.conditions);
+    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
+    ;({ lockPaymentCondition } = nevermined.keeper.conditions)
 
     // Accounts
-    [, publisher, consumer] = await nevermined.accounts.list()
-
+    ;[, publisher, consumer] = await nevermined.accounts.list()
   })
 
   describe('Short flow', () => {
@@ -60,8 +66,8 @@ describe('NFT Transfer w/ node Template', () => {
     let metadata
 
     before(async () => {
-      metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey);
-      ({ token } = nevermined.keeper)
+      metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey)
+      ;({ token } = nevermined.keeper)
 
       const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
@@ -77,7 +83,7 @@ describe('NFT Transfer w/ node Template', () => {
         amount: BigNumber.from(1),
       })
       ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
-      
+
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')
       buyerPub = await keyTransfer.secretToPublic(buyerK)
@@ -89,7 +95,6 @@ describe('NFT Transfer w/ node Template', () => {
 
       const gatewayAddress = await nevermined.services.node.getProviderAddress()
       await nevermined.nfts1155.setApprovalForAll(gatewayAddress, true, publisher)
-
     })
 
     it('should create a new agreement (short way)', async () => {
@@ -106,7 +111,13 @@ describe('NFT Transfer w/ node Template', () => {
     })
 
     it('should fulfill the conditions from publisher side', async () => {
-      const result = await dtp.transferForDelegate(ddo.id, agreementId, consumer, BigNumber.from(1), publisher.getId())
+      const result = await dtp.transferForDelegate(
+        ddo.id,
+        agreementId,
+        consumer,
+        BigNumber.from(1),
+        publisher.getId(),
+      )
       assert.isTrue(result)
     })
 

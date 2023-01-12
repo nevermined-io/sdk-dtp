@@ -18,8 +18,7 @@ import { Dtp } from './Dtp'
 import { ProofTemplate } from './ProofTemplate'
 import { ServiceAccessProof } from './Service'
 
-
-type AccessProofTemplateParamsDtp = Pick<AccessProofTemplateParams, "consumer" | "consumerId">
+type AccessProofTemplateParamsDtp = Pick<AccessProofTemplateParams, 'consumer' | 'consumerId'>
 
 export class AccessProofTemplate extends ProofTemplate<
   AccessProofTemplateParamsDtp,

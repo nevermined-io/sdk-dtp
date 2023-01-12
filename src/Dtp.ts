@@ -167,7 +167,7 @@ export class Dtp extends Instantiable {
     agreementId: string,
     account: Account,
     nftAmount: BigNumber,
-    nftHolder: string
+    nftHolder: string,
   ): Promise<boolean> {
     const ddo = await this.nevermined.assets.resolve(didZeroX(did))
     const { serviceEndpoint } = ddo.findServiceByType('nft-sales-proof')
@@ -191,19 +191,18 @@ export class Dtp extends Instantiable {
       Authorization: `Bearer ${accessToken}`,
     }
 
-
     // const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}`;
     const response = await this.nevermined.utils.fetch.post(
       serviceEndpoint,
       JSON.stringify({
-          agreementId,
-          nftHolder,
-          nftReceiver: account.getId(),
-          buyer: account.getPublic(),
-          nftAmount: nftAmount.toString(),
-          nftType: 1155
+        agreementId,
+        nftHolder,
+        nftReceiver: account.getId(),
+        buyer: account.getPublic(),
+        nftAmount: nftAmount.toString(),
+        nftType: 1155,
       }),
-      headers
+      headers,
     )
     return response.ok
   }
@@ -314,11 +313,13 @@ export class Dtp extends Instantiable {
     )
   }
 
-  public async order(did: string,
+  public async order(
+    did: string,
     nftAmount: BigNumber,
     consumer: Account,
     publisher: string,
-    txParams?: TxParameters) {
+    txParams?: TxParameters,
+  ) {
     const agreementIdSeed = zeroX(generateId())
     const accessProofTemplate = this.nftSalesWithAccessTemplate
     const ddo = await this.nevermined.assets.resolve(did)
@@ -330,7 +331,7 @@ export class Dtp extends Instantiable {
       consumer,
       consumer,
       undefined,
-      txParams
+      txParams,
     )
     const agreementData = await accessProofTemplate.instanceFromDDO(
       agreementIdSeed,
@@ -342,7 +343,7 @@ export class Dtp extends Instantiable {
       agreementData.instances[0] as ConditionInstance<any>,
       {},
       consumer,
-      txParams
+      txParams,
     )
     return agreementId
   }

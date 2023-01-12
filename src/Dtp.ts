@@ -18,6 +18,7 @@ import {
   ConditionInstance,
   zeroX,
   generateId,
+  AssetResult,
 } from '@nevermined-io/nevermined-sdk-js'
 import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
@@ -120,6 +121,7 @@ export class Dtp extends Instantiable {
     did: string,
     consumerAccount: Account,
     service: ServiceType = 'access',
+    result: AssetResult = AssetResult.URL,
   ): Promise<string | true> {
     const ddo = await this.nevermined.assets.resolve(did)
     const { serviceEndpoint } = ddo.findServiceByType(service)
@@ -135,6 +137,7 @@ export class Dtp extends Instantiable {
       serviceEndpoint,
       consumerAccount,
       service,
+      result,
     )
   }
 
@@ -144,6 +147,7 @@ export class Dtp extends Instantiable {
     serviceEndpoint: string,
     account: Account,
     service: ServiceType,
+    result: AssetResult = AssetResult.URL,
   ): Promise<string> {
     const { jwt } = this.nevermined.utils
     let accessToken: string
@@ -164,7 +168,7 @@ export class Dtp extends Instantiable {
       Authorization: 'Bearer ' + accessToken,
     }
 
-    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0?result=url`
+    const consumeUrl = `${serviceEndpoint}/${noZeroX(agreementId)}/0?result=${result}`
     try {
       return await this.nevermined.utils.fetch.downloadUrl(consumeUrl, headers)
     } catch (e) {

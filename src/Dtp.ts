@@ -12,8 +12,9 @@ import {
   AssetError,
   NeverminedNodeError,
   KeeperError,
+  Babysig
 } from '@nevermined-io/nevermined-sdk-js'
-import { makeKeyTransfer, KeyTransfer, Babysig } from './KeyTransfer'
+import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
 import { noZeroX } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
 
 import { EventOptions } from '@nevermined-io/nevermined-sdk-js/dist/node/events'

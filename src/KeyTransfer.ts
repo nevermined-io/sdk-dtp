@@ -1,14 +1,9 @@
-import { BabyjubPublicKey, MimcCipher } from '@nevermined-io/nevermined-sdk-js'
+import { BabyjubPublicKey, MimcCipher, Babysig } from '@nevermined-io/nevermined-sdk-js'
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
 
 const SEED = 'mimcsponge'
 const NROUNDS = 220
-
-export interface Babysig {
-  R8: [string, string]
-  S: string
-}
 
 class Circom {
   private babyjub

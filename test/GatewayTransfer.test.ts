@@ -4,27 +4,17 @@ import { config } from './config';
 import { Nevermined, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js';
 import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer';
-import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils';
-
 import { Dtp } from '../src/Dtp';
-import { AccessProofConditionExtra } from '../src/AccessProofCondition';
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer';
 import { cryptoConfig, getMetadataForDTP } from './utils';
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber';
-import { AgreementInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/templates';
-import { ConditionInstance } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
-import {
-  NFTSalesWithAccessTemplate,
-  NFTSalesWithAccessTemplateParams,
-} from '../src/NFTSalesWithAccessTemplate';
 import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token';
 import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
 
-describe('NFT Transfer Proof Template', () => {
+describe('NFT Transfer w/ node Template', () => {
   let nevermined: Nevermined;
 
-  let accessProofTemplate: NFTSalesWithAccessTemplate;
   let lockPaymentCondition: LockPaymentCondition;
 
   const totalAmount = BigNumber.from(12);
@@ -46,7 +36,6 @@ describe('NFT Transfer Proof Template', () => {
     };
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig);
-    accessProofTemplate = dtp.nftSalesWithAccessTemplate;
     ({ lockPaymentCondition } = nevermined.keeper.conditions);
 
     // Accounts
@@ -56,7 +45,7 @@ describe('NFT Transfer Proof Template', () => {
   });
 
   describe('Short flow', () => {
-    let agreementId, agreementIdSeed: string;
+    let agreementId: string;
     let ddo: DDO;
 
     let buyerK: string;
@@ -65,8 +54,6 @@ describe('NFT Transfer Proof Template', () => {
     let providerPub: BabyjubPublicKey;
     let keyTransfer: KeyTransfer;
     let token: Token;
-
-    let agreementData: AgreementInstance<NFTSalesWithAccessTemplateParams>;
 
     const providerKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
@@ -95,7 +82,6 @@ describe('NFT Transfer Proof Template', () => {
           [receivers[1], amounts[1]],
         ]),
       );
-      agreementIdSeed = generateId();
 
       ddo = await nevermined.assets.createNft(
         metadata,
@@ -104,13 +90,13 @@ describe('NFT Transfer Proof Template', () => {
         undefined,
         BigNumber.from(100),
         undefined,
-        BigNumber.from(20),
+        BigNumber.from(1),
         undefined,
         undefined,
         undefined,
         undefined,
         undefined,
-        ['nft-sales-proof'],
+        ['nft-sales-proof', 'nft-access'],
       );
 
       keyTransfer = await makeKeyTransfer();
@@ -120,66 +106,38 @@ describe('NFT Transfer Proof Template', () => {
       providerPub = await keyTransfer.secretToPublic(providerK);
       consumer.babyX = buyerPub.x;
       consumer.babyY = buyerPub.y;
-      consumer.babySecret = buyerK;
+      consumer.babySecret = 'abd';
+
+      const gatewayAddress = await nevermined.node.getProviderAddress()
+      await nevermined.nfts.setApprovalForAll(gatewayAddress, true, publisher)
+
     });
 
     it('should create a new agreement (short way)', async () => {
-      const params = accessProofTemplate.params(consumer, publisher.getId(), BigNumber.from(1));
-      agreementId = await accessProofTemplate.createAgreementFromDDO(
-        agreementIdSeed,
-        ddo,
-        params,
-        consumer,
-        publisher,
-      );
-      agreementData = await accessProofTemplate.instanceFromDDO(
-        agreementIdSeed,
-        ddo,
-        publisher.getId(),
-        params,
-      );
-
-      assert.match(agreementId, /^0x[a-f0-9]{64}$/i);
-    });
-
-    it('should fulfill the conditions from consumer side', async () => {
       try {
         await consumer.requestTokens(totalAmount);
       } catch (error) {
         Logger.error(error);
       }
-
       await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer);
-      await lockPaymentCondition.fulfillInstance(
-        agreementData.instances[0] as ConditionInstance<any>,
-        {},
-        consumer,
-      );
+
+      agreementId = await dtp.order(ddo.id, BigNumber.from(1), consumer, publisher.getId())
+
+      assert.match(agreementId, /^0x[a-f0-9]{64}$/i);
     });
 
     it('should fulfill the conditions from publisher side', async () => {
-      const extra: AccessProofConditionExtra = {
-        providerK,
-        data,
-      };
-      await nevermined.keeper.conditions.transferNftCondition.fulfillInstance(
-        agreementData.instances[1] as ConditionInstance<any>,
-        {},
-        publisher,
-      );
-      await dtp.accessProofCondition.fulfillInstance(
-        agreementData.instances[3] as ConditionInstance<AccessProofConditionExtra>,
-        extra,
-      );
-      await nevermined.keeper.conditions.escrowPaymentCondition.fulfillInstance(
-        agreementData.instances[2] as ConditionInstance<any>,
-        {},
-      );
+      const result = await dtp.transferForDelegate(ddo.id, agreementId, consumer, BigNumber.from(1), publisher.getId())
+      assert.isTrue(result)
     });
 
     it('buyer should have the key', async () => {
       const key = await dtp.readKey(agreementId, buyerK, providerPub);
       assert.equal(key.toString(), data.toString());
     });
+
+    it('access the asset using key', async () => {
+      await nevermined.assets.download(ddo.id, consumer, undefined, 1, true, 'nft-sales-proof')
+    })
   });
 });

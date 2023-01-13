@@ -94,7 +94,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
     ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
     const nftContractOwner = new Account(await token.owner())
-    await token.setProxyApproval(publisher.getId(), true, nftContractOwner)
+    await token.grantOperatorRole(publisher.getId(), nftContractOwner)
 
     await token.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
     const balance = await token.balance(consumer.getId(), ddo.id)

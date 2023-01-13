@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: nevermined-io/node
-          ref: fix/merge-master
+          ref: develop
           path: node
           token: ${{ secrets.API_TOKEN_GITHUB }}
 
@@ -62,7 +62,7 @@ jobs:
           rm -rf "${HOME}/.nevermined/nevermined-contracts/artifacts"
 
           # TODO: Use the default versions when merged into master
-          export KEEPER_VERSION=rc-3.0.0-rc2
+          export KEEPER_VERSION=v3.0.0-rc3
           export NODE_VERSION=develop
           ./start_nevermined.sh ${{ matrix.network }} --no-graph --no-node 2>&1 | tee nevermined_tools.txt &
           cd ..

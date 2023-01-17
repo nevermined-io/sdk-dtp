@@ -35,8 +35,6 @@ describe('NFT Transfer w/ node Template', () => {
     }
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
-
-    // Accounts
     ;[, publisher, consumer] = await nevermined.accounts.list()
   })
 
@@ -100,7 +98,6 @@ describe('NFT Transfer w/ node Template', () => {
       } catch (error) {
         Logger.error(error)
       }
-      // await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
 
       agreementId = await dtp.order(ddo.id, BigNumber.from(1), consumer, publisher.getId())
 

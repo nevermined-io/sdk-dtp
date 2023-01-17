@@ -6,8 +6,8 @@ import {
   Account,
   DDO,
   Logger,
+  Token,
   NFTAttributes,
-  Nft1155Contract,
 } from '@nevermined-io/nevermined-sdk-js'
 import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
 import { Dtp } from '../src/Dtp'
@@ -15,9 +15,12 @@ import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { cryptoConfig, getMetadataForDTP } from './utils'
 import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
 import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
+import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
 
 describe('NFT Transfer w/ node Template', () => {
   let nevermined: Nevermined
+
+  let lockPaymentCondition: LockPaymentCondition
 
   const totalAmount = BigNumber.from(12)
 
@@ -35,6 +38,9 @@ describe('NFT Transfer w/ node Template', () => {
     }
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
+    ;({ lockPaymentCondition } = nevermined.keeper.conditions)
+
+    // Accounts
     ;[, publisher, consumer] = await nevermined.accounts.list()
   })
 
@@ -47,7 +53,7 @@ describe('NFT Transfer w/ node Template', () => {
     let buyerPub: BabyjubPublicKey
     let providerPub: BabyjubPublicKey
     let keyTransfer: KeyTransfer
-    let token: Nft1155Contract
+    let token: Token
 
     const providerKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
@@ -61,7 +67,7 @@ describe('NFT Transfer w/ node Template', () => {
 
     before(async () => {
       metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey)
-      token = nevermined.keeper.nftUpgradeable
+      ;({ token } = nevermined.keeper)
 
       const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
@@ -72,7 +78,7 @@ describe('NFT Transfer w/ node Template', () => {
       const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
         serviceTypes: ['nft-access', 'nft-sales-proof'],
-        nftContractAddress: token.address,
+        nftContractAddress: nevermined.nfts1155.nftContract.address,
         cap: BigNumber.from(100),
         amount: BigNumber.from(1),
       })
@@ -98,6 +104,7 @@ describe('NFT Transfer w/ node Template', () => {
       } catch (error) {
         Logger.error(error)
       }
+      await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
 
       agreementId = await dtp.order(ddo.id, BigNumber.from(1), consumer, publisher.getId())
 

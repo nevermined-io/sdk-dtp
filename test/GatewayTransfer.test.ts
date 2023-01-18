@@ -78,10 +78,11 @@ describe('NFT Transfer w/ node Template', () => {
       const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
         serviceTypes: ['nft-access', 'nft-sales-proof'],
-        nftContractAddress: token.address,
+        nftContractAddress: nevermined.nfts1155.nftContract.address,
         cap: BigNumber.from(100),
         amount: BigNumber.from(1),
       })
+
       ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
       keyTransfer = await makeKeyTransfer()

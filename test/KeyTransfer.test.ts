@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { makeKeyTransfer } from '../src'
-import {Nevermined} from "@nevermined-io/nevermined-sdk-js";
-import {config} from "./config";
+import {Nevermined} from "@nevermined-io/nevermined-sdk-js"
+import {config} from "./config"
 
 describe('KeyTransfer', () => {
   let keyTransfer

@@ -12,7 +12,7 @@ yarn.lock
 src/metadata\.json
 .idea
 *.log
-circuits
+artifacts/circuits
 artifacts
 *.tgz
 .env*

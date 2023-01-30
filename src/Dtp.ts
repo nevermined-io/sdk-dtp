@@ -242,7 +242,7 @@ export class Dtp extends Instantiable {
     try {
       const keyTransfer = await makeKeyTransfer()
       const cipher = await keyTransfer.encryptKey(data, await keyTransfer.ecdh(providerK, buyerPub))
-      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data)
+      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data, this.config)
       const hash = await keyTransfer.hashKey(data)
       const receipt = await this.accessProofCondition.fulfill(
         agreementId,

@@ -1,8 +1,11 @@
 import { assert } from 'chai'
 import { makeKeyTransfer } from '../src'
+import {Nevermined} from "@nevermined-io/nevermined-sdk-js";
+import {config} from "./config";
 
 describe('KeyTransfer', () => {
   let keyTransfer
+  let nevermined: Nevermined
 
   let buyerK
   let providerK
@@ -12,6 +15,7 @@ describe('KeyTransfer', () => {
   const data = Buffer.from('12345678901234567890123456789012')
 
   before(async () => {
+    nevermined = await Nevermined.getInstance(config)
     keyTransfer = await makeKeyTransfer()
     buyerK = await keyTransfer.makeKey('a b c')
     providerK = await keyTransfer.makeKey('e f g')
@@ -44,7 +48,7 @@ describe('KeyTransfer', () => {
       assert.equal(data.toString('hex'), keyTransfer.decryptKey(cipher, mimcSecret).toString('hex'))
     })
     it('proving works', async () => {
-      await keyTransfer.prove(buyerPub, providerPub, providerK, data)
+      await keyTransfer.prove(buyerPub, providerPub, providerK, data, config)
     })
   })
 })

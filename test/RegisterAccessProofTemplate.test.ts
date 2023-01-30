@@ -234,7 +234,7 @@ describe('Register Escrow Access Proof Template', () => {
 
     it('should fulfill AccessCondition', async () => {
       const cipher = await keyTransfer.encryptKey(data, await keyTransfer.ecdh(providerK, buyerPub))
-      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data)
+      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data, config)
       const fulfill = await accessProofCondition.fulfill(
         agreementId,
         hash,

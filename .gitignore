@@ -14,5 +14,6 @@ src/metadata\.json
 *.log
 artifacts/circuits
 artifacts
+circuits
 *.tgz
 .env*

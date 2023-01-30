@@ -7,9 +7,9 @@ LoggerInstance.setLevel(LogLevel.Error)
 const nograph = process.env['NO_GRAPH'] === 'true'
 
 const configBase: NeverminedOptions = {
-  web3ProviderUri: 'http://contracts.nevermined.localnet',
-  marketplaceUri: 'http://marketplace.nevermined.localnet',
-  neverminedNodeUri: 'http://node.nevermined.localnet',
+  web3ProviderUri: 'http://localhost:8545',
+  marketplaceUri: 'http://nevermined-metadata:3100',
+  neverminedNodeUri: 'http://localhost:8030',
   neverminedNodeAddress: '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0',
   marketplaceAuthToken: 'bogus',
   artifactsFolder: './artifacts',

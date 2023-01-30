@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import { makeKeyTransfer } from '../src'
+import {config} from "./config"
 
 describe('KeyTransfer', () => {
   let keyTransfer
@@ -44,7 +45,7 @@ describe('KeyTransfer', () => {
       assert.equal(data.toString('hex'), keyTransfer.decryptKey(cipher, mimcSecret).toString('hex'))
     })
     it('proving works', async () => {
-      await keyTransfer.prove(buyerPub, providerPub, providerK, data)
+      await keyTransfer.prove(buyerPub, providerPub, providerK, data, config)
     })
   })
 })

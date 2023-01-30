@@ -1,4 +1,9 @@
-import { BabyjubPublicKey, MimcCipher, Babysig } from '@nevermined-io/nevermined-sdk-js'
+import {
+  BabyjubPublicKey,
+  MimcCipher,
+  Babysig,
+  NeverminedOptions
+} from '@nevermined-io/nevermined-sdk-js'
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
 
@@ -36,6 +41,7 @@ export class KeyTransfer {
   snarkjs
   ffjavascript
   circom: Circom
+
 
   public async init() {
     this.snarkjs = require('snarkjs')
@@ -185,6 +191,7 @@ export class KeyTransfer {
     providerPub: BabyjubPublicKey,
     providerK: string,
     data: Buffer,
+    config: NeverminedOptions
   ): Promise<string> {
     const mimcsponge = this.circom.getMimcSponge()
     const poseidon = this.circom.getPoseidon()
@@ -216,8 +223,8 @@ export class KeyTransfer {
 
     const { proof } = await this.snarkjs.plonk.fullProve(
       snarkParams,
-      'circuits/keytransfer.wasm',
-      'circuits/keytransfer.zkey',
+      `${config.circuitsFolder}/keytransfer.wasm`,
+      `${config.circuitsFolder}/keytransfer.zkey`,
     )
 
     const signals = [

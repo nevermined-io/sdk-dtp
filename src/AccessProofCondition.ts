@@ -41,7 +41,7 @@ export class AccessProofCondition extends ProviderCondition<
           data,
           await keytransfer.ecdh(providerK, buyerPub),
         )
-        const proof = await keytransfer.prove(buyerPub, providerPub, providerK, data)
+        const proof = await keytransfer.prove(buyerPub, providerPub, providerK, data, this.config)
         return [zeroX(_hash), buyerPub.param(), providerPub.param(), cipher.param(), proof]
       },
     }

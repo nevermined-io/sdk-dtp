@@ -1,4 +1,4 @@
-import { MetaData } from '@nevermined-io/nevermined-sdk-js'
+import { MetaData } from '@nevermined-io/sdk'
 import { readFileSync } from 'fs'
 import { makeKeyTransfer, CryptoConfig } from '../src'
 

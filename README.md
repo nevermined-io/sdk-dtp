@@ -14,7 +14,7 @@
 SDK Data Transfer Proofs (aka DTP) library allows the delivery of use cases involving encrypted assets in a Nevermined deployment.
 The library is packaged in NPM format:
 
-https://www.npmjs.com/package/@nevermined-io/nevermined-sdk-dtp
+https://www.npmjs.com/package/@nevermined-io/sdk-dtp
 
 ### Examples
 

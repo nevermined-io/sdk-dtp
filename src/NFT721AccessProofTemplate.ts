@@ -1,4 +1,4 @@
-import { Account, AgreementTemplate, DDO } from '@nevermined-io/nevermined-sdk-js'
+import { Account, AgreementTemplate, DDO } from '@nevermined-io/sdk'
 import {
   ServiceType,
   ValidationParams,
@@ -6,7 +6,7 @@ import {
   NFT721HolderCondition,
   AgreementInstance,
   InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import { AccessProofCondition } from './AccessProofCondition'
 import { nft721AccessTemplateServiceAgreementTemplate } from './NFT721AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'

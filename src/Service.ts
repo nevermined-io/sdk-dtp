@@ -1,4 +1,4 @@
-import { Account, MetaData, MetaDataMain } from '@nevermined-io/nevermined-sdk-js'
+import { Account, MetaData, MetaDataMain } from '@nevermined-io/sdk'
 import {
   ServiceAccess,
   ServiceNFTAccess,
@@ -12,7 +12,7 @@ import {
   NFTSalesService,
   Instantiable,
   InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'

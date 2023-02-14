@@ -3,7 +3,7 @@ import {
   MimcCipher,
   Babysig,
   NeverminedOptions
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
 

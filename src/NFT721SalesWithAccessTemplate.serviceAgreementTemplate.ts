@@ -1,4 +1,4 @@
-import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js'
+import { ServiceAgreementTemplate } from '@nevermined-io/sdk'
 import { access, escrowPayment, lockPayment, transferNFT721 } from './ConditionTemplate'
 
 export const nft721SalesTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {

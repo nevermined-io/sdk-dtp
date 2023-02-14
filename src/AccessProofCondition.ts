@@ -8,7 +8,7 @@ import {
   zeroX,
   TxParameters,
   InstantiableConfig,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import { makeKeyTransfer } from './KeyTransfer'
 
 export interface AccessProofConditionContext extends ConditionContext {

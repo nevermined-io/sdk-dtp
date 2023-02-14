@@ -41,7 +41,7 @@ jobs:
           cp *.tgz node/dtp.tgz
 
           cd node
-          sed -i "/sdk-dtp/c\\    \"@nevermined-io/nevermined-sdk-dtp\": \"./dtp.tgz\"," package.json
+          sed -i "/sdk-dtp/c\\    \"@nevermined-io/sdk-dtp\": \"./dtp.tgz\"," package.json
           yarn
           yarn run setup:dev
           yarn build

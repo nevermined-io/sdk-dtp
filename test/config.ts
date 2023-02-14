@@ -1,5 +1,5 @@
 import { NeverminedOptions } from '@nevermined-io/sdk'
-import { LoggerInstance, LogLevel } from '@nevermined-io/sdk/dist/node/utils'
+import { LoggerInstance, LogLevel } from '@nevermined-io/sdk'
 import HDWalletProvider from '@truffle/hdwallet-provider'
 
 LoggerInstance.setLevel(LogLevel.Error)

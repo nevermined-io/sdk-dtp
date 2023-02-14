@@ -8,14 +8,14 @@ import {
   Logger,
   Token,
   NFTAttributes,
+  BigNumber,
 } from '@nevermined-io/sdk'
-import { BabyjubPublicKey } from '@nevermined-io/sdk/dist/node/models/KeyTransfer'
+import { BabyjubPublicKey } from '@nevermined-io/sdk'
 import { Dtp } from '../src/Dtp'
 import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
 import { cryptoConfig, getMetadataForDTP } from './utils'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/sdk/dist/node/Instantiable.abstract'
-import BigNumber from '@nevermined-io/sdk/dist/node/utils/BigNumber'
-import { LockPaymentCondition } from '@nevermined-io/sdk/dist/node/keeper/contracts/conditions'
+import { generateIntantiableConfigFromConfig } from '@nevermined-io/sdk'
+import { LockPaymentCondition } from '@nevermined-io/sdk'
 
 describe('NFT Transfer w/ node Template', () => {
   let nevermined: Nevermined

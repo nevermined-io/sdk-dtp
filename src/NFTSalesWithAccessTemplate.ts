@@ -1,4 +1,4 @@
-import { Account, AgreementTemplate, DDO } from '@nevermined-io/sdk'
+import { Account, AgreementTemplate, BigNumber, DDO } from '@nevermined-io/sdk'
 import {
   ServiceType,
   ValidationParams,
@@ -11,9 +11,8 @@ import {
   LockPaymentCondition,
   TransferNFTCondition,
   EscrowPaymentCondition,
-} from '@nevermined-io/sdk/dist/node/keeper/contracts/conditions'
+} from '@nevermined-io/sdk'
 import { AccessProofCondition } from './AccessProofCondition'
-import BigNumber from '@nevermined-io/sdk/dist/node/utils/BigNumber'
 import { Dtp } from './Dtp'
 import { ProofTemplate } from './ProofTemplate'
 import { ServiceNFTSalesProof } from './Service'

@@ -12,7 +12,7 @@ import {
   zeroX,
   BigNumber,
   generateIntantiableConfigFromConfig,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp, makeKeyTransfer } from '../src'

@@ -17,7 +17,7 @@ import {
   generateId,
   BigNumber,
   generateIntantiableConfigFromConfig,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import {
   Dtp,
   AccessProofConditionExtra,

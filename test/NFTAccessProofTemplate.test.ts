@@ -15,7 +15,7 @@ import {
   Nft1155Contract,
   generateIntantiableConfigFromConfig,
   BigNumber,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import {
   AccessProofConditionExtra,
   KeyTransfer,

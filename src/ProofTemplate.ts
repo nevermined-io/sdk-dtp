@@ -9,7 +9,7 @@ import {
   Service,
   ValidationParams,
   AssetPrice,
-} from '@nevermined-io/nevermined-sdk-js'
+} from '@nevermined-io/sdk'
 import { CryptoConfig, decrypt } from './utils'
 import { Dtp } from './Dtp'
 

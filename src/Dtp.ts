@@ -19,11 +19,11 @@ import {
   zeroX,
   generateId,
   AssetResult,
+  EventOptions,
 } from '@nevermined-io/sdk'
 import { makeKeyTransfer, KeyTransfer } from './KeyTransfer'
 import { noZeroX } from '@nevermined-io/sdk'
 
-import { EventOptions } from '@nevermined-io/sdk'
 import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'
 import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'

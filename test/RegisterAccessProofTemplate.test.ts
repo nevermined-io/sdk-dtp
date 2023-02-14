@@ -1,23 +1,30 @@
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { config } from './config'
-import { Nevermined, Keeper, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js'
-import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards'
-import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
-import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token'
-import { generateId } from '@nevermined-io/nevermined-sdk-js/dist/node/utils'
-
-import { AccessProofTemplate } from '../src/AccessProofTemplate'
 import {
+  Nevermined,
+  Keeper,
+  Account,
+  DDO,
+  Logger,
+  AssetPrice,
+  AssetAttributes,
   EscrowPaymentCondition,
-  LockPaymentCondition
-} from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions'
-import { Dtp } from '../src/Dtp'
-import { AccessProofCondition } from '../src/AccessProofCondition'
-import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
+  LockPaymentCondition,
+  generateId,
+  Token,
+  BabyjubPublicKey,
+  BigNumber,
+  generateIntantiableConfigFromConfig,
+} from '@nevermined-io/sdk'
+import {
+  Dtp,
+  AccessProofCondition,
+  KeyTransfer,
+  makeKeyTransfer,
+  AccessProofTemplate,
+} from '../src'
 import { cryptoConfig, getMetadataForDTP } from './utils'
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract'
-import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber'
 
 describe('Register Escrow Access Proof Template', () => {
   let nevermined: Nevermined
@@ -47,7 +54,7 @@ describe('Register Escrow Access Proof Template', () => {
 
     const instanceConfig = {
       ...generateIntantiableConfigFromConfig(config),
-      nevermined
+      nevermined,
     }
 
     dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
@@ -56,12 +63,7 @@ describe('Register Escrow Access Proof Template', () => {
     ;({ token } = keeper)
 
     // Accounts
-    ;[
-      templateManagerOwner,
-      publisher,
-      consumer,
-      provider
-    ] = await nevermined.accounts.list()
+    ;[templateManagerOwner, publisher, consumer, provider] = await nevermined.accounts.list()
 
     receivers = [publisher.getId(), provider.getId()]
 
@@ -75,20 +77,20 @@ describe('Register Escrow Access Proof Template', () => {
       await keeper.templateStoreManager.proposeTemplate(
         accessProofTemplate.getAddress(),
         consumer,
-        true
+        true,
       )
       // TODO: Use a event to detect template mined
-      await new Promise(resolve => setTimeout(resolve, 2 * 1000))
+      await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
     })
 
     it('should approve the template', async () => {
       await keeper.templateStoreManager.approveTemplate(
         accessProofTemplate.getAddress(),
         templateManagerOwner,
-        true
+        true,
       )
       // TODO: Use a event to detect template mined
-      await new Promise(resolve => setTimeout(resolve, 2 * 1000))
+      await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
     })
   })
 
@@ -110,7 +112,7 @@ describe('Register Escrow Access Proof Template', () => {
 
     const data = Buffer.from(
       '4e657665726d696e65640a436f707972696768742032303230204b65796b6f20476d62482e0a0a546869732070726f6475637420696e636c75646573',
-      'hex'
+      'hex',
     )
     let hash: string
 
@@ -118,7 +120,7 @@ describe('Register Escrow Access Proof Template', () => {
       agreementIdSeed = generateId()
       agreementId = await nevermined.keeper.agreementStoreManager.agreementId(
         agreementIdSeed,
-        publisher.getId()
+        publisher.getId(),
       )
       didSeed = generateId()
       did = await keeper.didRegistry.hashDID(didSeed, publisher.getId())
@@ -133,19 +135,13 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should register a DID', async () => {
-      await keeper.didRegistry.registerAttribute(
-        didSeed,
-        checksum,
-        [],
-        url,
-        publisher.getId()
-      )
+      await keeper.didRegistry.registerAttribute(didSeed, checksum, [], url, publisher.getId())
     })
 
     it('should generate the condition IDs', async () => {
       conditionIdAccess = await accessProofCondition.generateIdWithSeed(
         agreementId,
-        await accessProofCondition.hashValues(hash, buyerPub, providerPub)
+        await accessProofCondition.hashValues(hash, buyerPub, providerPub),
       )
       conditionIdLock = await lockPaymentCondition.generateIdWithSeed(
         agreementId,
@@ -154,8 +150,8 @@ describe('Register Escrow Access Proof Template', () => {
           escrowPaymentCondition.getAddress(),
           token.getAddress(),
           amounts,
-          receivers
-        )
+          receivers,
+        ),
       )
       conditionIdEscrow = await escrowPaymentCondition.generateIdWithSeed(
         agreementId,
@@ -167,8 +163,8 @@ describe('Register Escrow Access Proof Template', () => {
           escrowPaymentCondition.getAddress(),
           token.getAddress(),
           conditionIdLock[1],
-          conditionIdAccess[1]
-        )
+          conditionIdAccess[1],
+        ),
       )
     })
 
@@ -181,9 +177,9 @@ describe('Register Escrow Access Proof Template', () => {
         [
           accessProofCondition.getAddress(),
           escrowPaymentCondition.getAddress(),
-          lockPaymentCondition.getAddress()
+          lockPaymentCondition.getAddress(),
         ].sort(),
-        "The conditions doesn't match"
+        "The conditions doesn't match",
       )
     })
 
@@ -192,13 +188,9 @@ describe('Register Escrow Access Proof Template', () => {
 
       assert.equal(conditionInstances.length, 3, 'Expected 3 conditions.')
 
-      const conditionClasses = [
-        AccessProofCondition,
-        EscrowPaymentCondition,
-        LockPaymentCondition
-      ]
-      conditionClasses.forEach(conditionClass => {
-        if (!conditionInstances.find(condition => condition instanceof conditionClass)) {
+      const conditionClasses = [AccessProofCondition, EscrowPaymentCondition, LockPaymentCondition]
+      conditionClasses.forEach((conditionClass) => {
+        if (!conditionInstances.find((condition) => condition instanceof conditionClass)) {
           throw new Error(`${conditionClass.name} is not part of the conditions.`)
         }
       })
@@ -212,7 +204,7 @@ describe('Register Escrow Access Proof Template', () => {
         [0, 0, 0],
         [0, 0, 0],
         [consumer.getId()],
-        publisher
+        publisher,
       )
 
       assert.isTrue(agreement.status === 1)
@@ -222,7 +214,7 @@ describe('Register Escrow Access Proof Template', () => {
       try {
         await consumer.requestTokens(totalAmount)
       } catch (error) {
-        Logger.error(error);
+        Logger.error(error)
       }
 
       await keeper.token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
@@ -234,25 +226,22 @@ describe('Register Escrow Access Proof Template', () => {
         token.getAddress(),
         amounts,
         receivers,
-        consumer
+        consumer,
       )
 
       assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
     })
 
     it('should fulfill AccessCondition', async () => {
-      const cipher = await keyTransfer.encryptKey(
-        data,
-        await keyTransfer.ecdh(providerK, buyerPub)
-      )
-      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data)
+      const cipher = await keyTransfer.encryptKey(data, await keyTransfer.ecdh(providerK, buyerPub))
+      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data, config)
       const fulfill = await accessProofCondition.fulfill(
         agreementId,
         hash,
         buyerPub,
         providerPub,
         cipher,
-        proof
+        proof,
       )
 
       assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
@@ -269,7 +258,7 @@ describe('Register Escrow Access Proof Template', () => {
         token.getAddress(),
         conditionIdLock[1],
         conditionIdAccess[1],
-        consumer
+        consumer,
       )
 
       assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
@@ -288,7 +277,7 @@ describe('Register Escrow Access Proof Template', () => {
 
     const providerKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
-      y: '0x0b932f02e59f90cdd761d9d5e7c15c8e620efce4ce018bf54015d68d9cb35561'
+      y: '0x0b932f02e59f90cdd761d9d5e7c15c8e620efce4ce018bf54015d68d9cb35561',
     }
 
     const origPasswd = 'passwd_32_letters_1234567890asdf'
@@ -297,28 +286,30 @@ describe('Register Escrow Access Proof Template', () => {
     let metadata
 
     before(async () => {
-      metadata = await getMetadataForDTP(
-        'foo' + Math.random(),
-        data.toString('hex'),
-        providerKey
-      )
+      metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey)
 
-      const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(
-        publisher
-      )
+      const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
-      await nevermined.marketplace.login(clientAssertion)
+      await nevermined.services.marketplace.login(clientAssertion)
 
-      const payload = decodeJwt(config.marketplaceAuthToken)
+      const payload = decodeJwt(config.marketplaceAuthToken as string)
       metadata.userId = payload.sub
 
-      const assetRewards = new AssetRewards(
+      const assetPrice = new AssetPrice(
         new Map([
           [receivers[0], amounts[0]],
-          [receivers[1], amounts[1]]
-        ])
+          [receivers[1], amounts[1]],
+        ]),
       )
-      ddo = await nevermined.assets.create(metadata, publisher, assetRewards, ['access'])
+
+      const assetAttributes = AssetAttributes.getInstance({
+        metadata,
+        price: assetPrice,
+        serviceTypes: ['access'],
+      })
+      ddo = await nevermined.assets.create(assetAttributes, publisher)
+
+      // ddo = await nevermined.assets.create(metadata, publisher, assetPrice, ['access'])
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')
       providerK = await keyTransfer.makeKey('abc')
@@ -335,7 +326,7 @@ describe('Register Escrow Access Proof Template', () => {
         ddo,
         accessProofTemplate.params(consumer),
         consumer,
-        publisher
+        publisher,
       )
 
       assert.match(agreementId, /^0x[a-f0-9]{64}$/i)
@@ -345,7 +336,7 @@ describe('Register Escrow Access Proof Template', () => {
       try {
         await consumer.requestTokens(totalAmount)
       } catch (error) {
-        Logger.error(error);
+        Logger.error(error)
       }
 
       await nevermined.agreements.conditions.lockPayment(
@@ -354,19 +345,12 @@ describe('Register Escrow Access Proof Template', () => {
         amounts,
         receivers,
         token.getAddress(),
-        consumer
+        consumer,
       )
     })
 
     it('should fulfill the conditions from publisher side', async () => {
-      await dtp.transferKey(
-        agreementId,
-        data,
-        providerK,
-        buyerPub,
-        providerPub,
-        publisher
-      )
+      await dtp.transferKey(agreementId, data, providerK, buyerPub, providerPub, publisher)
       await nevermined.agreements.conditions.releaseReward(
         agreementId,
         amounts,
@@ -374,7 +358,7 @@ describe('Register Escrow Access Proof Template', () => {
         consumer.getId(),
         ddo.shortId(),
         token.getAddress(),
-        publisher
+        publisher,
       )
     })
 

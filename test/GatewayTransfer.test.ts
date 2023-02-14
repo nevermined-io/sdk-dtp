@@ -1,143 +1,134 @@
-import { assert } from 'chai';
-import { decodeJwt } from 'jose';
-import { config } from './config';
-import { Nevermined, Account, DDO, Logger } from '@nevermined-io/nevermined-sdk-js';
-import AssetRewards from '@nevermined-io/nevermined-sdk-js/dist/node/models/AssetRewards';
-import { BabyjubPublicKey } from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer';
-import { Dtp } from '../src/Dtp';
-import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer';
-import { cryptoConfig, getMetadataForDTP } from './utils';
-import { generateIntantiableConfigFromConfig } from '@nevermined-io/nevermined-sdk-js/dist/node/Instantiable.abstract';
-import BigNumber from '@nevermined-io/nevermined-sdk-js/dist/node/utils/BigNumber';
-import Token from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/Token';
-import { LockPaymentCondition } from '@nevermined-io/nevermined-sdk-js/dist/node/keeper/contracts/conditions';
+import { assert } from 'chai'
+import { decodeJwt } from 'jose'
+import { config } from './config'
+import {
+  Nevermined,
+  Account,
+  DDO,
+  Logger,
+  Token,
+  NFTAttributes,
+  BigNumber,
+  LockPaymentCondition,
+  generateIntantiableConfigFromConfig,
+} from '@nevermined-io/sdk'
+import { BabyjubPublicKey } from '@nevermined-io/sdk'
+import { Dtp } from '../src/Dtp'
+import { KeyTransfer, makeKeyTransfer } from '../src/KeyTransfer'
+import { cryptoConfig, getMetadataForDTP } from './utils'
 
 describe('NFT Transfer w/ node Template', () => {
-  let nevermined: Nevermined;
+  let nevermined: Nevermined
 
-  let lockPaymentCondition: LockPaymentCondition;
+  let lockPaymentCondition: LockPaymentCondition
 
-  const totalAmount = BigNumber.from(12);
-  const amounts = [BigNumber.from(10), BigNumber.from(2)];
+  const totalAmount = BigNumber.from(12)
 
-  let publisher: Account;
-  let consumer: Account;
-  let provider: Account;
-  let receivers: string[];
+  let publisher: Account
+  let consumer: Account
 
-  let dtp: Dtp;
+  let dtp: Dtp
 
   before(async () => {
-    nevermined = await Nevermined.getInstance(config);
+    nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
       ...generateIntantiableConfigFromConfig(config),
       nevermined,
-    };
+    }
 
-    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig);
-    ({ lockPaymentCondition } = nevermined.keeper.conditions);
+    dtp = await Dtp.getInstance(instanceConfig, cryptoConfig)
+    ;({ lockPaymentCondition } = nevermined.keeper.conditions)
 
     // Accounts
-    [, publisher, consumer, provider] = await nevermined.accounts.list();
-
-    receivers = [publisher.getId(), provider.getId()];
-  });
+    ;[, publisher, consumer] = await nevermined.accounts.list()
+  })
 
   describe('Short flow', () => {
-    let agreementId: string;
-    let ddo: DDO;
+    let agreementId: string
+    let ddo: DDO
 
-    let buyerK: string;
-    let providerK: string;
-    let buyerPub: BabyjubPublicKey;
-    let providerPub: BabyjubPublicKey;
-    let keyTransfer: KeyTransfer;
-    let token: Token;
+    let buyerK: string
+    let providerK: string
+    let buyerPub: BabyjubPublicKey
+    let providerPub: BabyjubPublicKey
+    let keyTransfer: KeyTransfer
+    let token: Token
 
     const providerKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
       y: '0x0b932f02e59f90cdd761d9d5e7c15c8e620efce4ce018bf54015d68d9cb35561',
-    };
+    }
 
-    const origPasswd = 'passwd_32_letters_1234567890asdf';
-    const data = Buffer.from(origPasswd);
+    const origPasswd = 'passwd_32_letters_1234567890asdf'
+    const data = Buffer.from(origPasswd)
 
-    let metadata;
+    let metadata
 
     before(async () => {
-      metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey);
-      ({ token } = nevermined.keeper);
+      metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey)
+      ;({ token } = nevermined.keeper)
 
-      const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher);
+      const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
-      await nevermined.marketplace.login(clientAssertion);
+      await nevermined.services.marketplace.login(clientAssertion)
+      const payload = decodeJwt(config.marketplaceAuthToken!)
+      metadata.userId = payload.sub
 
-      const payload = decodeJwt(config.marketplaceAuthToken);
-      metadata.userId = payload.sub;
-
-      const assetRewards = new AssetRewards(
-        new Map([
-          [receivers[0], amounts[0]],
-          [receivers[1], amounts[1]],
-        ]),
-      );
-
-      ddo = await nevermined.assets.createNft(
+      const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
-        publisher,
-        assetRewards,
-        undefined,
-        BigNumber.from(100),
-        undefined,
-        BigNumber.from(1),
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        ['nft-sales-proof', 'nft-access'],
-      );
+        serviceTypes: ['nft-access', 'nft-sales-proof'],
+        nftContractAddress: nevermined.nfts1155.nftContract.address,
+        cap: BigNumber.from(100),
+        amount: BigNumber.from(1),
+      })
 
-      keyTransfer = await makeKeyTransfer();
-      buyerK = await keyTransfer.makeKey('abd');
-      buyerPub = await keyTransfer.secretToPublic(buyerK);
-      providerK = await keyTransfer.makeKey('abc');
-      providerPub = await keyTransfer.secretToPublic(providerK);
-      consumer.babyX = buyerPub.x;
-      consumer.babyY = buyerPub.y;
-      consumer.babySecret = 'abd';
+      ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
-      const gatewayAddress = await nevermined.node.getProviderAddress()
-      await nevermined.nfts.setApprovalForAll(gatewayAddress, true, publisher)
+      keyTransfer = await makeKeyTransfer()
+      buyerK = await keyTransfer.makeKey('abd')
+      buyerPub = await keyTransfer.secretToPublic(buyerK)
+      providerK = await keyTransfer.makeKey('abc')
+      providerPub = await keyTransfer.secretToPublic(providerK)
+      consumer.babyX = buyerPub.x
+      consumer.babyY = buyerPub.y
+      consumer.babySecret = 'abd'
 
-    });
+      const gatewayAddress = await nevermined.services.node.getProviderAddress()
+      await nevermined.nfts1155.setApprovalForAll(gatewayAddress, true, publisher)
+    })
 
     it('should create a new agreement (short way)', async () => {
       try {
-        await consumer.requestTokens(totalAmount);
+        await consumer.requestTokens(totalAmount)
       } catch (error) {
-        Logger.error(error);
+        Logger.error(error)
       }
-      await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer);
+      await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
 
       agreementId = await dtp.order(ddo.id, BigNumber.from(1), consumer, publisher.getId())
 
-      assert.match(agreementId, /^0x[a-f0-9]{64}$/i);
-    });
+      assert.match(agreementId, /^0x[a-f0-9]{64}$/i)
+    })
 
     it('should fulfill the conditions from publisher side', async () => {
-      const result = await dtp.transferForDelegate(ddo.id, agreementId, consumer, BigNumber.from(1), publisher.getId())
+      const result = await dtp.transferForDelegate(
+        ddo.id,
+        agreementId,
+        consumer,
+        BigNumber.from(1),
+        publisher.getId(),
+      )
       assert.isTrue(result)
-    });
+    })
 
     it('buyer should have the key', async () => {
-      const key = await dtp.readKey(agreementId, buyerK, providerPub);
-      assert.equal(key.toString(), data.toString());
-    });
+      const key = await dtp.readKey(agreementId, buyerK, providerPub)
+      assert.equal(key.toString(), data.toString())
+    })
 
     it('access the asset using key', async () => {
-      await nevermined.assets.download(ddo.id, consumer, undefined, 1, true, 'nft-sales-proof')
+      await nevermined.assets.download(ddo.id, consumer, undefined, 1, 'nft-sales-proof')
     })
-  });
-});
+  })
+})

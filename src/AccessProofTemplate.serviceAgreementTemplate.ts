@@ -1,4 +1,4 @@
-import { ServiceAgreementTemplate } from '@nevermined-io/nevermined-sdk-js/dist/node/ddo/ServiceAgreementTemplate'
+import { ServiceAgreementTemplate } from '@nevermined-io/sdk'
 import { access, escrowPayment, lockPayment } from './ConditionTemplate'
 
 export const accessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {
@@ -10,15 +10,15 @@ export const accessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = 
       handler: {
         moduleName: 'escrowAccessTemplate',
         functionName: 'fulfillLockPaymentCondition',
-        version: '0.1'
-      }
-    }
+        version: '0.1',
+      },
+    },
   ],
   fulfillmentOrder: ['access.fulfill', 'lockPayment.fulfill', 'escrowPayment.fulfill'],
   conditionDependency: {
     lockPayment: [],
     access: [],
-    escrowPayment: ['lockPayment', 'access']
+    escrowPayment: ['lockPayment', 'access'],
   },
-  conditions: [lockPayment, access, escrowPayment]
+  conditions: [lockPayment, access, escrowPayment],
 }

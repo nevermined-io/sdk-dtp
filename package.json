@@ -1,9 +1,9 @@
 {
-  "name": "@nevermined-io/nevermined-sdk-dtp",
-  "version": "0.2.6",
+  "name": "@nevermined-io/sdk-dtp",
+  "version": "0.3.0",
   "description": "Javascript SDK for connecting with Nevermined Data Platform (Data Transfer proofs module)",
   "main": "./dist/index.js",
-  "typings": "./dist/node/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "yarn run build:tsc",
     "build:tsc": "tsc --sourceMap",
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/nevermined-sdk-js": "0.27.5",
+    "@nevermined-io/sdk": "1.0.0",
     "circomlibjs": "^0.1.1",
     "eciesjs": "^0.3.15",
     "ffjavascript": "^0.2.55",
@@ -57,7 +57,7 @@
     "chai-spies": "^1.0.0",
     "cross-env": "^6.0.3",
     "eslint": "^8.19.0",
-    "eslint-config-nevermined": "^0.1.0",
+    "eslint-config-nevermined": "^0.2.0",
     "eslint-config-next": "^12.3.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

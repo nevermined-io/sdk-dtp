@@ -48,11 +48,7 @@ const aes_decryption = (data64, passphrase) => {
   const data = Buffer.from(data64, 'base64')
   const iv = data.slice(0, AES_BLOCK_SIZE)
   const cipher = crypto.createDecipheriv('aes-128-cbc', private_key, iv)
-  let res = cipher.update(
-    data.slice(AES_BLOCK_SIZE).toString('binary'),
-    'binary',
-    'binary'
-  )
+  let res = cipher.update(data.slice(AES_BLOCK_SIZE).toString('binary'), 'binary', 'binary')
   res += cipher.final('binary')
   return unpad(res)
 }
@@ -65,16 +61,12 @@ export const aes_encryption_256 = (data, passphrase) => {
   const cipher = crypto.createCipheriv('aes-256-cbc', private_key, iv)
   let res = cipher.update(pad(data), 'binary', 'binary')
   res += cipher.final('binary')
-  return Buffer.from('Salted__' + salt.toString('binary') + res, 'binary').toString(
-    'binary'
-  )
+  return Buffer.from('Salted__' + salt.toString('binary') + res, 'binary').toString('binary')
 }
 
 export const aes_decryption_256 = (encrypted, password) => {
   const salt = Buffer.from(encrypted.substring(8, 16), 'binary')
-  const keydata = crypto
-    .pbkdf2Sync(password, salt, 10000, 48, 'sha256')
-    .toString('binary')
+  const keydata = crypto.pbkdf2Sync(password, salt, 10000, 48, 'sha256').toString('binary')
   const key = Buffer.from(keydata.substring(0, 32), 'binary')
   const iv = Buffer.from(keydata.substring(32, 48), 'binary')
   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
@@ -87,21 +79,19 @@ export const aes_decryption_256 = (encrypted, password) => {
 export const encrypt = async (
   config: CryptoConfig,
   cipherText: string,
-  method: string
+  method: string,
 ): Promise<{ publicKey: string; result: string }> => {
   if (method === 'PSK-ECDSA') {
     const wallet = await ethers.Wallet.fromEncryptedJson(
       config.provider_key,
-      config.provider_password
+      config.provider_password,
     )
     const ecdh = crypto.createECDH('secp256k1')
     ecdh.setPrivateKey(Buffer.from(wallet.privateKey.substring(2), 'hex'))
-    const result = ec_encrypt(ecdh.getPublicKey(), Buffer.from(cipherText)).toString(
-      'binary'
-    )
+    const result = ec_encrypt(ecdh.getPublicKey(), Buffer.from(cipherText)).toString('binary')
     const res = {
       publicKey: wallet.publicKey,
-      result
+      result,
     }
     return res
   } else if (method === 'PSK-RSA') {
@@ -114,20 +104,16 @@ export const encrypt = async (
       result:
         Buffer.from(encrypted_data).toString('hex') +
         '|' +
-        Buffer.from(encrypted_aes_key).toString('hex')
+        Buffer.from(encrypted_aes_key).toString('hex'),
     }
   }
 }
 
-export const decrypt = async (
-  config: CryptoConfig,
-  cipherText: string,
-  method: string
-) => {
+export const decrypt = async (config: CryptoConfig, cipherText: string, method: string) => {
   if (method === 'PSK-ECDSA') {
     const wallet = await ethers.Wallet.fromEncryptedJson(
       config.provider_key,
-      config.provider_password
+      config.provider_password,
     )
     const ecdh = crypto.createECDH('secp256k1')
     ecdh.setPrivateKey(Buffer.from(wallet.privateKey.substring(2), 'hex'))

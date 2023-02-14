@@ -1,17 +1,14 @@
 import {
   BabyjubPublicKey,
-  MimcCipher
-} from '@nevermined-io/nevermined-sdk-js/dist/node/models/KeyTransfer'
+  MimcCipher,
+  Babysig,
+  NeverminedOptions
+} from '@nevermined-io/sdk'
 import Web3Utils from 'web3-utils'
 import vKey from './verification_key.json'
 
 const SEED = 'mimcsponge'
 const NROUNDS = 220
-
-export interface Babysig {
-  R8: [string, string]
-  S: string
-}
 
 class Circom {
   private babyjub
@@ -44,6 +41,7 @@ export class KeyTransfer {
   snarkjs
   ffjavascript
   circom: Circom
+
 
   public async init() {
     this.snarkjs = require('snarkjs')
@@ -90,7 +88,7 @@ export class KeyTransfer {
     }
     return {
       xL,
-      xR
+      xR,
     }
   }
 
@@ -128,15 +126,11 @@ export class KeyTransfer {
     const S = (r + hm * s) % subOrder
     return {
       R8: [this.toHex(R8[0]), this.toHex(R8[1])],
-      S: this.bigToHex(S)
+      S: this.bigToHex(S),
     }
   }
 
-  public async verifyBabyjub(
-    pubkey: BabyjubPublicKey,
-    msg,
-    sig: Babysig
-  ): Promise<boolean> {
+  public async verifyBabyjub(pubkey: BabyjubPublicKey, msg, sig: Babysig): Promise<boolean> {
     const babyjub = this.circom.getBabyjub()
     const poseidon = this.circom.getPoseidon()
 
@@ -175,10 +169,7 @@ export class KeyTransfer {
   public async ecdh(secret: string, pub: BabyjubPublicKey): Promise<string> {
     const babyjub = this.circom.getBabyjub()
 
-    const [x, _y] = babyjub.mulPointEscalar(
-      [this.F.e(pub.x), this.F.e(pub.y)],
-      BigInt(secret)
-    )
+    const [x, _y] = babyjub.mulPointEscalar([this.F.e(pub.x), this.F.e(pub.y)], BigInt(secret))
     return this.toHex(x)
   }
 
@@ -199,7 +190,8 @@ export class KeyTransfer {
     buyerPub: BabyjubPublicKey,
     providerPub: BabyjubPublicKey,
     providerK: string,
-    data: Buffer
+    data: Buffer,
+    config: NeverminedOptions
   ): Promise<string> {
     const mimcsponge = this.circom.getMimcSponge()
     const poseidon = this.circom.getPoseidon()
@@ -226,13 +218,13 @@ export class KeyTransfer {
       provider_y: BigInt(providerPub.y),
       cipher_xL_in: conv(cipher.xL),
       cipher_xR_in: conv(cipher.xR),
-      hash_plain: conv(origHash)
+      hash_plain: conv(origHash),
     }
 
     const { proof } = await this.snarkjs.plonk.fullProve(
       snarkParams,
-      'circuits/keytransfer.wasm',
-      'circuits/keytransfer.zkey'
+      `${config.circuitsFolder}/keytransfer.wasm`,
+      `${config.circuitsFolder}/keytransfer.zkey`,
     )
 
     const signals = [
@@ -242,12 +234,12 @@ export class KeyTransfer {
       this.F.e(providerPub.y),
       cipher.xL,
       cipher.xR,
-      origHash
+      origHash,
     ]
 
     const proofSolidity = await this.snarkjs.plonk.exportSolidityCallData(
       this.ffjavascript.utils.unstringifyBigInts(proof),
-      signals
+      signals,
     )
 
     const proofData = proofSolidity.split(',')[0]
@@ -259,7 +251,7 @@ export class KeyTransfer {
     providerPub: BabyjubPublicKey,
     providerK: string,
     data: Buffer,
-    proof: any
+    proof: any,
   ): Promise<string> {
     const mimcsponge = await this.circom.getMimcSponge()
     const poseidon = await this.circom.getPoseidon()
@@ -274,7 +266,7 @@ export class KeyTransfer {
       providerPub.y,
       cipher.xL,
       cipher.xR,
-      origHash
+      origHash,
     ]
 
     const res = await this.snarkjs.plonk.verify(vKey, signals, proof)

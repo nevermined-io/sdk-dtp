@@ -24,6 +24,8 @@ export type ServiceAccessProof = ServiceAccess & {
     main: {
       _hash: string
       _providerPub: { x: string; y: string }
+      _cipherDLEQ: string
+      _secretId: { x: string; y: string }
     }
   }
 }

@@ -135,6 +135,66 @@ export const access = {
   ],
 }
 
+export const accessDLEQ = {
+  name: 'access',
+  timelock: 0,
+  timeout: 0,
+  contractName: 'AccessDLEQCondition',
+  functionName: 'fulfill',
+  parameters: [
+    {
+      name: '_agreementId',
+      type: 'bytes32',
+      value: '',
+    },
+    {
+      name: '_cipher',
+      type: 'uint',
+      value: '',
+    },
+    {
+      name: '_secretId',
+      type: 'uint[2]',
+      value: '',
+    },
+    {
+      name: '_provider',
+      type: 'uint[2]',
+      value: '',
+    },
+    {
+      name: '_reencrypt',
+      type: 'uint[2]',
+      value: '',
+    },
+    {
+      name: '_proof',
+      type: 'uint[2]',
+      value: '',
+    },
+  ],
+  events: [
+    {
+      name: 'Fulfilled',
+      actorType: 'publisher',
+      handler: {
+        moduleName: 'access',
+        functionName: 'fulfillEscrowPaymentCondition',
+        version: '0.1',
+      },
+    },
+    {
+      name: 'TimedOut',
+      actorType: 'consumer',
+      handler: {
+        moduleName: 'access',
+        functionName: 'fulfillEscrowPaymentCondition',
+        version: '0.1',
+      },
+    },
+  ],
+}
+
 export const escrowPayment = {
   name: 'escrowPayment',
   timelock: 0,

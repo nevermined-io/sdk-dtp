@@ -1,6 +1,7 @@
 // Extension of main nevermined object
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { AccessProofCondition } from './AccessProofCondition'
+import { AccessDLEQCondition } from './AccessDLEQCondition'
 import {
   Account,
   ServiceType,
@@ -30,10 +31,13 @@ import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
 import { CryptoConfig } from './utils'
 import { AccessProofService, NFTAccessProofService, NFTSalesProofService } from './Service'
+import { AccessDLEQTemplate } from './AccessDLEQTemplate'
 
 export class Dtp extends Instantiable {
+  public accessDLEQCondition: AccessDLEQCondition
   public accessProofCondition: AccessProofCondition
   public accessProofTemplate: AccessProofTemplate
+  public accessDLEQTemplate: AccessDLEQTemplate
   public nftAccessProofTemplate: NFTAccessProofTemplate
   public nft721AccessProofTemplate: NFT721AccessProofTemplate
   public nftSalesWithAccessTemplate: NFTSalesWithAccessTemplate
@@ -49,6 +53,7 @@ export class Dtp extends Instantiable {
     dtp.cryptoConfig = cryptoConfig
     dtp.setInstanceConfig(config)
     dtp.accessProofCondition = await AccessProofCondition.getInstance(config)
+    dtp.accessDLEQCondition = await AccessDLEQCondition.getInstance(config)
     dtp.accessProofTemplate = await AccessProofTemplate.getInstanceDtp(config, dtp)
     dtp.nftAccessProofTemplate = await NFTAccessProofTemplate.getInstanceDtp(config, dtp)
     dtp.nftSalesWithAccessTemplate = await NFTSalesWithAccessTemplate.getInstanceDtp(config, dtp)
@@ -60,6 +65,10 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.agreementStoreManager.addTemplate(
       dtp.accessProofTemplate.address,
       dtp.accessProofTemplate,
+    )
+    config.nevermined.keeper.agreementStoreManager.addTemplate(
+      dtp.accessDLEQTemplate.address,
+      dtp.accessDLEQTemplate,
     )
     config.nevermined.keeper.agreementStoreManager.addTemplate(
       dtp.nftAccessProofTemplate.address,
@@ -78,6 +87,7 @@ export class Dtp extends Instantiable {
       dtp.nft721SalesWithAccessTemplate,
     )
     config.nevermined.keeper.conditionsList.push(dtp.accessProofCondition)
+    config.nevermined.keeper.conditionsList.push(dtp.accessDLEQCondition)
     config.nevermined.keeper.templateList.push(dtp.accessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftAccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nft721AccessProofTemplate)
@@ -87,6 +97,7 @@ export class Dtp extends Instantiable {
     config.nevermined.assets.servicePlugin['access'] = new AccessProofService(
       config,
       dtp.accessProofTemplate,
+      dtp.accessDLEQTemplate,
     )
     config.nevermined.assets.servicePlugin['nft-access'] = new NFTAccessProofService(
       config,
@@ -270,7 +281,7 @@ export class Dtp extends Instantiable {
     return account
   }
 
-  public async consumerAccount(baby: string, eth: string, babysig: Babysig): Promise<Account> {
+  public async consumerAccount(baby: string, eth: string, babysig?: Babysig): Promise<Account> {
     const account = new Account(eth)
     account.babyX = '0x' + baby.substring(0, 64)
     account.babyY = '0x' + baby.substring(64, 128)

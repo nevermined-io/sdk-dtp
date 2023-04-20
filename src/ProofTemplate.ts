@@ -12,6 +12,7 @@ import {
 } from '@nevermined-io/sdk'
 import { CryptoConfig, decrypt } from './utils'
 import { Dtp } from './Dtp'
+import { AccessDLEQConditionExtra } from './AccessDLEQCondition'
 
 type AssetData = { url: string; content_type: string }
 
@@ -81,5 +82,56 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
 
   public isDTP(main: MetaDataMain): boolean {
     return main.files && main.files.some((f) => f.encryption === 'dtp')
+  }
+}
+
+export abstract class DLEQTemplate<Params, S extends Service> extends BaseTemplate<Params, S> {
+  public dtp: Dtp
+
+  public async createService(
+    publisher: Account,
+    metadata: MetaData,
+    assetPrice?: AssetPrice,
+    erc20TokenAddress?: string,
+    priced?: boolean,
+  ): Promise<S> {
+    const service = await super.createService(
+      publisher,
+      metadata,
+      assetPrice,
+      erc20TokenAddress,
+      priced,
+    )
+    const { secretId, providerKey, cipher } = metadata.additionalInformation as any
+    return {
+      ...service,
+      attributes: {
+        ...service.attributes,
+        main: {
+          ...service.attributes.main,
+          _cipher: cipher,
+          _providerPub: {
+            x: providerKey.x,
+            y: providerKey.y,
+          },
+          _secretId: {
+            x: secretId.x,
+            y: secretId.y,
+          },
+        },
+      },
+    } as S
+  }
+
+  public async extraGen(params: ValidationParams): Promise<any> {
+    const extra: AccessDLEQConditionExtra = {
+      providerK: this.dtp.keytransfer.makeKey(process.env.PROVIDER_DLEQ_SECRET),
+      agreementId: params.agreement_id
+    }
+    return extra
+  }
+
+  public isDLEQ(main: MetaDataMain): boolean {
+    return main.files && main.files.some((f) => f.encryption as any=== 'dleq')
   }
 }

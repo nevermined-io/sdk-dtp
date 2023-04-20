@@ -11,8 +11,8 @@ import {
   AgreementInstance,
   InstantiableConfig,
 } from '@nevermined-io/sdk'
-import { AccessProofCondition } from './AccessProofCondition'
-import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
+import { AccessDLEQCondition } from './AccessDLEQCondition'
+import { accessDLEQTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
 import { Dtp } from './Dtp'
 import { DLEQTemplate } from './ProofTemplate'
 import { ServiceAccessProof } from './Service'
@@ -52,7 +52,7 @@ export class AccessDLEQTemplate extends DLEQTemplate<
   }
 
   public async getServiceAgreementTemplate() {
-    return accessTemplateServiceAgreementTemplate
+    return accessDLEQTemplateServiceAgreementTemplate
   }
 
   public name(): string {
@@ -79,10 +79,10 @@ export class AccessDLEQTemplate extends DLEQTemplate<
     return { consumer, consumerId: consumer.getId() }
   }
 
-  public conditions(): [AccessProofCondition, LockPaymentCondition, EscrowPaymentCondition] {
+  public conditions(): [AccessDLEQCondition, LockPaymentCondition, EscrowPaymentCondition] {
     const { lockPaymentCondition, escrowPaymentCondition } = this.nevermined.keeper.conditions
-    const { accessProofCondition } = this.dtp
-    return [accessProofCondition, lockPaymentCondition, escrowPaymentCondition]
+    const { accessDLEQCondition } = this.dtp
+    return [accessDLEQCondition, lockPaymentCondition, escrowPaymentCondition]
   }
 
   public async instanceFromDDO(

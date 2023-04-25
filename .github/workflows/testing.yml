@@ -11,27 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        network: ["--geth", "--polygon"]
-        node: ["16"]
-        include:
-          - network: "--geth"
-            network-name: geth-localnet
-          - network: "--polygon"
-            network-name: polygon-localnet
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 16
       - uses: nevermined-io/nvm-tools-actions@v0.9.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
           estuary: 'true'
-          contracts-version: 'v3.0.0'
-          node-version: 'v1.0.0'
+          contracts-version: 'v3.1.0'
       - name: Install dependencies
         run: |
           yarn
@@ -40,7 +30,7 @@ jobs:
           nvm-tools copy-artifacts ./artifacts
           nvm-tools copy-circuits ./circuits
           ls -l ./artifacts
-      
+
       - name: Run integration tests
         env:
           NO_GRAPH: true
@@ -54,4 +44,3 @@ jobs:
         with:
           name: nevermined-tools-output
           path: tools/nevermined_tools.txt
-

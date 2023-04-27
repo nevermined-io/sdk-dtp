@@ -385,8 +385,8 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('buyer should have the key', async () => {
-      const key = await dtp.readKeyDLEQ(agreementId, buyerK, providerPub)
-      assert.equal(key.toString(), data.toString())
+      const key = await dtp.readKeyDLEQ(agreementId, cipher, buyerK, providerPub)
+      assert.equal(key.toString(), passwd.toString())
     })
   })
 })

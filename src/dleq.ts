@@ -85,10 +85,32 @@ async function encrypt(passwd: bigint, secret: string, providerPub: BabyjubPubli
     return passwd ^ mask
 }
 
+async function decrypt(cipher: string, buyerK: string, reencrypt: [string, string], providerPub: BabyjubPublicKey): Promise<bigint> {
+    const { buildBn128 } = require('ffjavascript')
+    const ffCurve = await buildBn128()
+    const G1 = ffCurve.G1
+    const Fr = ffCurve.Fr
+
+    const G = G1.g
+
+    const yG = G1.fromObject([BigInt(providerPub.x), BigInt(providerPub.y)])
+    const yR = G1.fromObject([BigInt(reencrypt[0]), BigInt(reencrypt[1])])
+    const z = Fr.fromObject(BigInt(buyerK))
+    const zG = G1.timesFr(G, z)
+
+    // Compute ECDH (reencrypted)
+    const R = G1.add(yR, G1.neg(G1.timesFr(yG, z)))
+    const objR = G1.toObject(G1.toAffine(R))
+
+    const mask = objR[0]
+    return BigInt(cipher) ^ mask
+}
+
 export const dleq = {
     makeProof,
     secretToPublic,
     encrypt,
+    decrypt,
     bigToHex,
 }
 

@@ -369,6 +369,31 @@ export class Dtp extends Instantiable {
     )
   }
 
+  public async readKeyDLEQ(agreementId: string, cipher: string, buyerK: string, providerPub: BabyjubPublicKey) {
+    const evOptions: EventOptions = {
+      eventName: 'Fulfilled',
+      methodName: 'getFulfilleds',
+      filterJsonRpc: { _agreementId: agreementId },
+      filterSubgraph: { where: { _agreementId: agreementId } },
+      result: {
+        _agreementId: true,
+        _origHash: true,
+        _buyer: true,
+        _provider: true,
+        _cipher: true,
+        _proof: true,
+        _conditionId: true,
+      },
+    }
+    const ev = await this.accessDLEQCondition.events.once((events) => events, evOptions)
+
+    if (!ev.length) {
+      throw new KeeperError('No events are returned')
+    }
+
+    return dleq.decrypt(cipher, buyerK, ev[0].args._reencrypt, providerPub)
+  }
+
   public async order(
     did: string,
     nftAmount: BigNumber,

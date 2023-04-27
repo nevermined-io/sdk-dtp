@@ -32,6 +32,7 @@ import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
 import { CryptoConfig } from './utils'
 import { AccessProofService, NFTAccessProofService, NFTSalesProofService } from './Service'
 import { AccessDLEQTemplate } from './AccessDLEQTemplate'
+import { dleq } from './dleq'
 
 export class Dtp extends Instantiable {
   public accessDLEQCondition: AccessDLEQCondition
@@ -265,6 +266,36 @@ export class Dtp extends Instantiable {
         from,
         params,
       )
+      return !!receipt
+    } catch (e) {
+      throw new KeeperError(e)
+    }
+  }
+
+  public async transferKeyDLEQ(
+    agreementId: string,
+    cipher: string,
+    providerK: string,
+    secretId: BabyjubPublicKey,
+    buyerPub: BabyjubPublicKey,
+    providerPub: BabyjubPublicKey,
+    from?: Account,
+    params?: TxParameters,
+  ) {
+    try {
+      const { proof, reencrypt } = await dleq.makeProof(agreementId, providerK, secretId, buyerPub)
+      const receipt = await this.accessDLEQCondition.fulfill(
+        agreementId,
+        cipher,
+        secretId,
+        providerPub,
+        buyerPub,
+        reencrypt,
+        proof,
+        from,
+        params,
+      )
+
       return !!receipt
     } catch (e) {
       throw new KeeperError(e)

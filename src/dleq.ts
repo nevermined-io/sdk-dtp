@@ -2,6 +2,14 @@ import { BabyjubPublicKey } from "@nevermined-io/sdk"
 
 const { ethers } = require('ethers')
 
+function bigToHex(a) {
+    let str = a.toString(16)
+    while (str.length < 64) {
+      str = '0' + str
+    }
+    return '0x' + str
+}
+
 export async function makeProof(agreementId: string, providerK: string, secretId: BabyjubPublicKey, buyerPub: BabyjubPublicKey) {
     const { buildBn128 } = require('ffjavascript')
     const ffCurve = await buildBn128()
@@ -41,5 +49,46 @@ export async function makeProof(agreementId: string, providerK: string, secretId
         reencrypt: new BabyjubPublicKey(objR[0].toString(16), objR[1].toString(16)),
     }
 
+}
+
+async function secretToPublic(secret: string): Promise<BabyjubPublicKey> {
+    const { buildBn128 } = require('ffjavascript')
+    const ffCurve = await buildBn128()
+    const G1 = ffCurve.G1
+    const Fr = ffCurve.Fr
+
+    const G = G1.g
+
+    const y = Fr.fromObject(BigInt(secret))
+    const yG = G1.timesFr(G, y)
+    const objR = G1.toObject(G1.toAffine(yG))
+    return new BabyjubPublicKey(bigToHex(objR[0]), bigToHex(objR[1]))
+}
+
+async function encrypt(passwd: bigint, secret: string, providerPub: BabyjubPublicKey): Promise<bigint> {
+    const { buildBn128 } = require('ffjavascript')
+    const ffCurve = await buildBn128()
+    const G1 = ffCurve.G1
+    const Fr = ffCurve.Fr
+
+    const G = G1.g
+
+    const yG = G1.fromObject([BigInt(providerPub.x), BigInt(providerPub.y)])
+    const x = Fr.fromObject(BigInt(secret))
+    const xG = G1.timesFr(G, x)
+
+    // Compute ECDH
+    const ecdh = G1.timesFr(yG, x)
+    const objR = G1.toObject(G1.toAffine(ecdh))
+
+    const mask = objR[0]
+    return passwd ^ mask
+}
+
+export const dleq = {
+    makeProof,
+    secretToPublic,
+    encrypt,
+    bigToHex,
 }
 

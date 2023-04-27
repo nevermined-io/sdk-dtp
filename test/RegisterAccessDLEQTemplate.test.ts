@@ -23,8 +23,9 @@ import {
   KeyTransfer,
   makeKeyTransfer,
   AccessDLEQTemplate,
+  dleq,
 } from '../src'
-import { cryptoConfig, getMetadataForDTP } from './utils'
+import { cryptoConfig, getMetadataForDLEQ } from './utils'
 
 describe('Register Escrow Access Proof Template', () => {
   let nevermined: Nevermined
@@ -110,11 +111,11 @@ describe('Register Escrow Access Proof Template', () => {
     let providerPub: BabyjubPublicKey
     let keyTransfer: KeyTransfer
 
-    const data = Buffer.from(
-      '4e657665726d696e65640a436f707972696768742032303230204b65796b6f20476d62482e0a0a546869732070726f6475637420696e636c75646573',
-      'hex',
-    )
-    let hash: string
+    let secret: string
+    let secretId: BabyjubPublicKey
+    const passwd = 123456n
+    let encryptedPasswd: bigint
+    let cipher: string
 
     before(async () => {
       agreementIdSeed = generateId()
@@ -129,9 +130,12 @@ describe('Register Escrow Access Proof Template', () => {
 
       buyerK = keyTransfer.makeKey('abd')
       providerK = keyTransfer.makeKey('abc')
-      buyerPub = await keyTransfer.secretToPublic(buyerK)
-      providerPub = await keyTransfer.secretToPublic(providerK)
-      hash = await keyTransfer.hashKey(data)
+      secret = keyTransfer.makeKey('abcedf')
+      buyerPub = await dleq.secretToPublic(buyerK)
+      providerPub = await dleq.secretToPublic(providerK)
+      secretId = await dleq.secretToPublic(secret)
+      encryptedPasswd = await dleq.encrypt(passwd, secret, providerPub)
+      cipher = dleq.bigToHex(encryptedPasswd)
     })
 
     it('should register a DID', async () => {
@@ -141,7 +145,7 @@ describe('Register Escrow Access Proof Template', () => {
     it('should generate the condition IDs', async () => {
       conditionIdAccess = await accessCondition.generateIdWithSeed(
         agreementId,
-        await accessCondition.hashValues(hash, buyerPub, providerPub),
+        await accessCondition.hashValues(cipher, secretId, providerPub, buyerPub),
       )
       conditionIdLock = await lockPaymentCondition.generateIdWithSeed(
         agreementId,
@@ -233,14 +237,14 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill AccessCondition', async () => {
-      const cipher = await keyTransfer.encryptKey(data, await keyTransfer.ecdh(providerK, buyerPub))
-      const proof = await keyTransfer.prove(buyerPub, providerPub, providerK, data, config)
+      const { proof, reencrypt } = await dleq.makeProof(agreementId, providerK, secretId, buyerPub)
       const fulfill = await accessCondition.fulfill(
         agreementId,
-        hash,
-        buyerPub,
-        providerPub,
         cipher,
+        secretId,
+        providerPub,
+        buyerPub,
+        reencrypt,
         proof,
       )
 
@@ -275,7 +279,19 @@ describe('Register Escrow Access Proof Template', () => {
     let providerPub: BabyjubPublicKey
     let keyTransfer: KeyTransfer
 
+    let secret: string
+    let secretId: BabyjubPublicKey
+    const passwd = 123456n
+    let encryptedPasswd: bigint
+    let cipher: string
+
+
     const providerKey = {
+      x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
+      y: '0x0b932f02e59f90cdd761d9d5e7c15c8e620efce4ce018bf54015d68d9cb35561',
+    }
+
+    const secretKey = {
       x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
       y: '0x0b932f02e59f90cdd761d9d5e7c15c8e620efce4ce018bf54015d68d9cb35561',
     }
@@ -286,7 +302,22 @@ describe('Register Escrow Access Proof Template', () => {
     let metadata
 
     before(async () => {
-      metadata = await getMetadataForDTP('foo' + Math.random(), data.toString('hex'), providerKey)
+      keyTransfer = await makeKeyTransfer()
+      buyerK = await keyTransfer.makeKey('abd')
+      providerK = await keyTransfer.makeKey('abc')
+
+      secret = keyTransfer.makeKey('abcedf')
+      buyerPub = await dleq.secretToPublic(buyerK)
+      providerPub = await dleq.secretToPublic(providerK)
+      secretId = await dleq.secretToPublic(secret)
+      encryptedPasswd = await dleq.encrypt(passwd, secret, providerPub)
+      cipher = dleq.bigToHex(encryptedPasswd)
+
+      consumer.babyX = buyerPub.x
+      consumer.babyY = buyerPub.y
+      consumer.babySecret = buyerK
+
+      metadata = await getMetadataForDLEQ('foo' + Math.random(), cipher, providerKey, secretKey)
 
       const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
 
@@ -309,15 +340,6 @@ describe('Register Escrow Access Proof Template', () => {
       })
       ddo = await nevermined.assets.create(assetAttributes, publisher)
 
-      // ddo = await nevermined.assets.create(metadata, publisher, assetPrice, ['access'])
-      keyTransfer = await makeKeyTransfer()
-      buyerK = await keyTransfer.makeKey('abd')
-      providerK = await keyTransfer.makeKey('abc')
-      buyerPub = await keyTransfer.secretToPublic(buyerK)
-      providerPub = await keyTransfer.secretToPublic(providerK)
-      consumer.babyX = buyerPub.x
-      consumer.babyY = buyerPub.y
-      consumer.babySecret = buyerK
     })
 
     it('should create a new agreement (short way)', async () => {
@@ -350,7 +372,7 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill the conditions from publisher side', async () => {
-      await dtp.transferKeyDLEQ(agreementId, data, providerK, buyerPub, providerPub, publisher)
+      await dtp.transferKeyDLEQ(agreementId, cipher, providerK, secretId, buyerPub, providerPub, publisher)
       await nevermined.agreements.conditions.releaseReward(
         agreementId,
         amounts,

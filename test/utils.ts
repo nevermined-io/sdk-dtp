@@ -54,3 +54,40 @@ export async function getMetadataForDTP(
     },
   }
 }
+
+export async function getMetadataForDLEQ(
+  name: string,
+  cipher: string,
+  providerKey: any,
+  secretId: any,
+): Promise<MetaData> {
+  return {
+    main: {
+      name,
+      type: 'dataset',
+      dateCreated: '2012-10-10T17:00:00Z',
+      datePublished: '2012-10-10T17:00:00Z',
+      author: 'Met Office',
+      license: 'CC-BY',
+      files: [
+        {
+          index: 1,
+          contentType: 'text/plain',
+          url: cipher,
+          encryption: 'dtp',
+        },
+      ],
+    },
+    additionalInformation: {
+      description: 'Weather information of UK including temperature and humidity',
+      copyrightHolder: 'Met Office',
+      workExample: '423432fsd,51.509865,-0.118092,2011-01-01T10:55:11+00:00,7.2,68',
+      inLanguage: 'en',
+      categories: ['Economy', 'Data Science'],
+      cipher,
+      secretId,
+      providerKey,
+      tags: ['weather', 'uk', '2011', 'temperature', 'humidity'],
+    } as any,
+  }
+}

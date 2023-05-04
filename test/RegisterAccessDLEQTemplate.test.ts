@@ -237,7 +237,8 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill AccessCondition', async () => {
-      const { proof, reencrypt } = await dleq.makeProof(agreementId, providerK, secretId, buyerPub)
+      const { proof, reencrypt } = await dleq.makeProof(conditionIdAccess[1], providerK, secretId, buyerPub)
+      assert(await dleq.checkProof(conditionIdAccess[1], buyerK, secretId, providerPub, proof, reencrypt))
       const fulfill = await accessCondition.fulfill(
         agreementId,
         cipher,

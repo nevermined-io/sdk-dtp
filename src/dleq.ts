@@ -42,12 +42,50 @@ export async function makeProof(agreementId: string, providerK: string, secretId
     const e = Fr.fromObject(BigInt(ethers.utils.solidityKeccak256(arr.map(a => 'uint256'), arr)))
     const f = Fr.add(t, Fr.neg(Fr.mul(y, e)))
 
-    const objR = G1.toObject(G1.toAffine(R))
+    const objR = G1.toObject(G1.toAffine(yR))
 
     return {
-        proof: new BabyjubPublicKey(Fr.toObject(e).toString(16), Fr.toObject(f).toString(16)),
-        reencrypt: new BabyjubPublicKey(objR[0].toString(16), objR[1].toString(16)),
+        proof: new BabyjubPublicKey('0x'+Fr.toObject(e).toString(16), '0x'+Fr.toObject(f).toString(16)),
+        reencrypt: new BabyjubPublicKey('0x'+objR[0].toString(16), '0x'+objR[1].toString(16)),
     }
+
+}
+
+export async function checkProof(agreementId: string, buyerK: string, secretId: BabyjubPublicKey, providerPub: BabyjubPublicKey, proof: BabyjubPublicKey, reencrypt: BabyjubPublicKey) {
+    const { buildBn128 } = require('ffjavascript')
+    const ffCurve = await buildBn128()
+    const G1 = ffCurve.G1
+    const Fr = ffCurve.Fr
+
+    const G = G1.g
+
+    function toEvm(p) {
+        const obj = G1.toObject(G1.toAffine(p))
+        return [obj[0].toString(10), obj[1].toString(10)]
+    }
+
+    const z = Fr.fromObject(BigInt(buyerK))
+    const zG = G1.timesFr(G, z)
+    const label = agreementId
+
+    const xG =  G1.fromObject([BigInt(secretId.x), BigInt(secretId.y)]) // secret id, get from x, y
+    const yG =  G1.fromObject([BigInt(providerPub.x), BigInt(providerPub.y)]) // provider pub, get from x, y
+
+    const R = G1.add(xG, zG)
+    const yR =  G1.fromObject([BigInt(reencrypt.x), BigInt(reencrypt.y)]) // reencryption, get from x, y
+
+    const e = Fr.fromObject(BigInt(proof.x))
+    const f = Fr.fromObject(BigInt(proof.y))
+
+    // w1 = f*G + yG * e
+    const ww1 = G1.add(G1.timesFr(G, f), G1.timesFr(yG, e))
+    // w2 = f*R + yR * e
+    const ww2 = G1.add(G1.timesFr(R, f), G1.timesFr(yR, e))
+
+    const arr2 = [label].concat(toEvm(yG)).concat(toEvm(yR)).concat(toEvm(ww1)).concat(toEvm(ww2))
+    const chal = Fr.fromObject(BigInt(ethers.utils.solidityKeccak256(arr2.map(a => 'uint256'), arr2)))
+    
+    return Fr.eq(chal, e)
 
 }
 
@@ -108,6 +146,7 @@ async function decrypt(cipher: string, buyerK: string, reencrypt: [string, strin
 
 export const dleq = {
     makeProof,
+    checkProof,
     secretToPublic,
     encrypt,
     decrypt,

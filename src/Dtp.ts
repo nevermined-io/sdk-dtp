@@ -56,6 +56,7 @@ export class Dtp extends Instantiable {
     dtp.accessProofCondition = await AccessProofCondition.getInstance(config)
     dtp.accessDLEQCondition = await AccessDLEQCondition.getInstance(config)
     dtp.accessProofTemplate = await AccessProofTemplate.getInstanceDtp(config, dtp)
+    dtp.accessDLEQTemplate = await AccessDLEQTemplate.getInstanceDtp(config, dtp)
     dtp.nftAccessProofTemplate = await NFTAccessProofTemplate.getInstanceDtp(config, dtp)
     dtp.nftSalesWithAccessTemplate = await NFTSalesWithAccessTemplate.getInstanceDtp(config, dtp)
     dtp.nft721AccessProofTemplate = await NFT721AccessProofTemplate.getInstanceDtp(config, dtp)

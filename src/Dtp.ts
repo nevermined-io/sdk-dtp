@@ -284,7 +284,9 @@ export class Dtp extends Instantiable {
     params?: TxParameters,
   ) {
     try {
-      const { proof, reencrypt } = await dleq.makeProof(agreementId, providerK, secretId, buyerPub)
+      console.log('args', cipher, secretId, providerPub, buyerPub)
+      const conditionId = await this.accessDLEQCondition.generateIdHash(agreementId, cipher, secretId, providerPub, buyerPub)
+      const { proof, reencrypt } = await dleq.makeProof(conditionId, providerK, secretId, buyerPub)
       const receipt = await this.accessDLEQCondition.fulfill(
         agreementId,
         cipher,

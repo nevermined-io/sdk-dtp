@@ -54,6 +54,7 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
       erc20TokenAddress,
       priced,
     )
+    
     return {
       ...service,
       attributes: {
@@ -61,6 +62,8 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
         main: {
           ...service.attributes.main,
           _hash: metadata.additionalInformation!.poseidonHash,
+          _cipherDLEQ: ((metadata.additionalInformation as any).cipher),
+          _secretId: ((metadata.additionalInformation as any).secretId),
           _providerPub: {
             x: metadata.additionalInformation.providerKey.x,
             y: metadata.additionalInformation.providerKey.y,

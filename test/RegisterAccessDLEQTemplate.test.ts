@@ -95,7 +95,7 @@ describe('Register Escrow Access Proof Template', () => {
     })
   })
 
-  describe.skip('Full flow', () => {
+  describe('Full flow', () => {
     let agreementId: string
     let agreementIdSeed: string
     let didSeed: string
@@ -282,13 +282,12 @@ describe('Register Escrow Access Proof Template', () => {
 
     let secret: string
     let secretId: BabyjubPublicKey
-    const passwd = 123456n
+    let passwd : bigint
     let encryptedPasswd: bigint
     let cipher: string
 
 
     const origPasswd = 'passwd_32_letters_1234567890asdf'
-    const data = Buffer.from(origPasswd)
 
     let metadata
 
@@ -296,6 +295,8 @@ describe('Register Escrow Access Proof Template', () => {
       keyTransfer = await makeKeyTransfer()
       buyerK = await keyTransfer.makeKey('abd')
       providerK = await keyTransfer.makeKey('abc')
+
+      passwd = dleq.makeKey(origPasswd)
 
       secret = keyTransfer.makeKey('abcedf')
       buyerPub = await dleq.secretToPublic(buyerK)
@@ -376,7 +377,7 @@ describe('Register Escrow Access Proof Template', () => {
       )
     })
 
-    it.skip('buyer should have the key', async () => {
+    it('buyer should have the key', async () => {
       const key = await dtp.readKeyDLEQ(agreementId, cipher, buyerK, providerPub)
       assert.equal(key.toString(), passwd.toString())
     })

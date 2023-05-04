@@ -1,4 +1,5 @@
 import { BabyjubPublicKey } from "@nevermined-io/sdk"
+import Web3Utils from 'web3-utils'
 
 const { ethers } = require('ethers')
 
@@ -10,7 +11,12 @@ function bigToHex(a) {
     return '0x' + str
 }
 
-export async function makeProof(agreementId: string, providerK: string, secretId: BabyjubPublicKey, buyerPub: BabyjubPublicKey) {
+function makeKey(str: string): bigint {
+    const c = Web3Utils.keccak256(str)
+    return BigInt(c.substr(0, 60))
+}
+
+export async function makeProof(conditionId: string, providerK: string, secretId: BabyjubPublicKey, buyerPub: BabyjubPublicKey) {
     const { buildBn128 } = require('ffjavascript')
     const ffCurve = await buildBn128()
     const G1 = ffCurve.G1
@@ -20,7 +26,7 @@ export async function makeProof(agreementId: string, providerK: string, secretId
 
     const y = Fr.fromObject(BigInt(providerK))
     const yG = G1.timesFr(G, y)
-    const label = agreementId
+    const label = conditionId
 
     const xG =  G1.fromObject([BigInt(secretId.x), BigInt(secretId.y)]) // secret id, get from x, y
     const zG =  G1.fromObject([BigInt(buyerPub.x), BigInt(buyerPub.y)]) // buyer pub, get from x, y
@@ -151,5 +157,6 @@ export const dleq = {
     encrypt,
     decrypt,
     bigToHex,
+    makeKey,
 }
 

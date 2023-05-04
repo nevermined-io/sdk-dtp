@@ -31,16 +31,15 @@ export class AccessDLEQCondition extends ProviderCondition<
   public async paramsFromDDO({ service, consumer }: AccessDLEQConditionContext) {
     const keytransfer = await makeKeyTransfer()
     const { _secretId, _providerPub, _cipherDLEQ } = service.attributes.main
-    console.log(service.attributes.main)
 
     const buyerPub: BabyjubPublicKey = keytransfer.makePublic(consumer.babyX!, consumer.babyY!)
     const providerPub: BabyjubPublicKey = keytransfer.makePublic(_providerPub.x, _providerPub.y)
     const secretId: BabyjubPublicKey = keytransfer.makePublic(_secretId.x, _secretId.y)
-    console.log("args", zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), buyerPub.param())
     return {
       list: [zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), buyerPub.param()],
       params: async (_method, { providerK, agreementId }) => {
-        const { reencrypt, proof } = await makeProof(agreementId, providerK, secretId, buyerPub)
+        const conditionId = await this.generateIdHash(agreementId, zeroX(_cipherDLEQ), secretId, providerPub, buyerPub)
+        const { reencrypt, proof } = await makeProof(conditionId, providerK, secretId, buyerPub)
         return [zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), reencrypt.param(), proof.param()]
       },
     }

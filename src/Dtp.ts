@@ -91,6 +91,7 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.conditionsList.push(dtp.accessProofCondition)
     config.nevermined.keeper.conditionsList.push(dtp.accessDLEQCondition)
     config.nevermined.keeper.templateList.push(dtp.accessProofTemplate)
+    config.nevermined.keeper.templateList.push(dtp.accessDLEQTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftAccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nft721AccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftSalesWithAccessTemplate)

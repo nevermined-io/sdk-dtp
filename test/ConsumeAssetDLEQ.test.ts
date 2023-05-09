@@ -14,7 +14,7 @@ import { Dtp, KeyTransfer, dleq, makeKeyTransfer } from '../src'
 import { config } from './config'
 import { cryptoConfig, getMetadataForDLEQ, sleep } from './utils'
 
-describe('Consume Asset (Node w/ proofs)', () => {
+describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   let nevermined: Nevermined
   let dtp: Dtp
 
@@ -38,12 +38,6 @@ describe('Consume Asset (Node w/ proofs)', () => {
 
 
   const origPasswd = 'passwd_32_letters_1234567890asdf'
-  /*
-  const providerKey = {
-    x: '0x2e3133fbdaeb5486b665ba78c0e7e749700a5c32b1998ae14f7d1532972602bb',
-    y: '0x0b932f02e59f90cdd761d9d5e7c15c8e620efce4ce018bf54015d68d9cb35561',
-  }
-  */
 
   let metadata: MetaData
 
@@ -58,11 +52,12 @@ describe('Consume Asset (Node w/ proofs)', () => {
     keyTransfer = await makeKeyTransfer()
 
     buyerK = keyTransfer.makeKey('abd')
-    providerK = keyTransfer.makeKey('abc')
+    providerK = keyTransfer.makeKey('abc_def')
     secret = keyTransfer.makeKey('abcedf')
     buyerPub = await dleq.secretToPublic(buyerK)
     providerPub = await dleq.secretToPublic(providerK)
     secretId = await dleq.secretToPublic(secret)
+    passwd = dleq.makeKey(origPasswd)
     encryptedPasswd = await dleq.encrypt(passwd, secret, providerPub)
     cipher = dleq.bigToHex(encryptedPasswd)
 
@@ -120,8 +115,8 @@ describe('Consume Asset (Node w/ proofs)', () => {
   })
 
   it('should consume and store the assets', async () => {
-    const passwd = await dtp.consumeProof(agreementId, ddo.id, consumer)
-    assert.deepEqual(passwd, origPasswd)
+    const res_passwd = await dtp.consumeProof(agreementId, ddo.id, consumer)
+    assert.deepEqual(res_passwd, cipher)
   })
 
   it('buyer should have the key', async () => {
@@ -133,6 +128,6 @@ describe('Consume Asset (Node w/ proofs)', () => {
       buyerK,
       providerPub,
     )
-    assert.equal(key.toString(16), origPasswd)
+    assert.equal(key.toString(16), passwd.toString(16))
   })
 })

@@ -40,7 +40,7 @@ export class AccessDLEQCondition extends ProviderCondition<
       params: async (_method, { providerK, agreementId }) => {
         const conditionId = await this.generateIdHash(agreementId, zeroX(_cipherDLEQ), secretId, providerPub, buyerPub)
         const { reencrypt, proof } = await makeProof(conditionId, providerK, secretId, buyerPub)
-        return [zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), reencrypt.param(), proof.param()]
+        return [zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), buyerPub.param(), reencrypt.param(), proof.param()]
       },
     }
   }

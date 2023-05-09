@@ -112,7 +112,7 @@ export abstract class DLEQTemplate<Params, S extends Service> extends BaseTempla
         ...service.attributes,
         main: {
           ...service.attributes.main,
-          _cipher: cipher,
+          _cipherDLEQ: cipher,
           _providerPub: {
             x: providerKey.x,
             y: providerKey.y,

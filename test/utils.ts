@@ -74,7 +74,7 @@ export async function getMetadataForDLEQ(
           index: 1,
           contentType: 'text/plain',
           url: cipher,
-          encryption: 'dtp',
+          encryption: 'dleq' as any,
         },
       ],
     },

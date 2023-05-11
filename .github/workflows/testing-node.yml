@@ -35,9 +35,9 @@ jobs:
         run: |
           yarn build
           yarn pack
-          cp *dtp*.tgz ../node/dtp.tgz
+          cp *dtp*.tgz ./node/dtp.tgz
 
-          cd ../node
+          cd ./node
           cat package.json | jq '.dependencies."@nevermined-io/sdk-dtp"="./dtp.tgz"' | sponge package.json
           yarn
           yarn run setup:dev

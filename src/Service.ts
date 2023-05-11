@@ -100,9 +100,8 @@ export class AccessProofService extends Instantiable
   private isDTP(main: MetaDataMain): boolean {
     return main.files && main.files.some((f) => f.encryption === 'dtp')
   }
-  // TODO: remove "as any"
   private isDLEQ(main: MetaDataMain): boolean {
-    return main.files && main.files.some((f) => f.encryption as any === 'dleq')
+    return main.files && main.files.some((f) => f.encryption === 'dleq')
   }
 }
 

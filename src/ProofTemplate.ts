@@ -62,8 +62,8 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
         main: {
           ...service.attributes.main,
           _hash: metadata.additionalInformation!.poseidonHash,
-          _cipherDLEQ: ((metadata.additionalInformation as any).cipher),
-          _secretId: ((metadata.additionalInformation as any).secretId),
+          _cipherDLEQ: metadata.additionalInformation!.cipher,
+          _secretId: metadata.additionalInformation!.secretId,
           _providerPub: {
             x: metadata.additionalInformation.providerKey.x,
             y: metadata.additionalInformation.providerKey.y,
@@ -105,7 +105,7 @@ export abstract class DLEQTemplate<Params, S extends Service> extends BaseTempla
       erc20TokenAddress,
       priced,
     )
-    const { secretId, providerKey, cipher } = metadata.additionalInformation as any
+    const { secretId, providerKey, cipher } = metadata.additionalInformation
     return {
       ...service,
       attributes: {
@@ -135,6 +135,6 @@ export abstract class DLEQTemplate<Params, S extends Service> extends BaseTempla
   }
 
   public isDLEQ(main: MetaDataMain): boolean {
-    return main.files && main.files.some((f) => f.encryption as any=== 'dleq')
+    return main.files && main.files.some((f) => f.encryption === 'dleq')
   }
 }

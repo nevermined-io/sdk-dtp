@@ -74,7 +74,7 @@ export async function getMetadataForDLEQ(
           index: 1,
           contentType: 'text/plain',
           url: cipher,
-          encryption: 'dleq' as any,
+          encryption: 'dleq',
         },
       ],
     },
@@ -88,6 +88,6 @@ export async function getMetadataForDLEQ(
       secretId,
       providerKey,
       tags: ['weather', 'uk', '2011', 'temperature', 'humidity'],
-    } as any,
+    },
   }
 }

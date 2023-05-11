@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { makeKeyTransfer } from '../src'
-import {config} from "./config"
+import { config } from './config'
 
 describe('KeyTransfer', () => {
   let keyTransfer

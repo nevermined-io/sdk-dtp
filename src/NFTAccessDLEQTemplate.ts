@@ -52,10 +52,7 @@ export class NFTAccessDLEQTemplate extends DLEQTemplate<
   }
 
   public async paramsGen(params: ValidationParams): Promise<NFTAccessDLEQTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(
-      params.buyer,
-      params.consumer_address,
-    )
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
     return this.params(consumer, params.consumer_address, params.nft_amount)
   }
 

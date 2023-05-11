@@ -285,7 +285,13 @@ export class Dtp extends Instantiable {
     params?: TxParameters,
   ) {
     try {
-      const conditionId = await this.accessDLEQCondition.generateIdHash(agreementId, cipher, secretId, providerPub, buyerPub)
+      const conditionId = await this.accessDLEQCondition.generateIdHash(
+        agreementId,
+        cipher,
+        secretId,
+        providerPub,
+        buyerPub,
+      )
       const { proof, reencrypt } = await dleq.makeProof(conditionId, providerK, secretId, buyerPub)
       const receipt = await this.accessDLEQCondition.fulfill(
         agreementId,
@@ -372,7 +378,12 @@ export class Dtp extends Instantiable {
     )
   }
 
-  public async readKeyDLEQ(agreementId: string, cipher: string, buyerK: string, providerPub: BabyjubPublicKey) {
+  public async readKeyDLEQ(
+    agreementId: string,
+    cipher: string,
+    buyerK: string,
+    providerPub: BabyjubPublicKey,
+  ) {
     const evOptions: EventOptions = {
       eventName: 'Fulfilled',
       methodName: 'getFulfilleds',

@@ -79,7 +79,7 @@ export class AccessProofService extends Instantiable
   }
 
   public select(main: MetaDataMain): AccessTemplate | AccessProofTemplate | AccessDLEQTemplate {
-    return this.isDTP(main) ? this.proof : (this.isDLEQ(main) ? this.dleq : this.normal )
+    return this.isDTP(main) ? this.proof : this.isDLEQ(main) ? this.dleq : this.normal
   }
 
   public async process(

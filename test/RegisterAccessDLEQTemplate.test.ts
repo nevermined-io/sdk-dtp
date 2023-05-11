@@ -75,11 +75,7 @@ describe('Register Escrow Access Proof Template', () => {
 
   describe('Propose and approve template', () => {
     it('should propose the template', async () => {
-      await keeper.templateStoreManager.proposeTemplate(
-        accessTemplate.getAddress(),
-        consumer,
-        true,
-      )
+      await keeper.templateStoreManager.proposeTemplate(accessTemplate.getAddress(), consumer, true)
       // TODO: Use a event to detect template mined
       await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
     })
@@ -237,8 +233,22 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill AccessCondition', async () => {
-      const { proof, reencrypt } = await dleq.makeProof(conditionIdAccess[1], providerK, secretId, buyerPub)
-      assert(await dleq.checkProof(conditionIdAccess[1], buyerK, secretId, providerPub, proof, reencrypt))
+      const { proof, reencrypt } = await dleq.makeProof(
+        conditionIdAccess[1],
+        providerK,
+        secretId,
+        buyerPub,
+      )
+      assert(
+        await dleq.checkProof(
+          conditionIdAccess[1],
+          buyerK,
+          secretId,
+          providerPub,
+          proof,
+          reencrypt,
+        ),
+      )
       const fulfill = await accessCondition.fulfill(
         agreementId,
         cipher,
@@ -282,10 +292,9 @@ describe('Register Escrow Access Proof Template', () => {
 
     let secret: string
     let secretId: BabyjubPublicKey
-    let passwd : bigint
+    let passwd: bigint
     let encryptedPasswd: bigint
     let cipher: string
-
 
     const origPasswd = 'passwd_32_letters_1234567890asdf'
 
@@ -332,7 +341,6 @@ describe('Register Escrow Access Proof Template', () => {
         serviceTypes: ['access'],
       })
       ddo = await nevermined.assets.create(assetAttributes, publisher)
-
     })
 
     it('should create a new agreement (short way)', async () => {
@@ -365,7 +373,15 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill the conditions from publisher side', async () => {
-      await dtp.transferKeyDLEQ(agreementId, cipher, providerK, secretId, buyerPub, providerPub, publisher)
+      await dtp.transferKeyDLEQ(
+        agreementId,
+        cipher,
+        providerK,
+        secretId,
+        buyerPub,
+        providerPub,
+        publisher,
+      )
       await nevermined.agreements.conditions.releaseReward(
         agreementId,
         amounts,

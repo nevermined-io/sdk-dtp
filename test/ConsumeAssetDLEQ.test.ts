@@ -32,10 +32,9 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
 
   let secret: string
   let secretId: BabyjubPublicKey
-  let passwd : bigint
+  let passwd: bigint
   let encryptedPasswd: bigint
   let cipher: string
-
 
   const origPasswd = 'passwd_32_letters_1234567890asdf'
 
@@ -122,12 +121,7 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   it('buyer should have the key', async () => {
     // wait for subgraph to pick up the events
     await sleep(3000)
-    const key = await dtp.readKeyDLEQ(
-      agreementId,
-      cipher,
-      buyerK,
-      providerPub,
-    )
+    const key = await dtp.readKeyDLEQ(agreementId, cipher, buyerK, providerPub)
     assert.equal(key.toString(16), passwd.toString(16))
   })
 })

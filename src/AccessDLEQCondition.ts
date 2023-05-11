@@ -38,14 +38,32 @@ export class AccessDLEQCondition extends ProviderCondition<
     return {
       list: [zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), buyerPub.param()],
       params: async (_method, { providerK, agreementId }) => {
-        const conditionId = await this.generateIdHash(agreementId, zeroX(_cipherDLEQ), secretId, providerPub, buyerPub)
+        const conditionId = await this.generateIdHash(
+          agreementId,
+          zeroX(_cipherDLEQ),
+          secretId,
+          providerPub,
+          buyerPub,
+        )
         const { reencrypt, proof } = await makeProof(conditionId, providerK, secretId, buyerPub)
-        return [zeroX(_cipherDLEQ), secretId.param(), providerPub.param(), buyerPub.param(), reencrypt.param(), proof.param()]
+        return [
+          zeroX(_cipherDLEQ),
+          secretId.param(),
+          providerPub.param(),
+          buyerPub.param(),
+          reencrypt.param(),
+          proof.param(),
+        ]
       },
     }
   }
 
-  public params(cipher: string, secretId: BabyjubPublicKey, provider: BabyjubPublicKey, grantee: BabyjubPublicKey) {
+  public params(
+    cipher: string,
+    secretId: BabyjubPublicKey,
+    provider: BabyjubPublicKey,
+    grantee: BabyjubPublicKey,
+  ) {
     return super.params(zeroX(cipher), secretId.param(), provider.param(), grantee.param())
   }
 
@@ -62,7 +80,14 @@ export class AccessDLEQCondition extends ProviderCondition<
   ): Promise<any> {
     return super.fulfillPlain(
       agreementId,
-      [zeroX(cipher), secretId.param(), provider.param(), grantee.param(), reencrypt.param(), proof.param()],
+      [
+        zeroX(cipher),
+        secretId.param(),
+        provider.param(),
+        grantee.param(),
+        reencrypt.param(),
+        proof.param(),
+      ],
       from,
       params,
     )

@@ -18,14 +18,11 @@ import { DLEQTemplate } from './ProofTemplate'
 import { ServiceAccessProof } from './Service'
 
 export interface AccessDLEQTemplateParams {
-  consumer: Account;
-  consumerId: string;
+  consumer: Account
+  consumerId: string
 }
 
-export class AccessDLEQTemplate extends DLEQTemplate<
-  AccessDLEQTemplateParams,
-  ServiceAccessProof
-> {
+export class AccessDLEQTemplate extends DLEQTemplate<AccessDLEQTemplateParams, ServiceAccessProof> {
   public dtp: Dtp
 
   public static async getInstanceDtp(
@@ -68,10 +65,7 @@ export class AccessDLEQTemplate extends DLEQTemplate<
   }
 
   public async paramsGen(params: ValidationParams): Promise<AccessDLEQTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(
-      params.buyer,
-      params.consumer_address,
-    )
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
     return this.params(consumer)
   }
 

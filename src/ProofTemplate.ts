@@ -54,7 +54,7 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
       erc20TokenAddress,
       priced,
     )
-    
+
     return {
       ...service,
       attributes: {
@@ -129,7 +129,7 @@ export abstract class DLEQTemplate<Params, S extends Service> extends BaseTempla
   public async extraGen(params: ValidationParams): Promise<any> {
     const extra: AccessDLEQConditionExtra = {
       providerK: this.dtp.keytransfer.makeKey(process.env.PROVIDER_DLEQ_SECRET),
-      agreementId: params.agreement_id
+      agreementId: params.agreement_id,
     }
     return extra
   }

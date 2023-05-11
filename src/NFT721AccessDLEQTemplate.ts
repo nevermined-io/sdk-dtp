@@ -42,10 +42,7 @@ export class NFT721AccessDLEQTemplate extends DLEQTemplate<
   }
 
   public async paramsGen(params: ValidationParams): Promise<NFT721AccessDLEQTemplateParams> {
-    const consumer = await this.dtp.consumerAccount(
-      params.buyer,
-      params.consumer_address,
-    )
+    const consumer = await this.dtp.consumerAccount(params.buyer, params.consumer_address)
     return this.params(params.consumer_address, consumer)
   }
 

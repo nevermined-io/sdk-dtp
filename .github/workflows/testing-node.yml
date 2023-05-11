@@ -53,6 +53,7 @@ jobs:
         run: |
           cd node
           nvm-tools copy-artifacts ./artifacts
+          nvm-tools copy-circuits ./circuits
           yarn start 2>&1 | tee node_log.txt &
 
       - name: Run integration tests

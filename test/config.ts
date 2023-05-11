@@ -76,3 +76,4 @@ if (process.env.SEED_WORDS) {
 
 export const config: NeverminedOptions & { forceVerbose: NeverminedOptions } = configBase as any
 ;(config as any).forceVerbose = { ...configBase, verbose: true }
+

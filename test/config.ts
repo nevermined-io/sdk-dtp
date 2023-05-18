@@ -43,7 +43,7 @@ if (process.env.NETWORK_NAME === 'testing') {
   Object.assign(configBase, {
     web3ProviderUri: 'http://contracts.nevermined.localnet',
     marketplaceUri: 'http://marketplace.nevermined.localnet',
-    neverminedNodeUri: 'http://localhost:8030',
+    neverminedNodeUri: process.env.NEVERMINED_NODE_URI || 'http://node.nevermined.localnet',
     neverminedNodeAddress: '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0',
   } as NeverminedOptions)
 }

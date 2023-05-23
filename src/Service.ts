@@ -18,12 +18,15 @@ import { NFT721AccessProofTemplate } from './NFT721AccessProofTemplate'
 import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
 import { NFTAccessProofTemplate } from './NFTAccessProofTemplate'
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
+import { AccessDLEQTemplate } from './AccessDLEQTemplate'
 
 export type ServiceAccessProof = ServiceAccess & {
   attributes: {
     main: {
       _hash: string
       _providerPub: { x: string; y: string }
+      _cipherDLEQ: string
+      _secretId: { x: string; y: string }
     }
   }
 }
@@ -50,12 +53,14 @@ export class AccessProofService extends Instantiable
   implements ServicePlugin<ServiceAccess | ServiceAccessProof> {
   normal: AccessTemplate
   proof: AccessProofTemplate
+  dleq: AccessDLEQTemplate
 
-  constructor(config: InstantiableConfig, proof: AccessProofTemplate) {
+  constructor(config: InstantiableConfig, proof: AccessProofTemplate, dleq: AccessDLEQTemplate) {
     super()
     this.setInstanceConfig(config)
     this.normal = config.nevermined.keeper.templates.accessTemplate
     this.proof = proof
+    this.dleq = dleq
   }
 
   public async createService(
@@ -73,8 +78,8 @@ export class AccessProofService extends Instantiable
     )
   }
 
-  public select(main: MetaDataMain): AccessTemplate | AccessProofTemplate {
-    return this.isDTP(main) ? this.proof : this.normal
+  public select(main: MetaDataMain): AccessTemplate | AccessProofTemplate | AccessDLEQTemplate {
+    return this.isDTP(main) ? this.proof : this.isDLEQ(main) ? this.dleq : this.normal
   }
 
   public async process(
@@ -94,6 +99,9 @@ export class AccessProofService extends Instantiable
 
   private isDTP(main: MetaDataMain): boolean {
     return main.files && main.files.some((f) => f.encryption === 'dtp')
+  }
+  private isDLEQ(main: MetaDataMain): boolean {
+    return main.files && main.files.some((f) => f.encryption === 'dleq')
   }
 }
 

@@ -1,6 +1,7 @@
 // Extension of main nevermined object
 import { AccessProofTemplate } from './AccessProofTemplate'
 import { AccessProofCondition } from './AccessProofCondition'
+import { AccessDLEQCondition } from './AccessDLEQCondition'
 import {
   Account,
   ServiceType,
@@ -30,10 +31,14 @@ import { NFT721SalesWithAccessTemplate } from './NFT721SalesWithAccessTemplate'
 import { NFTSalesWithAccessTemplate } from './NFTSalesWithAccessTemplate'
 import { CryptoConfig } from './utils'
 import { AccessProofService, NFTAccessProofService, NFTSalesProofService } from './Service'
+import { AccessDLEQTemplate } from './AccessDLEQTemplate'
+import { dleq } from './dleq'
 
 export class Dtp extends Instantiable {
+  public accessDLEQCondition: AccessDLEQCondition
   public accessProofCondition: AccessProofCondition
   public accessProofTemplate: AccessProofTemplate
+  public accessDLEQTemplate: AccessDLEQTemplate
   public nftAccessProofTemplate: NFTAccessProofTemplate
   public nft721AccessProofTemplate: NFT721AccessProofTemplate
   public nftSalesWithAccessTemplate: NFTSalesWithAccessTemplate
@@ -49,7 +54,9 @@ export class Dtp extends Instantiable {
     dtp.cryptoConfig = cryptoConfig
     dtp.setInstanceConfig(config)
     dtp.accessProofCondition = await AccessProofCondition.getInstance(config)
+    dtp.accessDLEQCondition = await AccessDLEQCondition.getInstance(config)
     dtp.accessProofTemplate = await AccessProofTemplate.getInstanceDtp(config, dtp)
+    dtp.accessDLEQTemplate = await AccessDLEQTemplate.getInstanceDtp(config, dtp)
     dtp.nftAccessProofTemplate = await NFTAccessProofTemplate.getInstanceDtp(config, dtp)
     dtp.nftSalesWithAccessTemplate = await NFTSalesWithAccessTemplate.getInstanceDtp(config, dtp)
     dtp.nft721AccessProofTemplate = await NFT721AccessProofTemplate.getInstanceDtp(config, dtp)
@@ -60,6 +67,10 @@ export class Dtp extends Instantiable {
     config.nevermined.keeper.agreementStoreManager.addTemplate(
       dtp.accessProofTemplate.address,
       dtp.accessProofTemplate,
+    )
+    config.nevermined.keeper.agreementStoreManager.addTemplate(
+      dtp.accessDLEQTemplate.address,
+      dtp.accessDLEQTemplate,
     )
     config.nevermined.keeper.agreementStoreManager.addTemplate(
       dtp.nftAccessProofTemplate.address,
@@ -78,7 +89,9 @@ export class Dtp extends Instantiable {
       dtp.nft721SalesWithAccessTemplate,
     )
     config.nevermined.keeper.conditionsList.push(dtp.accessProofCondition)
+    config.nevermined.keeper.conditionsList.push(dtp.accessDLEQCondition)
     config.nevermined.keeper.templateList.push(dtp.accessProofTemplate)
+    config.nevermined.keeper.templateList.push(dtp.accessDLEQTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftAccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nft721AccessProofTemplate)
     config.nevermined.keeper.templateList.push(dtp.nftSalesWithAccessTemplate)
@@ -87,6 +100,7 @@ export class Dtp extends Instantiable {
     config.nevermined.assets.servicePlugin['access'] = new AccessProofService(
       config,
       dtp.accessProofTemplate,
+      dtp.accessDLEQTemplate,
     )
     config.nevermined.assets.servicePlugin['nft-access'] = new NFTAccessProofService(
       config,
@@ -260,6 +274,43 @@ export class Dtp extends Instantiable {
     }
   }
 
+  public async transferKeyDLEQ(
+    agreementId: string,
+    cipher: string,
+    providerK: string,
+    secretId: BabyjubPublicKey,
+    buyerPub: BabyjubPublicKey,
+    providerPub: BabyjubPublicKey,
+    from?: Account,
+    params?: TxParameters,
+  ) {
+    try {
+      const conditionId = await this.accessDLEQCondition.generateIdHash(
+        agreementId,
+        cipher,
+        secretId,
+        providerPub,
+        buyerPub,
+      )
+      const { proof, reencrypt } = await dleq.makeProof(conditionId, providerK, secretId, buyerPub)
+      const receipt = await this.accessDLEQCondition.fulfill(
+        agreementId,
+        cipher,
+        secretId,
+        providerPub,
+        buyerPub,
+        reencrypt,
+        proof,
+        from,
+        params,
+      )
+
+      return !!receipt
+    } catch (e) {
+      throw new KeeperError(e)
+    }
+  }
+
   public async babyjubAccount(mnemonic: string): Promise<Account> {
     const keyTransfer = await makeKeyTransfer()
     const account = new Account()
@@ -270,7 +321,7 @@ export class Dtp extends Instantiable {
     return account
   }
 
-  public async consumerAccount(baby: string, eth: string, babysig: Babysig): Promise<Account> {
+  public async consumerAccount(baby: string, eth: string, babysig?: Babysig): Promise<Account> {
     const account = new Account(eth)
     account.babyX = '0x' + baby.substring(0, 64)
     account.babyY = '0x' + baby.substring(64, 128)
@@ -325,6 +376,36 @@ export class Dtp extends Instantiable {
       new MimcCipher(cipherL, cipherR),
       await keyTransfer.ecdh(buyerK, providerPub),
     )
+  }
+
+  public async readKeyDLEQ(
+    agreementId: string,
+    cipher: string,
+    buyerK: string,
+    providerPub: BabyjubPublicKey,
+  ) {
+    const evOptions: EventOptions = {
+      eventName: 'Fulfilled',
+      methodName: 'getFulfilleds',
+      filterJsonRpc: { _agreementId: agreementId },
+      filterSubgraph: { where: { _agreementId: agreementId } },
+      result: {
+        _agreementId: true,
+        _origHash: true,
+        _buyer: true,
+        _provider: true,
+        _cipher: true,
+        _proof: true,
+        _conditionId: true,
+      },
+    }
+    const ev = await this.accessDLEQCondition.events.once((events) => events, evOptions)
+
+    if (!ev.length) {
+      throw new KeeperError('No events are returned')
+    }
+
+    return dleq.decrypt(cipher, buyerK, ev[0].args._reencrypt, providerPub)
   }
 
   public async order(

@@ -14,7 +14,7 @@ import { Dtp, KeyTransfer, dleq, makeKeyTransfer } from '../src'
 import { config } from './config'
 import { cryptoConfig, getMetadataForDLEQ, sleep } from './utils'
 
-describe.skip('Consume Asset (Node w/ DLEQ proofs)', () => {
+describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   let nevermined: Nevermined
   let dtp: Dtp
 

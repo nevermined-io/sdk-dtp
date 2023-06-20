@@ -224,6 +224,7 @@ export class Dtp extends Instantiable {
       serviceEndpoint,
       JSON.stringify({
         agreementId,
+        did,
         nftHolder,
         nftReceiver: account.getId(),
         buyer: account.getPublic(),

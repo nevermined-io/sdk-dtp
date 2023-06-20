@@ -7,9 +7,12 @@ import {
   zeroX,
   TxParameters,
   InstantiableConfig,
+  BigNumber,
+  ConditionInstanceSmall,
 } from '@nevermined-io/sdk'
 import { makeKeyTransfer } from './KeyTransfer'
 import { makeProof } from './dleq'
+import ethers from 'ethers'
 
 export interface AccessDLEQConditionContext extends ConditionContext {
   consumer: Account
@@ -91,5 +94,43 @@ export class AccessDLEQCondition extends ProviderCondition<
       from,
       params,
     )
+  }
+
+  public setNetworkPublicKey(key: [string, string], from?: Account, txParams?: TxParameters) {
+    return super.send("setNetworkPublicKey", from && from.getId(), [key], txParams)
+  }
+
+  public addSecret(key: [string, string], from?: Account, txParams?: TxParameters) {
+    return super.send("addSecret", from && from.getId(), [key], txParams)
+  }
+
+  public addPrice(pid: string, price: BigNumber, token: string, ttype: number, from?: Account, txParams?: TxParameters) {
+    return super.send("addPrice", from && from.getId(), [pid, price, token, ttype], txParams)
+  }
+
+  public pointId(key: [string, string]): Promise<string> {
+    return super.call("pointId", [key])
+  }
+
+  public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters) {
+    const coder = new ethers.utils.AbiCoder()
+
+    const params = [
+        coder.encode(
+            ['uint', 'uint', 'uint', 'uint', 'uint', 'uint', 'uint'],
+            instances[0].list
+        ),
+        coder.encode(
+            ['bytes32', 'address', 'address', 'uint256[]', 'address[]'],
+            instances[1].list
+        ),
+        coder.encode(
+            ['bytes32', 'uint256[]', 'address[]', 'address', 'address', 'address', 'bytes32', 'bytes32[]'],
+            instances[2].list
+        )
+    ]
+
+    return super.send('authorizeAgreementTemplate', from && from.getId(), [agreementId, params, priceIdx], txParams)
+
   }
 }

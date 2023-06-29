@@ -96,20 +96,20 @@ export class AccessDLEQCondition extends ProviderCondition<
     )
   }
 
-  public setNetworkPublicKey(key: [string, string], from?: Account, txParams?: TxParameters) {
-    return super.send("setNetworkPublicKey", from && from.getId(), [key], txParams)
+  public setNetworkPublicKey(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
+    return super.send("setNetworkPublicKey", from && from.getId(), [[key.x, key.y]], txParams)
   }
 
-  public addSecret(key: [string, string], from?: Account, txParams?: TxParameters) {
-    return super.send("addSecret", from && from.getId(), [key], txParams)
+  public addSecret(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
+    return super.send("addSecret", from && from.getId(), [[key.x, key.y]], txParams)
   }
 
   public addPrice(pid: string, price: BigNumber, token: string, ttype: number, from?: Account, txParams?: TxParameters) {
     return super.send("addPrice", from && from.getId(), [pid, price, token, ttype], txParams)
   }
 
-  public pointId(key: [string, string]): Promise<string> {
-    return super.call("pointId", [key])
+  public pointId(key: BabyjubPublicKey): Promise<string> {
+    return super.call("pointId", [[key.x, key.y]])
   }
 
   public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters) {
@@ -117,7 +117,7 @@ export class AccessDLEQCondition extends ProviderCondition<
 
     const params = [
         coder.encode(
-            ['uint', 'uint', 'uint', 'uint', 'uint', 'uint', 'uint'],
+            ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
             instances[0].list
         ),
         coder.encode(

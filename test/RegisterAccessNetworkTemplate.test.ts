@@ -5,10 +5,7 @@ import {
   Nevermined,
   Keeper,
   Account,
-  DDO,
   Logger,
-  AssetPrice,
-  AssetAttributes,
   EscrowPaymentCondition,
   LockPaymentCondition,
   generateId,
@@ -16,6 +13,7 @@ import {
   BabyjubPublicKey,
   BigNumber,
   generateIntantiableConfigFromConfig,
+  ConditionInstanceSmall,
 } from '@nevermined-io/sdk'
 import {
   Dtp,
@@ -112,6 +110,7 @@ describe('Register Escrow Access Proof Template', () => {
     const passwd = 123456n
     let encryptedPasswd: bigint
     let cipher: string
+    let instances: ConditionInstanceSmall[]
 
     before(async () => {
       agreementIdSeed = generateId()
@@ -178,6 +177,25 @@ describe('Register Escrow Access Proof Template', () => {
           conditionIdAccess[1],
         ),
       )
+      let i1 = await accessCondition.instance(agreementId, accessCondition.params(cipher, secretId, providerPub, buyerPub))
+      let i2 = await lockPaymentCondition.instance(agreementId, lockPaymentCondition.params(
+        did,
+        escrowPaymentCondition.getAddress(),
+        token.getAddress(),
+        amounts,
+        receivers,
+      ))
+      let i3 = await escrowPaymentCondition.instance(agreementId, escrowPaymentCondition.params(
+        did,
+        amounts,
+        receivers,
+        consumer.getId(),
+        escrowPaymentCondition.getAddress(),
+        token.getAddress(),
+        conditionIdLock[1],
+        conditionIdAccess[1],
+      ))
+      instances = [i1, i2, i3]
     })
 
     it('should have conditions types', async () => {
@@ -245,33 +263,10 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill AccessCondition', async () => {
-      const { proof, reencrypt } = await dleq.makeProof(
-        conditionIdAccess[1],
-        providerK,
-        secretId,
-        buyerPub,
-      )
-      assert(
-        await dleq.checkProof(
-          conditionIdAccess[1],
-          buyerK,
-          secretId,
-          providerPub,
-          proof,
-          reencrypt,
-        ),
-      )
-      const fulfill = await accessCondition.fulfill(
-        agreementId,
-        cipher,
-        secretId,
-        providerPub,
-        buyerPub,
-        reencrypt,
-        proof,
-      )
+      const register = await accessCondition.authorize(agreementId, instances, 0)
+      assert.isDefined(register.events![0], 'Not Fulfilled event.')
 
-      assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
+      await new Promise((resolve) => setTimeout(resolve, 20 * 1000))
     })
 
     it('should fulfill EscrowPaymentCondition', async () => {

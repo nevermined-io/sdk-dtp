@@ -25,7 +25,7 @@ import {
 } from '../src'
 import { cryptoConfig, getMetadataForDLEQ } from './utils'
 
-describe('Register Escrow Access Proof Template', () => {
+describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => {
   let nevermined: Nevermined
   let keeper: Keeper
 
@@ -100,7 +100,6 @@ describe('Register Escrow Access Proof Template', () => {
     let conditionIdEscrow: [string, string]
 
     let buyerK: string
-    let providerK: string
     let buyerPub: BabyjubPublicKey
     let providerPub: BabyjubPublicKey
     let keyTransfer: KeyTransfer
@@ -124,25 +123,18 @@ describe('Register Escrow Access Proof Template', () => {
       keyTransfer = await makeKeyTransfer()
 
       buyerK = keyTransfer.makeKey('abd')
-      providerK = keyTransfer.makeKey('abc')
-      secret = keyTransfer.makeKey('abcedf')
+      secret = keyTransfer.makeKey('abcedf'+Math.random())
       buyerPub = await dleq.secretToPublic(buyerK)
-      providerPub = await dleq.secretToPublic(providerK)
+      providerPub = await accessCondition.networkKey()
       secretId = await dleq.secretToPublic(secret)
       encryptedPasswd = await dleq.encrypt(passwd, secret, providerPub)
       cipher = dleq.bigToHex(encryptedPasswd)
     })
 
-    it('should configure network', async () => {
-      await accessCondition.addSecret(secretId, publisher)
-      let pid = await accessCondition.pointId(secretId)
-      await accessCondition.addPrice(pid, BigNumber.from(12), token.address, 20, publisher)
-    })
-
     it('should configure secret', async () => {
       await accessCondition.addSecret(secretId, publisher)
       let pid = await accessCondition.pointId(secretId)
-      await accessCondition.addPrice(pid, BigNumber.from(12), token.address, 20, publisher)
+      await accessCondition.addPrice(pid, BigNumber.from(1), token.address, 20, publisher)
     })
 
     it('should register a DID', async () => {
@@ -263,7 +255,7 @@ describe('Register Escrow Access Proof Template', () => {
     })
 
     it('should fulfill AccessCondition', async () => {
-      const register = await accessCondition.authorize(agreementId, instances, 0)
+      const register = await accessCondition.authorize(agreementId, instances, 0, consumer)
       assert.isDefined(register.events![0], 'Not Fulfilled event.')
 
       await new Promise((resolve) => setTimeout(resolve, 20 * 1000))

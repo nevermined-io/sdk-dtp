@@ -27,7 +27,7 @@ import {
 } from '../src'
 import { cryptoConfig, getMetadataForDLEQ } from './utils'
 
-describe('Register Escrow Access Proof Template', () => {
+describe('Register Escrow Access DLEQ Template', () => {
   let nevermined: Nevermined
   let keeper: Keeper
 
@@ -64,7 +64,7 @@ describe('Register Escrow Access Proof Template', () => {
     ;({ token } = keeper)
 
     // Accounts
-    ;[templateManagerOwner, publisher, consumer, provider] = await nevermined.accounts.list()
+    ;[, publisher, consumer, provider, , , , , templateManagerOwner] = await nevermined.accounts.list()
 
     receivers = [publisher.getId(), provider.getId()]
 

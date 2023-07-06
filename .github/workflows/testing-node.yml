@@ -22,8 +22,8 @@ jobs:
           opengsn: 'true'
           estuary: 'true'
           frost: 'true'
-          contracts-version: 'v3.2.2.003'
-          frost-version: 'v3.2.2.003'
+          contracts-version: 'v3.2.2.004'
+          frost-version: 'v3.2.2.004'
           node: 'false'
 
       - name: Install sponge

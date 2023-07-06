@@ -113,12 +113,12 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
     assert.isDefined(agreementId)
   })
 
-  it.skip('should consume and store the assets', async () => {
+  it('should consume and store the assets', async () => {
     const res_passwd = await dtp.consumeProof(agreementId, ddo.id, consumer)
     assert.deepEqual(res_passwd, cipher)
   })
 
-  it.skip('buyer should have the key', async () => {
+  it('buyer should have the key', async () => {
     // wait for subgraph to pick up the events
     await sleep(3000)
     const key = await dtp.readKeyDLEQ(agreementId, cipher, buyerK, providerPub)

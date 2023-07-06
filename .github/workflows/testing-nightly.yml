@@ -22,13 +22,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - uses: nevermined-io/nvm-tools-actions@v0.10.0
+      - uses: nevermined-io/nvm-tools-actions@v0.12.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
           estuary: 'true'
           contracts-version: 'v3.2.1'
-          node-version: 'v1.2.5'
+          node-version: 'v1.2.16'
       - name: Install dependencies
         run: |
           yarn

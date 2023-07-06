@@ -1,14 +1,10 @@
 import { assert } from 'chai'
-import { decodeJwt } from 'jose'
 import { config } from './config'
 import {
   Nevermined,
   Keeper,
   Account,
-  DDO,
   Logger,
-  AssetPrice,
-  AssetAttributes,
   EscrowPaymentCondition,
   LockPaymentCondition,
   generateId,
@@ -16,6 +12,7 @@ import {
   BabyjubPublicKey,
   BigNumber,
   generateIntantiableConfigFromConfig,
+  ConditionInstanceSmall,
 } from '@nevermined-io/sdk'
 import {
   Dtp,
@@ -25,9 +22,9 @@ import {
   AccessDLEQTemplate,
   dleq,
 } from '../src'
-import { cryptoConfig, getMetadataForDLEQ } from './utils'
+import { cryptoConfig } from './utils'
 
-describe('Register Escrow Access DLEQ Template', () => {
+describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => {
   let nevermined: Nevermined
   let keeper: Keeper
 
@@ -64,7 +61,7 @@ describe('Register Escrow Access DLEQ Template', () => {
     ;({ token } = keeper)
 
     // Accounts
-    ;[, publisher, consumer, provider, , , , , templateManagerOwner] = await nevermined.accounts.list()
+    ;[templateManagerOwner, publisher, consumer, provider] = await nevermined.accounts.list()
 
     receivers = [publisher.getId(), provider.getId()]
 
@@ -102,7 +99,6 @@ describe('Register Escrow Access DLEQ Template', () => {
     let conditionIdEscrow: [string, string]
 
     let buyerK: string
-    let providerK: string
     let buyerPub: BabyjubPublicKey
     let providerPub: BabyjubPublicKey
     let keyTransfer: KeyTransfer
@@ -112,6 +108,7 @@ describe('Register Escrow Access DLEQ Template', () => {
     const passwd = 123456n
     let encryptedPasswd: bigint
     let cipher: string
+    let instances: ConditionInstanceSmall[]
 
     before(async () => {
       agreementIdSeed = generateId()
@@ -125,13 +122,18 @@ describe('Register Escrow Access DLEQ Template', () => {
       keyTransfer = await makeKeyTransfer()
 
       buyerK = keyTransfer.makeKey('abd')
-      providerK = keyTransfer.makeKey('abc')
-      secret = keyTransfer.makeKey('abcedf')
+      secret = keyTransfer.makeKey('abcedf'+Math.random())
       buyerPub = await dleq.secretToPublic(buyerK)
-      providerPub = await dleq.secretToPublic(providerK)
+      providerPub = await accessCondition.networkKey()
       secretId = await dleq.secretToPublic(secret)
       encryptedPasswd = await dleq.encrypt(passwd, secret, providerPub)
       cipher = dleq.bigToHex(encryptedPasswd)
+    })
+
+    it('should configure secret', async () => {
+      await accessCondition.addSecret(secretId, publisher)
+      const pid = await accessCondition.pointId(secretId)
+      await accessCondition.addPrice(pid, BigNumber.from(1), token.address, 20, publisher)
     })
 
     it('should register a DID', async () => {
@@ -166,6 +168,25 @@ describe('Register Escrow Access DLEQ Template', () => {
           conditionIdAccess[1],
         ),
       )
+      const i1 = await accessCondition.instance(agreementId, accessCondition.params(cipher, secretId, providerPub, buyerPub))
+      const i2 = await lockPaymentCondition.instance(agreementId, lockPaymentCondition.params(
+        did,
+        escrowPaymentCondition.getAddress(),
+        token.getAddress(),
+        amounts,
+        receivers,
+      ))
+      const i3 = await escrowPaymentCondition.instance(agreementId, escrowPaymentCondition.params(
+        did,
+        amounts,
+        receivers,
+        consumer.getId(),
+        escrowPaymentCondition.getAddress(),
+        token.getAddress(),
+        conditionIdLock[1],
+        conditionIdAccess[1],
+      ))
+      instances = [i1, i2, i3]
     })
 
     it('should have conditions types', async () => {
@@ -233,33 +254,10 @@ describe('Register Escrow Access DLEQ Template', () => {
     })
 
     it('should fulfill AccessCondition', async () => {
-      const { proof, reencrypt } = await dleq.makeProof(
-        conditionIdAccess[1],
-        providerK,
-        secretId,
-        buyerPub,
-      )
-      assert(
-        await dleq.checkProof(
-          conditionIdAccess[1],
-          buyerK,
-          secretId,
-          providerPub,
-          proof,
-          reencrypt,
-        ),
-      )
-      const fulfill = await accessCondition.fulfill(
-        agreementId,
-        cipher,
-        secretId,
-        providerPub,
-        buyerPub,
-        reencrypt,
-        proof,
-      )
+      const register = await accessCondition.authorize(agreementId, instances, 0, consumer)
+      assert.isDefined(register.events![0], 'Not Fulfilled event.')
 
-      assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
+      await new Promise((resolve) => setTimeout(resolve, 20 * 1000))
     })
 
     it('should fulfill EscrowPaymentCondition', async () => {
@@ -280,122 +278,4 @@ describe('Register Escrow Access DLEQ Template', () => {
     })
   })
 
-  describe('Short flow', () => {
-    let agreementId: string
-    let ddo: DDO
-
-    let buyerK: string
-    let providerK: string
-    let buyerPub: BabyjubPublicKey
-    let providerPub: BabyjubPublicKey
-    let keyTransfer: KeyTransfer
-
-    let secret: string
-    let secretId: BabyjubPublicKey
-    let passwd: bigint
-    let encryptedPasswd: bigint
-    let cipher: string
-
-    const origPasswd = 'passwd_32_letters_1234567890asdf'
-
-    let metadata
-
-    before(async () => {
-      keyTransfer = await makeKeyTransfer()
-      buyerK = await keyTransfer.makeKey('abd')
-      providerK = await keyTransfer.makeKey('abc')
-
-      passwd = dleq.makeKey(origPasswd)
-
-      secret = keyTransfer.makeKey('abcedf')
-      buyerPub = await dleq.secretToPublic(buyerK)
-      providerPub = await dleq.secretToPublic(providerK)
-      secretId = await dleq.secretToPublic(secret)
-      // TODO: use actual password
-      encryptedPasswd = await dleq.encrypt(passwd, secret, providerPub)
-      cipher = dleq.bigToHex(encryptedPasswd)
-
-      consumer.babyX = buyerPub.x
-      consumer.babyY = buyerPub.y
-      consumer.babySecret = buyerK
-
-      metadata = await getMetadataForDLEQ('foo' + Math.random(), cipher, providerPub, secretId)
-
-      const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
-
-      await nevermined.services.marketplace.login(clientAssertion)
-
-      const payload = decodeJwt(config.marketplaceAuthToken as string)
-      metadata.userId = payload.sub
-
-      const assetPrice = new AssetPrice(
-        new Map([
-          [receivers[0], amounts[0]],
-          [receivers[1], amounts[1]],
-        ]),
-      )
-
-      const assetAttributes = AssetAttributes.getInstance({
-        metadata,
-        price: assetPrice,
-        serviceTypes: ['access'],
-      })
-      ddo = await nevermined.assets.create(assetAttributes, publisher)
-    })
-
-    it('should create a new agreement (short way)', async () => {
-      agreementId = await accessTemplate.createAgreementFromDDO(
-        generateId(),
-        ddo,
-        accessTemplate.params(consumer),
-        consumer,
-        publisher,
-      )
-
-      assert.match(agreementId, /^0x[a-f0-9]{64}$/i)
-    })
-
-    it('should fulfill the conditions from consumer side', async () => {
-      try {
-        await consumer.requestTokens(totalAmount)
-      } catch (error) {
-        Logger.error(error)
-      }
-
-      await nevermined.agreements.conditions.lockPayment(
-        agreementId,
-        ddo.shortId(),
-        amounts,
-        receivers,
-        token.getAddress(),
-        consumer,
-      )
-    })
-
-    it('should fulfill the conditions from publisher side', async () => {
-      await dtp.transferKeyDLEQ(
-        agreementId,
-        cipher,
-        providerK,
-        secretId,
-        buyerPub,
-        providerPub,
-        publisher,
-      )
-      await nevermined.agreements.conditions.releaseReward(
-        agreementId,
-        amounts,
-        receivers,
-        consumer.getId(),
-        ddo.shortId(),
-        token.getAddress(),
-        publisher,
-      )
-    })
-
-    it('buyer should have the key', async () => {
-      const key = await dtp.readKeyDLEQ(agreementId, cipher, buyerK, providerPub)
-      assert.equal(key.toString(), passwd.toString())
-    })
-  })
 })

@@ -22,8 +22,8 @@ jobs:
           opengsn: 'true'
           estuary: 'true'
           frost: 'true'
-          contracts-version: 'v3.2.2.004'
-          frost-version: 'v3.2.2.004'
+          contracts-version: 'latest'
+          frost-version: 'latest'
       - name: Install dependencies
         run: |
           yarn

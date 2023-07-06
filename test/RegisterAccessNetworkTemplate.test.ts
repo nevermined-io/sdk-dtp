@@ -1,5 +1,4 @@
 import { assert } from 'chai'
-import { decodeJwt } from 'jose'
 import { config } from './config'
 import {
   Nevermined,
@@ -23,7 +22,7 @@ import {
   AccessDLEQTemplate,
   dleq,
 } from '../src'
-import { cryptoConfig, getMetadataForDLEQ } from './utils'
+import { cryptoConfig } from './utils'
 
 describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => {
   let nevermined: Nevermined
@@ -133,7 +132,7 @@ describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => 
 
     it('should configure secret', async () => {
       await accessCondition.addSecret(secretId, publisher)
-      let pid = await accessCondition.pointId(secretId)
+      const pid = await accessCondition.pointId(secretId)
       await accessCondition.addPrice(pid, BigNumber.from(1), token.address, 20, publisher)
     })
 
@@ -169,15 +168,15 @@ describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => 
           conditionIdAccess[1],
         ),
       )
-      let i1 = await accessCondition.instance(agreementId, accessCondition.params(cipher, secretId, providerPub, buyerPub))
-      let i2 = await lockPaymentCondition.instance(agreementId, lockPaymentCondition.params(
+      const i1 = await accessCondition.instance(agreementId, accessCondition.params(cipher, secretId, providerPub, buyerPub))
+      const i2 = await lockPaymentCondition.instance(agreementId, lockPaymentCondition.params(
         did,
         escrowPaymentCondition.getAddress(),
         token.getAddress(),
         amounts,
         receivers,
       ))
-      let i3 = await escrowPaymentCondition.instance(agreementId, escrowPaymentCondition.params(
+      const i3 = await escrowPaymentCondition.instance(agreementId, escrowPaymentCondition.params(
         did,
         amounts,
         receivers,

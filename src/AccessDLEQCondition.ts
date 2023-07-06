@@ -101,12 +101,10 @@ export class AccessDLEQCondition extends ProviderCondition<
   }
 
   public addSecret(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
-    console.log('from', from.getId())
     return super.send("addSecret", from && from.getId(), [[key.x, key.y]], txParams)
   }
 
   public addPrice(pid: string, price: BigNumber, token: string, ttype: number, from?: Account, txParams?: TxParameters) {
-    console.log('from', from.getId())
     return super.send("addPrice", from && from.getId(), [pid, price, token, ttype], txParams)
   }
 
@@ -117,15 +115,12 @@ export class AccessDLEQCondition extends ProviderCondition<
   public async networkKey(): Promise<BabyjubPublicKey> {
     const res0 = await super.call("network", [0])
     const res1 = await super.call("network", [1])
-    console.log(res0, res1)
     return new BabyjubPublicKey((res0 as any)._hex, (res1 as any)._hex)
-    // return new BabyjubPublicKey(res[0], res[1])
   }
 
   public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters) {
     const coder = new ethers.utils.AbiCoder()
 
-    console.log(instances[2].list)
     const l2 = instances[2].list
     const params = [
       coder.encode(

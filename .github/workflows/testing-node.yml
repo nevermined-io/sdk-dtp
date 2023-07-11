@@ -16,12 +16,14 @@ jobs:
           repository: nevermined-io/node
           path: node
           token: ${{ secrets.API_TOKEN_GITHUB }}
-      - uses: nevermined-io/nvm-tools-actions@v0.12.0
+      - uses: nevermined-io/nvm-tools-actions@v0.13.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
           estuary: 'true'
-          contracts-version: 'v3.2.2'
+          frost: 'true'
+          contracts-version: 'v3.2.2.004'
+          frost-version: 'v3.2.2.004'
           node: 'false'
 
       - name: Install sponge

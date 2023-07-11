@@ -7,9 +7,12 @@ import {
   zeroX,
   TxParameters,
   InstantiableConfig,
+  BigNumber,
+  ConditionInstanceSmall,
 } from '@nevermined-io/sdk'
 import { makeKeyTransfer } from './KeyTransfer'
 import { makeProof } from './dleq'
+import { ethers } from 'ethers'
 
 export interface AccessDLEQConditionContext extends ConditionContext {
   consumer: Account
@@ -91,5 +94,50 @@ export class AccessDLEQCondition extends ProviderCondition<
       from,
       params,
     )
+  }
+
+  public setNetworkPublicKey(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
+    return super.send("setNetworkPublicKey", from && from.getId(), [[key.x, key.y]], txParams)
+  }
+
+  public addSecret(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
+    return super.send("addSecret", from && from.getId(), [[key.x, key.y]], txParams)
+  }
+
+  public addPrice(pid: string, price: BigNumber, token: string, ttype: number, from?: Account, txParams?: TxParameters) {
+    return super.send("addPrice", from && from.getId(), [pid, price, token, ttype], txParams)
+  }
+
+  public pointId(key: BabyjubPublicKey): Promise<string> {
+    return super.call("pointId", [[key.x, key.y]])
+  }
+
+  public async networkKey(): Promise<BabyjubPublicKey> {
+    const res0 = await super.call("network", [0])
+    const res1 = await super.call("network", [1])
+    return new BabyjubPublicKey((res0 as any)._hex, (res1 as any)._hex)
+  }
+
+  public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters) {
+    const coder = new ethers.utils.AbiCoder()
+
+    const l2 = instances[2].list
+    const params = [
+      coder.encode(
+        ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
+        [instances[0].list[0], instances[0].list[1][0], instances[0].list[1][1], instances[0].list[2][0], instances[0].list[2][1], instances[0].list[3][0], instances[0].list[3][1]]
+      ),
+      coder.encode(
+        ['bytes32', 'address', 'address', 'uint256[]', 'address[]'],
+        instances[1].list
+      ),
+      coder.encode(
+        ['bytes32', 'uint256[]', 'address[]', 'address', 'address', 'address', 'bytes32', 'bytes32[]'],
+        [l2[0], l2[1], l2[2], l2[3], l2[4], l2[5], l2[6], [l2[7]]]
+      )
+    ]
+
+    return super.send('authorizeAccessTemplate', from && from.getId(), [agreementId, params, priceIdx], txParams)
+
   }
 }

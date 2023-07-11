@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -21,11 +19,11 @@ jobs:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
           estuary: 'true'
-          contracts-version: 'v3.2.1'
+          contracts-version: 'v3.2.2'
       - name: Install dependencies
         run: |
           yarn
-      - name: Run linters
+      - name: Copy artifacts
         run: |
           nvm-tools copy-artifacts ./artifacts
           nvm-tools copy-circuits ./circuits

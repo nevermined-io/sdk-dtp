@@ -1,6 +1,6 @@
 {
   "name": "@nevermined-io/sdk-dtp",
-  "version": "0.5.1",
+  "version": "0.6.0-rc0",
   "description": "Javascript SDK for connecting with Nevermined Data Platform (Data Transfer proofs module)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/nevermined-io/sdk-dtp#readme",
   "dependencies": {
-    "@nevermined-io/sdk": "^1.5.3",
     "circomlibjs": "^0.1.1",
     "eciesjs": "^0.3.15",
     "ffjavascript": "^0.2.55",
@@ -38,8 +37,12 @@
     "snarkjs": "^0.4.26",
     "web3-utils": "^1.7.4"
   },
+  "peerDependencies": {
+    "@nevermined-io/sdk": "^1.6.0-rc1"
+  },
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",
+    "@nevermined-io/sdk": "^1.6.0-rc1",
     "@release-it/bumper": "^1.4.1",
     "@truffle/hdwallet-provider": "^1.0.42",
     "@types/chai": "^4.2.12",
@@ -49,8 +52,8 @@
     "@types/node": "^12.19.8",
     "@types/node-fetch": "^2.5.7",
     "@types/temp": "^0.8.34",
-    "@typescript-eslint/eslint-plugin": "^5.30.5",
-    "@typescript-eslint/parser": "^5.30.5",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "auto-changelog": "^1.16.4",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
@@ -77,9 +80,9 @@
     "stream-http": "^3.2.0",
     "tar": "^6.1.11",
     "terser-webpack-plugin": "^5.3.1",
-    "ts-node": "^8.10.2",
-    "typedoc": "^0.20.0",
-    "typescript": "^3.9.7",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.24.8",
+    "typescript": "^5.1.6",
     "url": "^0.11.0",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",

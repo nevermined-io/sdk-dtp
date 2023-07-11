@@ -351,7 +351,6 @@ export class Dtp extends Instantiable {
     // const { accessProofCondition } = this.nevermined.keeper.conditions
     const evOptions: EventOptions = {
       eventName: 'Fulfilled',
-      methodName: 'getFulfilleds',
       filterJsonRpc: { _agreementId: agreementId },
       filterSubgraph: { where: { _agreementId: agreementId } },
       result: {
@@ -387,7 +386,6 @@ export class Dtp extends Instantiable {
   ) {
     const evOptions: EventOptions = {
       eventName: 'Fulfilled',
-      methodName: 'getFulfilleds',
       filterJsonRpc: { _agreementId: agreementId },
       filterSubgraph: { where: { _agreementId: agreementId } },
       result: {

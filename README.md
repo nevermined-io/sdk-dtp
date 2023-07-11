@@ -2,7 +2,7 @@
 
 # Nevermined SDK Data Transfer Proofs
 
-> Javascript Data Tranfer Proofs library
+> Javascript Data Transfer Proofs library
 > [nevermined.io](https://nevermined.io)
 
 [![CI Build](https://github.com/nevermined-io/sdk-dtp/actions/workflows/testing.yml/badge.svg)](https://github.com/nevermined-io/sdk-dtp/actions/workflows/testing.yml)
@@ -10,6 +10,10 @@
 ---
 
 ## Get started
+
+```bash
+$ yarn add @nevermined-io/sdk @nevermined-io/sdk-dtp
+```
 
 SDK Data Transfer Proofs (aka DTP) library allows the delivery of use cases involving encrypted assets in a Nevermined deployment.
 The library is packaged in NPM format:
@@ -28,7 +32,7 @@ For linting and auto-formatting you can use:
 
 ```bash
 # lint all ts with eslint
-yarn run lint
+yarn lint
 
 ```
 

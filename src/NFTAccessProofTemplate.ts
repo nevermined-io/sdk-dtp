@@ -5,7 +5,6 @@ import {
   ServiceAgreementTemplate,
   NFTHolderCondition,
   AgreementInstance,
-  BigNumber,
   InstantiableConfig,
 } from '@nevermined-io/sdk'
 import { AccessProofCondition } from './AccessProofCondition'
@@ -16,7 +15,7 @@ import { ServiceNFTAccessProof } from './Service'
 
 export interface NFTAccessProofTemplateParams {
   holderAddress: string
-  amount: BigNumber
+  amount: bigint
   consumer: Account
 }
 
@@ -69,7 +68,7 @@ export class NFTAccessProofTemplate extends ProofTemplate<
   public params(
     consumer: Account,
     holderAddress: string,
-    amount: BigNumber,
+    amount: bigint,
   ): NFTAccessProofTemplateParams {
     return { holderAddress, amount, consumer }
   }
@@ -100,7 +99,7 @@ export class NFTAccessProofTemplate extends ProofTemplate<
     }
   }
 
-  public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-    return nftAccessTemplateServiceAgreementTemplate
+  public getServiceAgreementTemplate(): ServiceAgreementTemplate {
+    return nftAccessTemplateServiceAgreementTemplate()
   }
 }

@@ -101,14 +101,14 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   it('should agreement id be defined', async () => {
     try {
       await consumer.requestTokens(
-        +ddo.getPriceByService() * 10 ** -(await nevermined.keeper.token.decimals()),
+        ddo.getPriceByService() * 10n ** BigInt(await nevermined.keeper.token.decimals()),
       )
     } catch (error) {
       Logger.error(error)
     }
 
     const steps: any[] = []
-    agreementId = await nevermined.assets.order(ddo.id, consumer).next((step) => steps.push(step))
+    agreementId = await nevermined.assets.order(ddo.id, 'access', consumer).next((step) => steps.push(step))
 
     assert.isDefined(agreementId)
   })

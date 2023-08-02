@@ -134,7 +134,7 @@ export class NFT721SalesWithDLEQTemplate extends DLEQTemplate<
     }
   }
 
-  public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-    return nft721SalesTemplateServiceAgreementTemplateDLEQ
+  public getServiceAgreementTemplate(): ServiceAgreementTemplate {
+    return nft721SalesTemplateServiceAgreementTemplateDLEQ()
   }
 }

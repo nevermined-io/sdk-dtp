@@ -5,12 +5,14 @@ import {
   MetaData,
   ServiceType,
   ValidationParams,
-  AssetPrice,
   LockPaymentCondition,
   EscrowPaymentCondition,
   AgreementInstance,
   InstantiableConfig,
   AccessProofTemplateParams,
+  NFTAttributes,
+  PricedMetadataInformation,
+  ServiceAttributes,
 } from '@nevermined-io/sdk'
 import { AccessProofCondition } from './AccessProofCondition'
 import { accessTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
@@ -40,17 +42,18 @@ export class AccessProofTemplate extends ProofTemplate<
     return res
   }
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice?: AssetPrice,
-    erc20TokenAddress?: string,
-  ): Promise<ServiceAccessProof> {
-    return await super.createService(publisher, metadata, assetPrice, erc20TokenAddress, true)
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation,
+  ): ServiceAccessProof {
+    return super.createService(publisher, metadata, serviceAttributes, nftAttributes, pricedData)
   }
 
-  public async getServiceAgreementTemplate() {
-    return accessTemplateServiceAgreementTemplate
+  public getServiceAgreementTemplate() {
+    return accessTemplateServiceAgreementTemplate()
   }
 
   public name(): string {

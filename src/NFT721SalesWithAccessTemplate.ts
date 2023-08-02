@@ -138,7 +138,7 @@ export class NFT721SalesWithAccessTemplate extends ProofTemplate<
     }
   }
 
-  public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-    return nft721SalesTemplateServiceAgreementTemplate
+  public getServiceAgreementTemplate(): ServiceAgreementTemplate {
+    return nft721SalesTemplateServiceAgreementTemplate()
   }
 }

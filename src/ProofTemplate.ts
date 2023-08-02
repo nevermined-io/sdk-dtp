@@ -8,7 +8,9 @@ import {
   BaseTemplate,
   Service,
   ValidationParams,
-  AssetPrice,
+  NFTAttributes,
+  PricedMetadataInformation,
+  ServiceAttributes,
 } from '@nevermined-io/sdk'
 import { CryptoConfig, decrypt } from './utils'
 import { Dtp } from './Dtp'
@@ -40,19 +42,19 @@ export const getAssetUrl = async (
 export abstract class ProofTemplate<Params, S extends Service> extends BaseTemplate<Params, S> {
   public dtp: Dtp
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice?: AssetPrice,
-    erc20TokenAddress?: string,
-    priced?: boolean,
-  ): Promise<S> {
-    const service = await super.createService(
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation,
+  ): S {
+    const service = super.createService(
       publisher,
       metadata,
-      assetPrice,
-      erc20TokenAddress,
-      priced,
+      serviceAttributes,
+      nftAttributes,
+      pricedData,
     )
 
     return {
@@ -91,19 +93,19 @@ export abstract class ProofTemplate<Params, S extends Service> extends BaseTempl
 export abstract class DLEQTemplate<Params, S extends Service> extends BaseTemplate<Params, S> {
   public dtp: Dtp
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice?: AssetPrice,
-    erc20TokenAddress?: string,
-    priced?: boolean,
-  ): Promise<S> {
-    const service = await super.createService(
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation,
+  ): S {
+    const service = super.createService(
       publisher,
       metadata,
-      assetPrice,
-      erc20TokenAddress,
-      priced,
+      serviceAttributes,
+      nftAttributes,
+      pricedData,
     )
     const { secretId, providerKey, cipher } = metadata.additionalInformation
     return {

@@ -14,7 +14,6 @@ import {
   NFTAttributes,
   Nft1155Contract,
   generateIntantiableConfigFromConfig,
-  BigNumber,
 } from '@nevermined-io/sdk'
 import {
   AccessProofConditionExtra,
@@ -31,8 +30,8 @@ describe('NFT Access Proof Template', () => {
 
   let accessProofTemplate: NFTAccessProofTemplate
 
-  const totalAmount = BigNumber.from(12)
-  const amounts = [BigNumber.from(10), BigNumber.from(2)]
+  const totalAmount = 12n
+  const amounts = [10n, 2n]
   let nftContract: Nft1155Contract
 
   let publisher: Account
@@ -102,11 +101,18 @@ describe('NFT Access Proof Template', () => {
 
       const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
-        price: assetPrice,
-        serviceTypes: ['nft-sales', 'nft-access'],
+        services: [
+          {
+            serviceType: 'nft-sales',
+            price: assetPrice,
+            nft: { amount: 20n}
+          },
+          {
+            serviceType: 'nft-access',
+          },
+        ],          
         nftContractAddress: nftContract.address,
-        cap: BigNumber.from(100),
-        amount: BigNumber.from(20),
+        cap: 100n,
       })
       ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
@@ -121,7 +127,7 @@ describe('NFT Access Proof Template', () => {
     })
 
     it('should create a new agreement (short way)', async () => {
-      const params = accessProofTemplate.params(consumer, publisher.getId(), BigNumber.from(1))
+      const params = accessProofTemplate.params(consumer, publisher.getId(), 1n)
       agreementId = await accessProofTemplate.createAgreementFromDDO(
         agreementIdSeed,
         ddo,

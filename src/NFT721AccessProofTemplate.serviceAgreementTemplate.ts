@@ -1,7 +1,7 @@
 import { ServiceAgreementTemplate } from '@nevermined-io/sdk'
 import { access, accessDLEQ, nftHolder } from './ConditionTemplate'
 
-export const nft721AccessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {
+export const nft721AccessTemplateServiceAgreementTemplate = (): ServiceAgreementTemplate => ({
   contractName: 'NFT721AccessTemplate',
   events: [
     {
@@ -20,8 +20,8 @@ export const nft721AccessTemplateServiceAgreementTemplate: ServiceAgreementTempl
     nftAccess: [],
   },
   conditions: [nftHolder, access],
-}
-export const nft721AccessTemplateServiceAgreementTemplateDLEQ: ServiceAgreementTemplate = {
+})
+export const nft721AccessTemplateServiceAgreementTemplateDLEQ = (): ServiceAgreementTemplate => ({
   contractName: 'NFT721AccessTemplate',
   events: [
     {
@@ -40,4 +40,4 @@ export const nft721AccessTemplateServiceAgreementTemplateDLEQ: ServiceAgreementT
     nftAccess: [],
   },
   conditions: [nftHolder, accessDLEQ],
-}
+})

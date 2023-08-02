@@ -15,7 +15,6 @@ import {
   Nft1155Contract,
   BabyjubPublicKey,
   generateId,
-  BigNumber,
   generateIntantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import {
@@ -35,8 +34,8 @@ describe('NFT Transfer Proof Template', () => {
   let lockPaymentCondition: LockPaymentCondition
   let nftContract: Nft1155Contract
 
-  const totalAmount = BigNumber.from(12)
-  const amounts = [BigNumber.from(10), BigNumber.from(2)]
+  const totalAmount = 12n
+  const amounts = [10n, 2n]
 
   let publisher: Account
   let consumer: Account
@@ -107,11 +106,18 @@ describe('NFT Transfer Proof Template', () => {
 
       const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
-        price: assetPrice,
-        serviceTypes: ['nft-sales-proof', 'nft-access'],
+        services: [
+          {
+            serviceType: 'nft-sales-proof',
+            price: assetPrice,
+            nft: { amount: 20n}
+          },
+          {
+            serviceType: 'nft-access',
+          },
+        ],           
         nftContractAddress: nftContract.address,
-        cap: BigNumber.from(100),
-        amount: BigNumber.from(20),
+        cap: 100n
       })
       ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
@@ -126,7 +132,7 @@ describe('NFT Transfer Proof Template', () => {
     })
 
     it('should create a new agreement (short way)', async () => {
-      const params = accessProofTemplate.params(consumer, publisher.getId(), BigNumber.from(1))
+      const params = accessProofTemplate.params(consumer, publisher.getId(), 1n)
       agreementId = await accessProofTemplate.createAgreementFromDDO(
         agreementIdSeed,
         ddo,
@@ -151,7 +157,7 @@ describe('NFT Transfer Proof Template', () => {
         Logger.error(error)
       }
 
-      await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
+      await token.approve(lockPaymentCondition.address, totalAmount, consumer)
       await lockPaymentCondition.fulfillInstance(
         agreementData.instances[0] as ConditionInstance<any>,
         {},

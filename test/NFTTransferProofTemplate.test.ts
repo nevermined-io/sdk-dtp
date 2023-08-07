@@ -48,7 +48,7 @@ describe('NFT Transfer Proof Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateIntantiableConfigFromConfig(config)),
       nevermined,
     }
 

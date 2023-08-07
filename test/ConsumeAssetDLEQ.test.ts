@@ -43,7 +43,7 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateIntantiableConfigFromConfig(config)),
       nevermined,
     }
 

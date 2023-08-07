@@ -50,7 +50,7 @@ describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => 
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateIntantiableConfigFromConfig(config)),
       nevermined,
     }
 

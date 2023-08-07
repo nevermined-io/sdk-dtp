@@ -32,7 +32,7 @@ describe('NFT Transfer w/ node Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateIntantiableConfigFromConfig(config)),
       nevermined,
     }
 

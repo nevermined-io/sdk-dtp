@@ -43,7 +43,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateIntantiableConfigFromConfig(config)),
       nevermined,
     }
 

@@ -86,11 +86,12 @@ export const encrypt = async (
       config.provider_key,
       config.provider_password,
     )
+    
     const ecdh = crypto.createECDH('secp256k1')
     ecdh.setPrivateKey(Buffer.from(wallet.privateKey.substring(2), 'hex'))
     const result = ec_encrypt(ecdh.getPublicKey(), Buffer.from(cipherText)).toString('binary')
     const res = {
-      publicKey: wallet.publicKey,
+      publicKey: ecdh.getPublicKey().toString(), // wallet.publicKey, // || HDNodeWallet.fromPhrase(wallet.privateKey).publicKey,
       result,
     }
     return res

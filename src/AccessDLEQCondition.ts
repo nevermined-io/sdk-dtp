@@ -122,7 +122,7 @@ export class AccessDLEQCondition extends ProviderCondition<
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters): Promise<any> {
-    const coder = new ethers.utils.AbiCoder()
+    const coder = new ethers.AbiCoder()
 
     const l2 = instances[2].list
     const params = [

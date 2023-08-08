@@ -57,7 +57,7 @@ export async function makeProof(
     .concat(toEvm(w2))
   const e = Fr.fromObject(
     BigInt(
-      ethers.utils.solidityKeccak256(
+      ethers.solidityPackedKeccak256(
         arr.map((_a) => 'uint256'),
         arr,
       ),
@@ -121,7 +121,7 @@ export async function checkProof(
     .concat(toEvm(ww2))
   const chal = Fr.fromObject(
     BigInt(
-      ethers.utils.solidityKeccak256(
+      ethers.solidityPackedKeccak256(
         arr2.map((_a) => 'uint256'),
         arr2,
       ),

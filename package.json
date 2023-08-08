@@ -1,6 +1,6 @@
 {
   "name": "@nevermined-io/sdk-dtp",
-  "version": "0.7.0-rc1",
+  "version": "0.7.0-rc2",
   "description": "Javascript SDK for connecting with Nevermined Data Platform (Data Transfer proofs module)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,6 +9,7 @@
     "build:tsc": "tsc --sourceMap",
     "clean": "rm -rf ./dist/ ./doc/ ./.nyc_output",
     "test": "mocha test/*.test.ts",
+    "single-test": "mocha ",
     "prepare": "yarn run build",
     "lint": "eslint ./",
     "lint:fix": "yarn run lint -- --fix",

@@ -79,14 +79,15 @@ describe('NFT Transfer w/ node Template', () => {
         services: [
           {
             serviceType: 'nft-sales-proof',
-            nft: { amount: 1n}
+            nft: { amount: 1n, nftTransfer: false }
           },
           {
             serviceType: 'nft-access',
           },
         ],        
         nftContractAddress: nevermined.nfts1155.nftContract.address,
-        cap: 100n,        
+        cap: 100n,
+        preMint: false        
       })
 
       ddo = await nevermined.nfts1155.create(nftAttributes, publisher)

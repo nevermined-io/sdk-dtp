@@ -259,7 +259,7 @@ describe('Register Escrow Access DLEQ Template', () => {
         proof,
       )
 
-      assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
+      assert.isDefined(fulfill.logs![0], 'Not Fulfilled event.')
     })
 
     it('should fulfill EscrowPaymentCondition', async () => {

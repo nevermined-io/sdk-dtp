@@ -91,7 +91,7 @@ export const encrypt = async (
     ecdh.setPrivateKey(Buffer.from(wallet.privateKey.substring(2), 'hex'))
     const result = ec_encrypt(ecdh.getPublicKey(), Buffer.from(cipherText)).toString('binary')
     const res = {
-      publicKey: ecdh.getPublicKey().toString(), // wallet.publicKey, // || HDNodeWallet.fromPhrase(wallet.privateKey).publicKey,
+      publicKey: wallet.signingKey.publicKey,
       result,
     }
     return res

@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",
-    "@nevermined-io/sdk": "file:.yalc/@nevermined-io/sdk",
+    "@nevermined-io/sdk": "^2.0.0-rc5",
     "ethers": "^6.6.5",
     "@release-it/bumper": "^1.4.1",
     "@truffle/hdwallet-provider": "^1.0.42",

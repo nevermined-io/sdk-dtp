@@ -96,10 +96,14 @@ export class AccessProofService extends Instantiable
     const metadata = ddo.findServiceByType('metadata').attributes.main
     return this.select(metadata).accept(params)
   }
-  public async track(params: ValidationParams): Promise<boolean> {
+  public async track(
+    params: ValidationParams,
+    from: Account,
+    txparams?: TxParameters,    
+  ): Promise<boolean> {
     const ddo = await this.nevermined.assets.resolve(params.did)
     const metadata = ddo.findServiceByType('metadata').attributes.main
-    return this.select(metadata).accept(params)
+    return this.select(metadata).track(params, from, txparams)
   }
 
   private isDTP(main: MetaDataMain): boolean {
@@ -167,10 +171,14 @@ export class NFTAccessProofService extends Instantiable
     return this.select(metadata).accept(params)
   }
 
-  public async track(params: ValidationParams): Promise<boolean> {
+  public async track(
+    params: ValidationParams,
+    from: Account,
+    txparams?: TxParameters,    
+  ): Promise<boolean> {
     const ddo = await this.nevermined.assets.resolve(params.did)
     const metadata = ddo.findServiceByType('metadata').attributes.main
-    return this.select(metadata).track(params)
+    return this.select(metadata).track(params, from, txparams)
   }
 
   private isDTP(main: MetaDataMain): boolean {
@@ -235,10 +243,14 @@ export class NFTSalesProofService extends Instantiable
     return this.select(metadata).accept(params)
   }
 
-  public async track(params: ValidationParams): Promise<boolean> {
+  public async track(
+    params: ValidationParams,
+    from: Account,
+    txparams?: TxParameters,    
+  ): Promise<boolean> {
     const ddo = await this.nevermined.assets.resolve(params.did)
     const metadata = ddo.findServiceByType('metadata').attributes.main
-    return this.select(metadata).track(params)
+    return this.select(metadata).track(params, from, txparams)
   }
 
   private isDTP(main: MetaDataMain): boolean {

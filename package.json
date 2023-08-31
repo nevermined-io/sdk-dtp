@@ -1,6 +1,6 @@
 {
   "name": "@nevermined-io/sdk-dtp",
-  "version": "0.7.0-rc4",
+  "version": "0.7.0-rc5",
   "description": "Javascript SDK for connecting with Nevermined Data Platform (Data Transfer proofs module)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -39,11 +39,11 @@
     "web3-utils": "^1.7.4"
   },
   "peerDependencies": {
-    "@nevermined-io/sdk": "^2.0.0-rc7"
+    "@nevermined-io/sdk": "^2.0.0-rc9"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",
-    "@nevermined-io/sdk": "^2.0.0-rc7",
+    "@nevermined-io/sdk": "^2.0.0-rc9",
     "@release-it/bumper": "^1.4.1",
     "@truffle/hdwallet-provider": "^1.0.42",
     "@types/chai": "^4.2.12",

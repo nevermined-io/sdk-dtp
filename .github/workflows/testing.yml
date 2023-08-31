@@ -21,6 +21,7 @@ jobs:
           estuary: 'true'
           frost: 'true'
           contracts-version: 'latest'
+          node-version: 'develop'
           frost-version: 'latest'
       - name: Install dependencies
         run: |

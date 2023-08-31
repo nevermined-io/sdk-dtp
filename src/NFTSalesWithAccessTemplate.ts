@@ -23,6 +23,7 @@ export interface NFTSalesWithAccessTemplateParams {
   consumer: Account
   expiration: number
   nftAmount: bigint
+  duration: number
 }
 
 export class NFTSalesWithAccessTemplate extends ProofTemplate<
@@ -86,8 +87,9 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
     providerId: string,
     nftAmount = 1n,
     expiration = 0,
+    duration?: number
   ): NFTSalesWithAccessTemplateParams {
-    return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId }
+    return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId, duration }
   }
 
   public description(): string {

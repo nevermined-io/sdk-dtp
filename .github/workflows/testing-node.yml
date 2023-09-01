@@ -25,7 +25,7 @@ jobs:
           contracts-version: 'v3.2.2.004'
           frost-version: 'v3.2.2.004'
           node: 'false'
-          marketplace-version: 'v0.6.6'
+          marketplace-version: 'v0.6.5'
 
       - name: Install dependencies
         run: yarn

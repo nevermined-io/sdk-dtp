@@ -14,12 +14,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: nevermined-io/nvm-tools-actions@v0.13.0
+      - uses: nevermined-io/nvm-tools-actions@v0.14.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
           estuary: 'true'
           frost: 'true'
+          # TODO: Update to tagged versions when everything is relased and in main branches
           contracts-version: 'latest'
           node-version: 'develop'
           frost-version: 'latest'

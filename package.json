@@ -38,7 +38,7 @@
     "web3-utils": "^1.7.4"
   },
   "peerDependencies": {
-    "@nevermined-io/sdk": "^1.6.0"
+    "@nevermined-io/sdk": "^1.6.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.3.1",

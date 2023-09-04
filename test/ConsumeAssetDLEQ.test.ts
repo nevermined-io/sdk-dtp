@@ -68,6 +68,8 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
     await nevermined.services.marketplace.login(clientAssertion)
     const payload = decodeJwt(config.marketplaceAuthToken!)
 
+    console.log(consumer)
+
     consumer.babyX = buyerPub.x
     consumer.babyY = buyerPub.y
     consumer.babySecret = buyerK

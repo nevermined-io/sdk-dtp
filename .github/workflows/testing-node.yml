@@ -16,7 +16,7 @@ jobs:
           repository: nevermined-io/node
           path: node
           token: ${{ secrets.API_TOKEN_GITHUB }}
-      - uses: nevermined-io/nvm-tools-actions@v0.13.0
+      - uses: nevermined-io/nvm-tools-actions@v0.14.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
@@ -25,7 +25,7 @@ jobs:
           contracts-version: 'v3.2.2.004'
           frost-version: 'v3.2.2.004'
           node: 'false'
-          marketplace-version: 'v0.6.5'
+          marketplace-version: 'v0.6.6'
 
       - name: Install dependencies
         run: yarn

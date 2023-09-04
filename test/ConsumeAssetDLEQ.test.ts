@@ -64,9 +64,14 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
     ;[publisher, consumer] = await nevermined.accounts.list()
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
+    console.log(publisher)
+    console.log(clientAssertion)
 
     await nevermined.services.marketplace.login(clientAssertion)
+
     const payload = decodeJwt(config.marketplaceAuthToken!)
+
+    console.log(consumer)
 
     consumer.babyX = buyerPub.x
     consumer.babyY = buyerPub.y

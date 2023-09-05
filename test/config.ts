@@ -4,8 +4,6 @@ import HDWalletProvider from '@truffle/hdwallet-provider'
 
 LoggerInstance.setLevel(LogLevel.Error)
 
-const nograph = process.env['NO_GRAPH'] === 'true'
-
 const configBase: NeverminedOptions = {
   web3ProviderUri: 'http://contracts.nevermined.localnet',
   marketplaceUri: 'http://marketplace.nevermined.localnet',
@@ -14,9 +12,6 @@ const configBase: NeverminedOptions = {
   marketplaceAuthToken: 'bogus',
   artifactsFolder: './artifacts',
   circuitsFolder: './circuits',
-  graphHttpUri: nograph
-    ? undefined
-    : 'http://localhost:9000/subgraphs/name/nevermined-io/development',
   gasMultiplier: 1.1,
   verbose: LogLevel.Error,
 }

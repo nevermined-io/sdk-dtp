@@ -12,7 +12,7 @@ import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp, KeyTransfer, dleq, makeKeyTransfer } from '../src'
 import { config } from './config'
-import { cryptoConfig, getMetadataForDLEQ, sleep } from './utils'
+import { cryptoConfig, getMetadataForDLEQ } from './utils'
 
 describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   let nevermined: Nevermined
@@ -64,14 +64,9 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
     ;[publisher, consumer] = await nevermined.accounts.list()
 
     const clientAssertion = await nevermined.utils.jwt.generateClientAssertion(publisher)
-    console.log(publisher)
-    console.log(clientAssertion)
-
     await nevermined.services.marketplace.login(clientAssertion)
 
     const payload = decodeJwt(config.marketplaceAuthToken!)
-
-    console.log(consumer)
 
     consumer.babyX = buyerPub.x
     consumer.babyY = buyerPub.y
@@ -124,8 +119,6 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   })
 
   it('buyer should have the key', async () => {
-    // wait for subgraph to pick up the events
-    await sleep(3000)
     const key = await dtp.readKeyDLEQ(agreementId, cipher, buyerK, providerPub)
     assert.equal(key.toString(16), passwd.toString(16))
   })

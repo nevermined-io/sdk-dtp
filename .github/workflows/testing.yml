@@ -17,11 +17,7 @@ jobs:
       - uses: nevermined-io/nvm-tools-actions@v0.14.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
-          opengsn: 'true'
-          estuary: 'true'
-          frost: 'true'
-          contracts-version: 'latest'
-          frost-version: 'latest'
+          contracts-version: 'v3.2.1'
       - name: Install dependencies
         run: |
           yarn
@@ -33,7 +29,6 @@ jobs:
 
       - name: Run integration tests
         env:
-          NO_GRAPH: true
           SEED_WORDS: ${{ secrets.TEST_MNEMONIC }}
         run: |
           ls circuits

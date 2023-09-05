@@ -12,7 +12,7 @@ import { assert } from 'chai'
 import { decodeJwt } from 'jose'
 import { Dtp, makeKeyTransfer } from '../src'
 import { config } from './config'
-import { cryptoConfig, getMetadataForDTP, sleep } from './utils'
+import { cryptoConfig, getMetadataForDTP } from './utils'
 
 describe('Consume Asset (Node w/ proofs)', () => {
   let nevermined: Nevermined
@@ -103,8 +103,6 @@ describe('Consume Asset (Node w/ proofs)', () => {
   })
 
   it('buyer should have the key', async () => {
-    // wait for subgraph to pick up the events
-    await sleep(3000)
     const key = await dtp.readKey(
       agreementId,
       keyTransfer.makeKey(consumer.babySecret),

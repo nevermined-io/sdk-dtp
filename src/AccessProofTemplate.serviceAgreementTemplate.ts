@@ -1,7 +1,7 @@
 import { ServiceAgreementTemplate } from '@nevermined-io/sdk'
 import { access, accessDLEQ, escrowPayment, lockPayment } from './ConditionTemplate'
 
-export const accessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {
+export const accessTemplateServiceAgreementTemplate = (): ServiceAgreementTemplate => ({
   contractName: 'AccessProofTemplate',
   events: [
     {
@@ -21,9 +21,9 @@ export const accessTemplateServiceAgreementTemplate: ServiceAgreementTemplate = 
     escrowPayment: ['lockPayment', 'access'],
   },
   conditions: [lockPayment, access, escrowPayment],
-}
+})
 
-export const accessDLEQTemplateServiceAgreementTemplate: ServiceAgreementTemplate = {
+export const accessDLEQTemplateServiceAgreementTemplate = (): ServiceAgreementTemplate => ({
   contractName: 'AccessDLEQTemplate',
   events: [
     {
@@ -43,4 +43,4 @@ export const accessDLEQTemplateServiceAgreementTemplate: ServiceAgreementTemplat
     escrowPayment: ['lockPayment', 'access'],
   },
   conditions: [lockPayment, accessDLEQ, escrowPayment],
-}
+})

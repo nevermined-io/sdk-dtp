@@ -14,7 +14,6 @@ import {
   NeverminedNodeError,
   KeeperError,
   Babysig,
-  BigNumber,
   didZeroX,
   ConditionInstance,
   zeroX,
@@ -194,7 +193,7 @@ export class Dtp extends Instantiable {
     did: string,
     agreementId: string,
     account: Account,
-    nftAmount: BigNumber,
+    nftAmount: bigint,
     nftHolder: string,
   ): Promise<boolean> {
     const ddo = await this.nevermined.assets.resolve(didZeroX(did))
@@ -409,7 +408,7 @@ export class Dtp extends Instantiable {
 
   public async order(
     did: string,
-    nftAmount: BigNumber,
+    nftAmount: bigint,
     consumer: Account,
     publisher: string,
     txParams?: TxParameters,

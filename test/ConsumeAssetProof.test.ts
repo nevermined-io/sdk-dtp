@@ -6,7 +6,7 @@ import {
   Logger,
   BabyjubPublicKey,
   AssetAttributes,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
@@ -37,7 +37,7 @@ describe('Consume Asset (Node w/ proofs)', () => {
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 
@@ -85,14 +85,14 @@ describe('Consume Asset (Node w/ proofs)', () => {
   it('should agreement id be defined', async () => {
     try {
       await consumer.requestTokens(
-        +ddo.getPriceByService() * 10 ** -(await nevermined.keeper.token.decimals()),
+        ddo.getPriceByService() * 10n ** BigInt(await nevermined.keeper.token.decimals()),
       )
     } catch (error) {
       Logger.error(error)
     }
 
     const steps: any[] = []
-    agreementId = await nevermined.assets.order(ddo.id, consumer).next((step) => steps.push(step))
+    agreementId = await nevermined.assets.order(ddo.id, 'access', consumer).next((step) => steps.push(step))
 
     assert.isDefined(agreementId)
   })

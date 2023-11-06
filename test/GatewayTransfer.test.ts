@@ -8,9 +8,8 @@ import {
   Logger,
   Token,
   NFTAttributes,
-  BigNumber,
   LockPaymentCondition,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import { BabyjubPublicKey } from '@nevermined-io/sdk'
 import { Dtp } from '../src/Dtp'
@@ -22,7 +21,7 @@ describe('NFT Transfer w/ node Template', () => {
 
   let lockPaymentCondition: LockPaymentCondition
 
-  const totalAmount = BigNumber.from(12)
+  const totalAmount = 12n
 
   let publisher: Account
   let consumer: Account
@@ -33,7 +32,7 @@ describe('NFT Transfer w/ node Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 
@@ -77,10 +76,18 @@ describe('NFT Transfer w/ node Template', () => {
 
       const nftAttributes = NFTAttributes.getNFT1155Instance({
         metadata,
-        serviceTypes: ['nft-access', 'nft-sales-proof'],
+        services: [
+          {
+            serviceType: 'nft-sales-proof',
+            nft: { amount: 1n, nftTransfer: false }
+          },
+          {
+            serviceType: 'nft-access',
+          },
+        ],        
         nftContractAddress: nevermined.nfts1155.nftContract.address,
-        cap: BigNumber.from(100),
-        amount: BigNumber.from(1),
+        cap: 100n,
+        preMint: false        
       })
 
       ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
@@ -104,9 +111,9 @@ describe('NFT Transfer w/ node Template', () => {
       } catch (error) {
         Logger.error(error)
       }
-      await token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
+      await token.approve(lockPaymentCondition.address, totalAmount, consumer)
 
-      agreementId = await dtp.order(ddo.id, BigNumber.from(1), consumer, publisher.getId())
+      agreementId = await dtp.order(ddo.id, 1n, consumer, publisher.getId())
 
       assert.match(agreementId, /^0x[a-f0-9]{64}$/i)
     })
@@ -116,7 +123,7 @@ describe('NFT Transfer w/ node Template', () => {
         ddo.id,
         agreementId,
         consumer,
-        BigNumber.from(1),
+        1n,
         publisher.getId(),
       )
       assert.isTrue(result)

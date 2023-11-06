@@ -5,7 +5,6 @@ import {
   ServiceAgreementTemplate,
   NFTHolderCondition,
   AgreementInstance,
-  BigNumber,
   InstantiableConfig,
 } from '@nevermined-io/sdk'
 import { AccessDLEQCondition } from './AccessDLEQCondition'
@@ -16,7 +15,7 @@ import { ServiceNFTAccessProof } from './Service'
 
 export interface NFTAccessDLEQTemplateParams {
   holderAddress: string
-  amount: BigNumber
+  amount: bigint
   consumer: Account
 }
 
@@ -65,7 +64,7 @@ export class NFTAccessDLEQTemplate extends DLEQTemplate<
   public params(
     consumer: Account,
     holderAddress: string,
-    amount: BigNumber,
+    amount: bigint,
   ): NFTAccessDLEQTemplateParams {
     return { holderAddress, amount, consumer }
   }
@@ -96,7 +95,7 @@ export class NFTAccessDLEQTemplate extends DLEQTemplate<
     }
   }
 
-  public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-    return nftAccessTemplateServiceAgreementTemplateDLEQ
+  public getServiceAgreementTemplate(): ServiceAgreementTemplate {
+    return nftAccessTemplateServiceAgreementTemplateDLEQ()
   }
 }

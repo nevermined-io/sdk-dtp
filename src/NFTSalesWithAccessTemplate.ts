@@ -1,4 +1,4 @@
-import { Account, AgreementTemplate, BigNumber, DDO } from '@nevermined-io/sdk'
+import { Account, AgreementTemplate, DDO } from '@nevermined-io/sdk'
 import {
   ServiceType,
   ValidationParams,
@@ -22,7 +22,8 @@ export interface NFTSalesWithAccessTemplateParams {
   providerId: string
   consumer: Account
   expiration: number
-  nftAmount: BigNumber
+  nftAmount: bigint
+  duration: number
 }
 
 export class NFTSalesWithAccessTemplate extends ProofTemplate<
@@ -84,10 +85,11 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
   public params(
     consumer: Account,
     providerId: string,
-    nftAmount: BigNumber = BigNumber.from(1),
+    nftAmount = 1n,
     expiration = 0,
+    duration?: number
   ): NFTSalesWithAccessTemplateParams {
-    return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId }
+    return { consumer, consumerId: consumer.getId(), expiration, nftAmount, providerId, duration }
   }
 
   public description(): string {
@@ -147,7 +149,7 @@ export class NFTSalesWithAccessTemplate extends ProofTemplate<
     }
   }
 
-  public async getServiceAgreementTemplate(): Promise<ServiceAgreementTemplate> {
-    return nftSalesTemplateServiceAgreementTemplate
+  public getServiceAgreementTemplate(): ServiceAgreementTemplate {
+    return nftSalesTemplateServiceAgreementTemplate()
   }
 }

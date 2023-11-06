@@ -1,6 +1,4 @@
-import { NeverminedOptions } from '@nevermined-io/sdk'
-import { LoggerInstance, LogLevel } from '@nevermined-io/sdk'
-import HDWalletProvider from '@truffle/hdwallet-provider'
+import { LoggerInstance, LogLevel, makeAccounts, NeverminedOptions } from '@nevermined-io/sdk'
 
 LoggerInstance.setLevel(LogLevel.Error)
 
@@ -9,7 +7,7 @@ const nograph = process.env['NO_GRAPH'] === 'true'
 const configBase: NeverminedOptions = {
   web3ProviderUri: 'http://contracts.nevermined.localnet',
   marketplaceUri: 'http://marketplace.nevermined.localnet',
-  neverminedNodeUri: 'http://node.nevermined.localnet',
+  neverminedNodeUri: process.env.NEVERMINED_NODE_URI || 'http://node.nevermined.localnet',
   neverminedNodeAddress: '0x068ed00cf0441e4829d9784fcbe7b9e26d4bd8d0',
   marketplaceAuthToken: 'bogus',
   artifactsFolder: './artifacts',
@@ -67,11 +65,12 @@ if (process.env.NETWORK_NAME === 'mumbai') {
 }
 
 if (process.env.SEED_WORDS) {
-  const seedphrase = process.env.SEED_WORDS
+  configBase.accounts = makeAccounts(process.env.SEED_WORDS)
+  // const seedphrase = process.env.SEED_WORDS
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  configBase.web3Provider = new HDWalletProvider(seedphrase, configBase.web3ProviderUri, 0, 10)
+  // // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // // @ts-ignore
+  // configBase.web3Provider = new HDWalletProvider(seedphrase, configBase.web3ProviderUri, 0, 10)
 }
 
 export const config: NeverminedOptions & { forceVerbose: NeverminedOptions } = configBase as any

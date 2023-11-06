@@ -7,7 +7,6 @@ import {
   zeroX,
   TxParameters,
   InstantiableConfig,
-  BigNumber,
   ConditionInstanceSmall,
 } from '@nevermined-io/sdk'
 import { makeKeyTransfer } from './KeyTransfer'
@@ -96,15 +95,18 @@ export class AccessDLEQCondition extends ProviderCondition<
     )
   }
 
-  public setNetworkPublicKey(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async setNetworkPublicKey(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters): Promise<any> {
     return super.send("setNetworkPublicKey", from && from.getId(), [[key.x, key.y]], txParams)
   }
 
-  public addSecret(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async addSecret(key: BabyjubPublicKey, from?: Account, txParams?: TxParameters): Promise<any> {
     return super.send("addSecret", from && from.getId(), [[key.x, key.y]], txParams)
   }
 
-  public addPrice(pid: string, price: BigNumber, token: string, ttype: number, from?: Account, txParams?: TxParameters) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async addPrice(pid: string, price: bigint, token: string, ttype: number, from?: Account, txParams?: TxParameters): Promise<any> {
     return super.send("addPrice", from && from.getId(), [pid, price, token, ttype], txParams)
   }
 
@@ -112,14 +114,16 @@ export class AccessDLEQCondition extends ProviderCondition<
     return super.call("pointId", [[key.x, key.y]])
   }
 
-  public async networkKey(): Promise<BabyjubPublicKey> {
+  public async networkKey(): Promise<BabyjubPublicKey> { 
     const res0 = await super.call("network", [0])
     const res1 = await super.call("network", [1])
+    
     return new BabyjubPublicKey((res0 as any)._hex, (res1 as any)._hex)
   }
 
-  public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters) {
-    const coder = new ethers.utils.AbiCoder()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public authorize(agreementId: string, instances: ConditionInstanceSmall[], priceIdx: number, from?: Account, txParams?: TxParameters): Promise<any> {
+    const coder = new ethers.AbiCoder()
 
     const l2 = instances[2].list
     const params = [

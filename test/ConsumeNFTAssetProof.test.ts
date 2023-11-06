@@ -10,8 +10,7 @@ import {
   NFTAttributes,
   generateId,
   zeroX,
-  BigNumber,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
@@ -44,7 +43,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 
@@ -86,24 +85,30 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   it('should register an asset', async () => {
     const nftAttributes = NFTAttributes.getNFT1155Instance({
       metadata,
-      serviceTypes: ['nft-access'],
+      services: [{
+          serviceType: 'nft-sales',
+          nft: { amount: 1n, nftTransfer: false },
+        }, {
+          serviceType: 'nft-access',
+          nft: { amount: 1n },
+        }],
       nftContractAddress: token.address,
-      cap: BigNumber.from(100),
-      amount: BigNumber.from(1),
+      cap: 100n,
+      preMint: false
     })
     ddo = await nevermined.nfts1155.create(nftAttributes, publisher)
 
     const nftContractOwner = new Account(await token.owner())
     await token.grantOperatorRole(publisher.getId(), nftContractOwner)
 
-    await token.transferNft(ddo.id, consumer.getId(), BigNumber.from(10), publisher.getId())
+    await token.mint(consumer.getId(), ddo.id, 10n, publisher.getId())
     const balance = await token.balance(consumer.getId(), ddo.id)
-    assert(balance.eq(BigNumber.from(10)))
+    assert(balance === 10n)
   })
 
   it('should order the asset', async () => {
     const agreementIdSeed = zeroX(generateId())
-    const params = template.params(consumer, consumer.getId(), BigNumber.from(1))
+    const params = template.params(consumer, consumer.getId(), 1n)
     agreementId = await template.createAgreementFromDDO(
       agreementIdSeed,
       ddo,

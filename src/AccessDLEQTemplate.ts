@@ -5,11 +5,13 @@ import {
   MetaData,
   ServiceType,
   ValidationParams,
-  AssetPrice,
   LockPaymentCondition,
   EscrowPaymentCondition,
   AgreementInstance,
   InstantiableConfig,
+  NFTAttributes,
+  PricedMetadataInformation,
+  ServiceAttributes,
 } from '@nevermined-io/sdk'
 import { AccessDLEQCondition } from './AccessDLEQCondition'
 import { accessDLEQTemplateServiceAgreementTemplate } from './AccessProofTemplate.serviceAgreementTemplate'
@@ -39,17 +41,18 @@ export class AccessDLEQTemplate extends DLEQTemplate<AccessDLEQTemplateParams, S
     return res
   }
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice?: AssetPrice,
-    erc20TokenAddress?: string,
-  ): Promise<ServiceAccessProof> {
-    return await super.createService(publisher, metadata, assetPrice, erc20TokenAddress, true)
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation,
+  ): ServiceAccessProof {
+    return super.createService(publisher, metadata, serviceAttributes, nftAttributes, pricedData)
   }
 
-  public async getServiceAgreementTemplate() {
-    return accessDLEQTemplateServiceAgreementTemplate
+  public getServiceAgreementTemplate() {
+    return accessDLEQTemplateServiceAgreementTemplate()
   }
 
   public name(): string {

@@ -1,4 +1,4 @@
-import { Account, MetaData, MetaDataMain } from '@nevermined-io/sdk'
+import { Account, MetaData, MetaDataMain, NFTAttributes, PricedMetadataInformation, ServiceAttributes } from '@nevermined-io/sdk'
 import {
   ServiceAccess,
   ServiceNFTAccess,
@@ -7,7 +7,6 @@ import {
   ValidationParams,
   TxParameters,
   AccessTemplate,
-  AssetPrice,
   NFTAccessService,
   NFTSalesService,
   Instantiable,
@@ -63,18 +62,19 @@ export class AccessProofService extends Instantiable
     this.dleq = dleq
   }
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice: AssetPrice,
-    erc20TokenAddress: string,
-  ): Promise<ServiceAccess | ServiceAccessProof> {
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation
+  ): ServiceAccess | ServiceAccessProof {
     return this.select(metadata.main).createService(
       publisher,
       metadata,
-      assetPrice,
-      erc20TokenAddress,
-      false,
+      serviceAttributes,
+      nftAttributes,
+      pricedData
     )
   }
 
@@ -95,6 +95,15 @@ export class AccessProofService extends Instantiable
     const ddo = await this.nevermined.assets.resolve(params.did)
     const metadata = ddo.findServiceByType('metadata').attributes.main
     return this.select(metadata).accept(params)
+  }
+  public async track(
+    params: ValidationParams,
+    from: Account,
+    txparams?: TxParameters,    
+  ): Promise<boolean> {
+    const ddo = await this.nevermined.assets.resolve(params.did)
+    const metadata = ddo.findServiceByType('metadata').attributes.main
+    return this.select(metadata).track(params, from, txparams)
   }
 
   private isDTP(main: MetaDataMain): boolean {
@@ -123,18 +132,19 @@ export class NFTAccessProofService extends Instantiable
     this.proof721 = proof721
   }
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice: AssetPrice,
-    erc20TokenAddress: string,
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation,
   ) {
     return this.select(metadata.main).createService(
       publisher,
       metadata,
-      assetPrice,
-      erc20TokenAddress,
-      false,
+      serviceAttributes,
+      nftAttributes,
+      pricedData
     )
   }
 
@@ -161,6 +171,16 @@ export class NFTAccessProofService extends Instantiable
     return this.select(metadata).accept(params)
   }
 
+  public async track(
+    params: ValidationParams,
+    from: Account,
+    txparams?: TxParameters,    
+  ): Promise<boolean> {
+    const ddo = await this.nevermined.assets.resolve(params.did)
+    const metadata = ddo.findServiceByType('metadata').attributes.main
+    return this.select(metadata).track(params, from, txparams)
+  }
+
   private isDTP(main: MetaDataMain): boolean {
     return main.files && main.files.some((f) => f.encryption === 'dtp')
   }
@@ -184,18 +204,19 @@ export class NFTSalesProofService extends Instantiable
     this.proof721 = proof721
   }
 
-  public async createService(
+  public createService(
     publisher: Account,
     metadata: MetaData,
-    assetPrice: AssetPrice,
-    erc20TokenAddress: string,
-  ): Promise<ServiceNFTSales | ServiceNFTSalesProof> {
+    serviceAttributes: ServiceAttributes,
+    nftAttributes?: NFTAttributes,
+    pricedData?: PricedMetadataInformation,
+  ): ServiceNFTSales | ServiceNFTSalesProof {
     return this.select(metadata.main).createService(
       publisher,
       metadata,
-      assetPrice,
-      erc20TokenAddress,
-      true,
+      serviceAttributes,
+      nftAttributes,
+      pricedData,
     )
   }
 
@@ -220,6 +241,16 @@ export class NFTSalesProofService extends Instantiable
     const ddo = await this.nevermined.assets.resolve(params.did)
     const metadata = ddo.findServiceByType('metadata').attributes.main
     return this.select(metadata).accept(params)
+  }
+
+  public async track(
+    params: ValidationParams,
+    from: Account,
+    txparams?: TxParameters,    
+  ): Promise<boolean> {
+    const ddo = await this.nevermined.assets.resolve(params.did)
+    const metadata = ddo.findServiceByType('metadata').attributes.main
+    return this.select(metadata).track(params, from, txparams)
   }
 
   private isDTP(main: MetaDataMain): boolean {

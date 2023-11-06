@@ -14,8 +14,7 @@ import {
   generateId,
   Token,
   BabyjubPublicKey,
-  BigNumber,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import {
   Dtp,
@@ -34,8 +33,8 @@ describe('Register Escrow Access Proof Template', () => {
 
   const url = 'https://example.com/did/nevermined/test-attr-example.txt'
   const checksum = 'b'.repeat(64)
-  const totalAmount = BigNumber.from(12)
-  const amounts = [BigNumber.from(10), BigNumber.from(2)]
+  const totalAmount = 12n
+  const amounts = [10n, 2n]
 
   let templateManagerOwner: Account
   let publisher: Account
@@ -53,7 +52,7 @@ describe('Register Escrow Access Proof Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...generateIntantiableConfigFromConfig(config),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 
@@ -75,7 +74,7 @@ describe('Register Escrow Access Proof Template', () => {
   describe('Propose and approve template', () => {
     it('should propose the template', async () => {
       await keeper.templateStoreManager.proposeTemplate(
-        accessProofTemplate.getAddress(),
+        accessProofTemplate.address,
         consumer,
         true,
       )
@@ -85,7 +84,7 @@ describe('Register Escrow Access Proof Template', () => {
 
     it('should approve the template', async () => {
       await keeper.templateStoreManager.approveTemplate(
-        accessProofTemplate.getAddress(),
+        accessProofTemplate.address,
         templateManagerOwner,
         true,
       )
@@ -147,8 +146,8 @@ describe('Register Escrow Access Proof Template', () => {
         agreementId,
         await lockPaymentCondition.hashValues(
           did,
-          escrowPaymentCondition.getAddress(),
-          token.getAddress(),
+          escrowPaymentCondition.address,
+          token.address,
           amounts,
           receivers,
         ),
@@ -160,8 +159,8 @@ describe('Register Escrow Access Proof Template', () => {
           amounts,
           receivers,
           consumer.getId(),
-          escrowPaymentCondition.getAddress(),
-          token.getAddress(),
+          escrowPaymentCondition.address,
+          token.address,
           conditionIdLock[1],
           conditionIdAccess[1],
         ),
@@ -175,9 +174,9 @@ describe('Register Escrow Access Proof Template', () => {
       assert.deepEqual(
         [...conditionTypes].sort(),
         [
-          accessProofCondition.getAddress(),
-          escrowPaymentCondition.getAddress(),
-          lockPaymentCondition.getAddress(),
+          accessProofCondition.address,
+          escrowPaymentCondition.address,
+          lockPaymentCondition.address,
         ].sort(),
         "The conditions doesn't match",
       )
@@ -217,19 +216,19 @@ describe('Register Escrow Access Proof Template', () => {
         Logger.error(error)
       }
 
-      await keeper.token.approve(lockPaymentCondition.getAddress(), totalAmount, consumer)
+      await keeper.token.approve(lockPaymentCondition.address, totalAmount, consumer)
 
       const fulfill = await lockPaymentCondition.fulfill(
         agreementId,
         did,
-        escrowPaymentCondition.getAddress(),
-        token.getAddress(),
+        escrowPaymentCondition.address,
+        token.address,
         amounts,
         receivers,
         consumer,
       )
 
-      assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
+      assert.isDefined(fulfill.logs[0], 'Not Fulfilled event.')
     })
 
     it('should fulfill AccessCondition', async () => {
@@ -244,7 +243,8 @@ describe('Register Escrow Access Proof Template', () => {
         proof,
       )
 
-      assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
+      
+      assert.isDefined(fulfill.logs[0], 'Not Fulfilled event.')
     })
 
     it('should fulfill EscrowPaymentCondition', async () => {
@@ -254,14 +254,13 @@ describe('Register Escrow Access Proof Template', () => {
         amounts,
         receivers,
         consumer.getId(),
-        escrowPaymentCondition.getAddress(),
-        token.getAddress(),
+        escrowPaymentCondition.address,
+        token.address,
         conditionIdLock[1],
         conditionIdAccess[1],
         consumer,
       )
-
-      assert.isDefined(fulfill.events![0], 'Not Fulfilled event.')
+      assert.isDefined(fulfill.logs[0], 'Not Fulfilled event.')      
     })
   })
 
@@ -304,8 +303,10 @@ describe('Register Escrow Access Proof Template', () => {
 
       const assetAttributes = AssetAttributes.getInstance({
         metadata,
-        price: assetPrice,
-        serviceTypes: ['access'],
+        services: [{
+          serviceType: 'access',
+          price: assetPrice,
+        }]
       })
       ddo = await nevermined.assets.create(assetAttributes, publisher)
 
@@ -344,7 +345,7 @@ describe('Register Escrow Access Proof Template', () => {
         ddo.shortId(),
         amounts,
         receivers,
-        token.getAddress(),
+        token.address,
         consumer,
       )
     })
@@ -357,7 +358,7 @@ describe('Register Escrow Access Proof Template', () => {
         receivers,
         consumer.getId(),
         ddo.shortId(),
-        token.getAddress(),
+        token.address,
         publisher,
       )
     })

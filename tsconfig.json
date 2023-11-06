@@ -3,14 +3,9 @@
     "resolveJsonModule": true,
     "moduleResolution": "Node",
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "lib": [
-      "es2019",
-      "ES2017",
-      "ES6",
-      "ES7",
-      "DOM"
-    ],
+    "lib": ["es2019", "ES2020", "ES2021.String", "ES2017", "ES6", "ES7", "DOM"],
     "declaration": true,
     "module": "CommonJS",
     "target": "ES2020",

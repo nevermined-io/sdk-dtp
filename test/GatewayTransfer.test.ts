@@ -9,7 +9,7 @@ import {
   Token,
   NFTAttributes,
   LockPaymentCondition,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import { BabyjubPublicKey } from '@nevermined-io/sdk'
 import { Dtp } from '../src/Dtp'
@@ -32,7 +32,7 @@ describe('NFT Transfer w/ node Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 

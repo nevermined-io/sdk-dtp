@@ -15,7 +15,7 @@ import {
   Nft1155Contract,
   BabyjubPublicKey,
   generateId,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import {
   Dtp,
@@ -48,7 +48,7 @@ describe('NFT Transfer Proof Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 

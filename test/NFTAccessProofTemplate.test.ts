@@ -13,7 +13,7 @@ import {
   ConditionInstance,
   NFTAttributes,
   Nft1155Contract,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import {
   AccessProofConditionExtra,
@@ -45,7 +45,7 @@ describe('NFT Access Proof Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 

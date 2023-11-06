@@ -10,7 +10,7 @@ import {
   generateId,
   Token,
   BabyjubPublicKey,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
   ConditionInstanceSmall,
 } from '@nevermined-io/sdk'
 import {
@@ -50,7 +50,7 @@ describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => 
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 
@@ -69,6 +69,7 @@ describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => 
     ;({ lockPaymentCondition, escrowPaymentCondition } = keeper.conditions)
   })
 
+
   describe('Propose and approve template', () => {
     it('should propose the template', async () => {
       await keeper.templateStoreManager.proposeTemplate(accessTemplate.address, consumer, true)
@@ -85,6 +86,7 @@ describe('Register Escrow Access DLEQ Template (fulfillment by network)', () => 
       // TODO: Use a event to detect template mined
       await new Promise((resolve) => setTimeout(resolve, 2 * 1000))
     })
+
   })
 
   describe('Full flow', () => {

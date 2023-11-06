@@ -10,7 +10,7 @@ import {
   NFTAttributes,
   generateId,
   zeroX,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
@@ -43,7 +43,7 @@ describe('Consume NFT Asset (Node w/ proofs)', () => {
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 

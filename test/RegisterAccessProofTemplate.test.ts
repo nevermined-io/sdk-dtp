@@ -14,7 +14,7 @@ import {
   generateId,
   Token,
   BabyjubPublicKey,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,
 } from '@nevermined-io/sdk'
 import {
   Dtp,
@@ -52,7 +52,7 @@ describe('Register Escrow Access Proof Template', () => {
     nevermined = await Nevermined.getInstance(config)
 
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 

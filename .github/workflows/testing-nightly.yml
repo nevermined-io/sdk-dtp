@@ -11,24 +11,25 @@ jobs:
       fail-fast: false
       matrix:
         network: ["--geth"]
-        node: ["16"]
+        node: ["18"]
         include:
           - network: "--geth"
             network-name: geth-localnet
             chainId: 8998
 
     steps:
+      - name: Reclaim some disk space
+        run: docker system prune --all --volumes -f      
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - uses: nevermined-io/nvm-tools-actions@v0.12.0
+      - uses: nevermined-io/nvm-tools-actions@v0.15.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'
           estuary: 'true'
-          contracts-version: 'v3.2.1'
-          node-version: 'v1.2.16'
+          contracts-version: 'v3.5.4'          
       - name: Install dependencies
         run: |
           yarn

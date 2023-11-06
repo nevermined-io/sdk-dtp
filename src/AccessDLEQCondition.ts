@@ -117,6 +117,7 @@ export class AccessDLEQCondition extends ProviderCondition<
   public async networkKey(): Promise<BabyjubPublicKey> { 
     const res0 = await super.call("network", [0])
     const res1 = await super.call("network", [1])
+    
     return new BabyjubPublicKey((res0 as any)._hex, (res1 as any)._hex)
   }
 

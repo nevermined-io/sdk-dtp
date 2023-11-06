@@ -7,16 +7,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Reclaim some disk space
+        run: docker system prune --all --volumes -f      
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - uses: actions/checkout@v3
         with:
           repository: nevermined-io/node
           path: node
           token: ${{ secrets.API_TOKEN_GITHUB }}
-      - uses: nevermined-io/nvm-tools-actions@v0.13.0
+      - uses: nevermined-io/nvm-tools-actions@v0.15.0
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
           opengsn: 'true'

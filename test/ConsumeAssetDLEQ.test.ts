@@ -6,7 +6,7 @@ import {
   Logger,
   BabyjubPublicKey,
   AssetAttributes,
-  generateIntantiableConfigFromConfig,
+  generateInstantiableConfigFromConfig,  
 } from '@nevermined-io/sdk'
 import { assert } from 'chai'
 import { decodeJwt } from 'jose'
@@ -43,7 +43,7 @@ describe('Consume Asset (Node w/ DLEQ proofs)', () => {
   before(async () => {
     nevermined = await Nevermined.getInstance(config)
     const instanceConfig = {
-      ...(await generateIntantiableConfigFromConfig(config)),
+      ...(await generateInstantiableConfigFromConfig(config)),
       nevermined,
     }
 
